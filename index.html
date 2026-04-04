@@ -7,6 +7,7 @@
   <title>Timeout Restaurant, Grill & Bar — Abuja</title>
   <meta name="description" content="Abuja's finest grill experience. Premium Nigerian cuisine, cocktails, and unforgettable dining at Timeout Restaurant, Grill & Bar." />
   <link rel="stylesheet" href="style.css" />
+  <link rel="preload" as="image" href="images/hero.jpg">
   <style>
     /* ===== HERO ===== */
     .hero {
@@ -18,14 +19,7 @@
       overflow: hidden;
     }
 
-    .hero-parallax-bg {
-      position: absolute;
-      inset: -20%;
-      background: url('https://images.unsplash.com/photo-1544025162-d76694265947?w=1800&q=80') center/cover no-repeat;
-      filter: brightness(0.25);
-      will-change: transform;
-    }
-
+    
     .hero::after {
       content: '';
       position: absolute;
@@ -371,15 +365,15 @@
       gap: 1.5px;
       background: var(--border);
     }
-
-    .menu-card {
-      background: var(--card);
-      padding: 2.5rem;
-      position: relative;
-      overflow: hidden;
-      transition: var(--transition);
-      group: true;
-    }
+    
+.menu-card {
+  background: var(--card);
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s ease;
+}
+    
 
     .menu-card::before {
       content: '';
@@ -398,7 +392,19 @@
       background: var(--card2);
       transform: translateY(-4px);
     }
+.menu-card-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  filter: brightness(0.9);
+  transition: 0.3s ease;
+}
 
+.menu-card:hover .menu-card-img {
+  filter: brightness(1);
+  transform: scale(1.03);
+}
     .menu-card:hover::before { transform: scaleX(1); }
 
     .menu-card-cat {
@@ -682,6 +688,10 @@
   background: transparent !important;
 
   position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -721,43 +731,135 @@
   text-transform: uppercase;
   color: var(--gold);
 }
+.hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.45);
+  z-index: 0;
+}
   </style>
 </head>
 <body>
 
 <!-- ===== NAVBAR ===== -->
+<!-- ===== NAVBAR ===== -->
 <nav class="navbar">
   <a href="index.html" class="nav-logo luxury-logo">
     <img src="images/logo.png" alt="Timeout Logo" class="logo-img">
-    <span class="logo-name"></span>
+    <span class="logo-name">Timeout</span>
     <span class="logo-sub">Restaurant · Grill · Bar</span>
   </a>
 </nav>
-</a>
-  </div>
-</a>
-</a>
-  
-
 <!-- ===== HERO ===== -->
 <section class="hero">
-  <div class="hero-parallax-bg"></div>
+
+  <!-- HERO IMAGE (THIS IS THE FIX) -->
+<img 
+  src="images/hero.jpg" 
+  class="hero-img" 
+  alt="Restaurant background" 
+  loading="eager"
+  fetchpriority="high"
+>
   <div class="hero-content">
     <div class="hero-eyebrow">
       <span>Abuja's Finest — Since Day One</span>
     </div>
     <h1>Where Every Moment<em>Tastes Like a Memory</em></h1>
-    <p class="hero-sub">Premium Nigerian cuisine, world-class cocktails, and an atmosphere that sets the stage for unforgettable evenings.</p>
+    <p class="hero-sub">
+      Premium Nigerian cuisine, world-class cocktails, and an atmosphere that sets the stage for unforgettable evenings.
+    </p>
     <div class="hero-actions">
       <a href="menu.html" class="btn btn-primary">Explore Our Menu</a>
       <a href="https://wa.me/2349061600052" target="_blank" class="btn btn-outline">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         Order on WhatsApp
       </a>
     </div>
-  </section>
+  </div>
 
+</section>
 
+<!-- ===== ABOUT SECTION ===== -->
+<section class="about-section">
+  <div class="about-image-wrap">
+    <img src="images/about.jpg" class="about-image-main" alt="Restaurant interior">
+    
+    <div class="about-stat-box">
+      <div class="about-stat-number">5+</div>
+      <div class="about-stat-label">Years Experience</div>
+    </div>
+  </div>
+
+  <div class="about-text">
+    <h2>Our Story</h2>
+
+    <p>
+      Timeout Restaurant, Grill & Bar brings together the rich flavors of Nigerian cuisine with a modern dining experience.
+    </p>
+
+    <div class="about-divider">
+      <span>Why Choose Us</span>
+    </div>
+
+    <div class="about-features">
+      <div class="about-feature">
+        <div class="about-feature-icon">🔥</div>
+        <div class="about-feature-text">
+          <strong>Premium Grills</strong>
+          <span>Perfectly seasoned and flame-grilled</span>
+        </div>
+      </div>
+
+      <div class="about-feature">
+        <div class="about-feature-icon">🍹</div>
+        <div class="about-feature-text">
+          <strong>Signature Drinks</strong>
+          <span>Crafted cocktails & beverages</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ===== FEATURED DISHES ===== -->
+<section class="featured-section">
+  <div class="featured-header">
+    <h2>Featured Dishes</h2>
+  </div>
+
+<div class="menu-cards-grid">
+
+  <!-- CARD 1 -->
+  <div class="menu-card">
+    <img src="images/suya.jpg" alt="Suya" class="menu-card-img">
+    <div class="menu-card-cat">Grills</div>
+    <h3>Suya Platter</h3>
+    <p>Spicy grilled beef served with onions and pepper sauce.</p>
+    <div class="menu-card-price">₦6,500</div>
+  </div>
+
+  <!-- CARD 2 -->
+  <div class="menu-card">
+    <img src="images/jollof.jpg" alt="Jollof Rice" class="menu-card-img">
+    <div class="menu-card-cat">Main Course</div>
+    <h3>Jollof Rice & Chicken</h3>
+    <p>Smoky party jollof served with grilled chicken and salad.</p>
+    <div class="menu-card-price">₦5,000</div>
+  </div>
+
+  <!-- CARD 3 -->
+  <div class="menu-card">
+    <img src="images/cocktail.jpg" alt="Cocktail" class="menu-card-img">
+    <div class="menu-card-cat">Drinks</div>
+    <h3>Signature Cocktail</h3>
+    <p>A refreshing mix of premium spirits and fresh citrus.</p>
+    <div class="menu-card-price">₦4,000</div>
+  </div>
+
+</div>
+</section>
 
 <!-- ===== FOOTER ===== -->
 <footer>
@@ -802,32 +904,6 @@
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 
-<script src="script.js"></script>
-<script>
-  // Disable right-click context menu silently
-  document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-  });
-
-  // Disable text selection
-  document.addEventListener('selectstart', function(e) {
-    e.preventDefault();
-  });
-
-  // Disable common copy/paste/view-source shortcuts silently
-  document.addEventListener('keydown', function(e) {
-    if (
-      (e.ctrlKey && ['c','x','s','u'].includes(e.key.toLowerCase())) || // Ctrl+C, Ctrl+X, Ctrl+S, Ctrl+U
-      (e.key === 'PrintScreen')
-    ) {
-      e.preventDefault();
-    }
-  });
-
-  // Optional: disable drag events for images
-  document.addEventListener('dragstart', function(e) {
-    e.preventDefault();
-  });
-</script>
+<script src="script.js" defer></script>
 </body>
 </html>
