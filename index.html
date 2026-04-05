@@ -7,7 +7,10 @@
   <title>Timeout Restaurant, Grill & Bar — Abuja</title>
   <meta name="description" content="Abuja's finest grill experience. Premium Nigerian cuisine, cocktails, and unforgettable dining at Timeout Restaurant, Grill & Bar." />
   <link rel="stylesheet" href="style.css" />
-  <link rel="preload" as="image" href="images/hero.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,600&display=swap" rel="stylesheet">
   <style>
     /* ===== HERO ===== */
     .hero {
@@ -759,13 +762,15 @@
 
   <!-- HERO IMAGE (THIS IS THE FIX) -->
 <img 
-  src="images/hero.jpg" 
+  src="images/hero.webp" 
   class="hero-img" 
-  alt="Restaurant background" 
-  loading="eager"
+  alt="Restaurant background"
+  width="1600"
+  onerror="this.style.border='3px solid red'"
+  height="900"
   fetchpriority="high"
->
-  <div class="hero-content">
+/>
+<div class="hero-content">
     <div class="hero-eyebrow">
       <span>Abuja's Finest — Since Day One</span>
     </div>
@@ -786,7 +791,7 @@
 <!-- ===== ABOUT SECTION ===== -->
 <section class="about-section">
   <div class="about-image-wrap">
-    <img src="images/about.jpg" class="about-image-main" alt="Restaurant interior">
+    <img src="images/about.webp"loading="lazy" class="about-image-main" alt="Restaurant interior">
     
     <div class="about-stat-box">
       <div class="about-stat-number">5+</div>
@@ -834,7 +839,7 @@
 
   <!-- CARD 1 -->
   <div class="menu-card">
-    <img src="images/suya.jpg" alt="Suya" class="menu-card-img">
+    <img src="images/suya.webp"loading="lazy"alt="Suya" class="menu-card-img">
     <div class="menu-card-cat">Grills</div>
     <h3>Suya Platter</h3>
     <p>Spicy grilled beef served with onions and pepper sauce.</p>
@@ -843,7 +848,7 @@
 
   <!-- CARD 2 -->
   <div class="menu-card">
-    <img src="images/jollof.jpg" alt="Jollof Rice" class="menu-card-img">
+      <img src="images/Jollof.webp"loading="lazy"alt="Suya" class="menu-card-img">
     <div class="menu-card-cat">Main Course</div>
     <h3>Jollof Rice & Chicken</h3>
     <p>Smoky party jollof served with grilled chicken and salad.</p>
@@ -852,7 +857,7 @@
 
   <!-- CARD 3 -->
   <div class="menu-card">
-    <img src="images/cocktail.jpg" alt="Cocktail" class="menu-card-img">
+  <img src="images/ayo.webp"loading="lazy"alt="Suya" class="menu-card-img">
     <div class="menu-card-cat">Drinks</div>
     <h3>Signature Cocktail</h3>
     <p>A refreshing mix of premium spirits and fresh citrus.</p>
