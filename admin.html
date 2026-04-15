@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Timeout Restaurant — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:        #d4af37;
+      --gold-bright: #e8c84a;
+      --gold-dim:    rgba(212,175,55,0.10);
+      --gold-glow:   rgba(212,175,55,0.22);
+      --bg:          #0a0a0a;
+      --surface:     #0f0f0f;
+      --card:        #141414;
+      --card2:       #181818;
+      --border:      rgba(212,175,55,0.13);
+      --border-soft: rgba(255,255,255,0.05);
+      --text:        #ede8de;
+      --text-soft:   #8a857a;
+      --muted:       #4a4540;
+      --pending:     #e8a630;
+      --paid:        #4caf84;
+      --completed:   #5b8af0;
+      --radius:      16px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'Outfit', sans-serif;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Ambient glow */
+    body::before {
+      content: '';
+      position: fixed; top: 0; left: 0; right: 0; height: 60vh;
+      background: radial-gradient(ellipse 70% 50% at 30% 0%, rgba(212,175,55,0.05) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ─── HEADER ─── */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,10,0.88);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      padding: 0 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+      animation: slideDown 0.5s ease both;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .header-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px; font-weight: 700;
+      color: var(--text); letter-spacing: -0.2px;
+    }
+    .header-logo span { color: var(--gold); font-style: italic; }
+    .header-badge {
+      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gold); background: var(--gold-dim);
+      border: 1px solid rgba(212,175,55,0.2);
+      padding: 3px 10px; border-radius: 100px; font-weight: 600;
+    }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .live-dot {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 11px; color: var(--text-soft); letter-spacing: 0.5px;
+    }
+    .live-dot::before {
+      content: '';
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #4caf84;
+      box-shadow: 0 0 8px #4caf84;
+      animation: livePulse 2s ease infinite;
+    }
+    @keyframes livePulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.5; transform: scale(0.7); }
+    }
+    .logout-btn {
+      font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--text-soft); background: none;
+      border: 1px solid var(--border-soft);
+      border-radius: 8px; padding: 7px 14px;
+      cursor: pointer; font-family: 'Outfit', sans-serif;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .logout-btn:hover { color: var(--gold); border-color: var(--border); }
+
+    /* ─── MAIN LAYOUT ─── */
+    .main {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+      padding: 36px 24px 80px;
+    }
+
+    .page-title {
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .page-title h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px; font-weight: 700;
+      color: var(--text); letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    .page-title h1 em { color: var(--gold); font-style: italic; }
+    .page-title p {
+      font-size: 13px; color: var(--text-soft);
+      letter-spacing: 0.3px;
+    }
+    #clockDisplay {
+      font-size: 12px; color: var(--gold);
+      font-weight: 500; letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    /* ─── STAT CARDS ─── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px; margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px 24px;
+      position: relative; overflow: hidden;
+      cursor: default;
+      transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1), box-shadow 0.3s ease, border-color 0.3s;
+      animation: fadeUp 0.6s ease both;
+    }
+    .stat-card:nth-child(1) { animation-delay: 0.15s; }
+    .stat-card:nth-child(2) { animation-delay: 0.22s; }
+    .stat-card:nth-child(3) { animation-delay: 0.29s; }
+    .stat-card:nth-child(4) { animation-delay: 0.36s; }
+    .stat-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(212,175,55,0.28);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 40px rgba(212,175,55,0.05);
+    }
+    .stat-card:hover::before { opacity: 1; }
+
+    .stat-icon {
+      width: 42px; height: 42px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(212,175,55,0.15);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; margin-bottom: 16px;
+    }
+    .stat-label {
+      font-size: 10px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--text-soft);
+      font-weight: 500; margin-bottom: 8px;
+    }
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px; font-weight: 700;
+      color: var(--gold-bright); letter-spacing: -1px;
+      line-height: 1;
+    }
+    .stat-sub {
+      font-size: 11px; color: var(--muted);
+      margin-top: 6px; letter-spacing: 0.3px;
+    }
+
+    /* ─── POPULAR ITEMS ─── */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 600;
+      color: var(--text); letter-spacing: -0.2px;
+    }
+    .section-line {
+      height: 1px; flex: 1; margin-left: 16px;
+      background: linear-gradient(to right, var(--border), transparent);
+    }
+
+    .popular-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px; margin-bottom: 36px;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+    .popular-item {
+      background: var(--card);
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 16px;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .popular-item:hover { border-color: var(--border); transform: translateY(-2px); }
+    .popular-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .popular-count {
+      font-size: 11px; color: var(--text-soft);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .popular-bar-wrap {
+      height: 3px; background: rgba(255,255,255,0.05);
+      border-radius: 2px; margin-top: 10px; overflow: hidden;
+    }
+    .popular-bar {
+      height: 100%;
+      background: linear-gradient(to right, var(--gold), var(--gold-bright));
+      border-radius: 2px;
+      transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    /* ─── ORDERS TABLE ─── */
+    .orders-section { animation: fadeUp 0.6s 0.5s ease both; }
+
+    .table-controls {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .filter-btn {
+      font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase;
+      color: var(--text-soft); background: var(--card);
+      border: 1px solid var(--border-soft);
+      border-radius: 8px; padding: 7px 14px;
+      cursor: pointer; font-family: 'Outfit', sans-serif;
+      transition: all 0.2s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      color: var(--gold); border-color: var(--border);
+      background: var(--gold-dim);
+    }
+    .clear-btn {
+      margin-left: auto;
+      font-size: 11px; color: #e05555;
+      background: rgba(224,85,85,0.08);
+      border: 1px solid rgba(224,85,85,0.2);
+      border-radius: 8px; padding: 7px 14px;
+      cursor: pointer; font-family: 'Outfit', sans-serif;
+      transition: all 0.2s; letter-spacing: 0.5px;
+    }
+    .clear-btn:hover { background: rgba(224,85,85,0.15); }
+
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    table {
+      width: 100%; border-collapse: collapse;
+    }
+    thead tr {
+      background: rgba(212,175,55,0.04);
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      padding: 14px 18px;
+      text-align: left;
+      font-size: 9.5px; letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-soft); font-weight: 600;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--border-soft);
+      transition: background 0.2s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    td {
+      padding: 16px 18px;
+      font-size: 13px; color: var(--text);
+      vertical-align: middle;
+    }
+    .order-id {
+      font-family: 'Playfair Display', serif;
+      font-size: 12px; color: var(--gold);
+      font-weight: 600; letter-spacing: 0.5px;
+    }
+    .order-items {
+      font-size: 12px; color: var(--text-soft);
+      max-width: 260px; line-height: 1.5;
+    }
+    .order-total {
+      font-weight: 600; color: var(--gold-bright);
+      font-size: 14px; letter-spacing: -0.3px;
+      white-space: nowrap;
+    }
+    .order-time {
+      font-size: 11px; color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* Status badge */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 100px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      white-space: nowrap; border: none;
+      font-family: 'Outfit', sans-serif;
+    }
+    .status-badge:hover { transform: scale(1.05); }
+    .status-badge::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+    }
+    .status-Pending  { background: rgba(232,166,48,0.12);  color: #e8a630; border: 1px solid rgba(232,166,48,0.25); }
+    .status-Pending::before  { background: #e8a630; box-shadow: 0 0 6px #e8a630; }
+    .status-Paid     { background: rgba(76,175,132,0.12);  color: #4caf84; border: 1px solid rgba(76,175,132,0.25); }
+    .status-Paid::before     { background: #4caf84; box-shadow: 0 0 6px #4caf84; }
+    .status-Completed{ background: rgba(91,138,240,0.12);  color: #5b8af0; border: 1px solid rgba(91,138,240,0.25); }
+    .status-Completed::before{ background: #5b8af0; box-shadow: 0 0 6px #5b8af0; }
+
+    .empty-state {
+      text-align: center; padding: 64px 24px;
+      color: var(--text-soft);
+    }
+    .empty-state .icon { font-size: 40px; margin-bottom: 14px; opacity: 0.4; }
+    .empty-state p { font-size: 14px; letter-spacing: 0.3px; }
+
+    /* ─── TOAST ─── */
+    .toast {
+      position: fixed; bottom: 28px; right: 28px; z-index: 999;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-size: 13px; color: var(--text);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+      display: flex; align-items: center; gap: 10px;
+      transform: translateY(80px); opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.34,1.2,0.64,1), opacity 0.3s;
+      pointer-events: none;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-icon { font-size: 16px; }
+
+    @media (max-width: 640px) {
+      .header { padding: 0 16px; }
+      .main { padding: 24px 16px 60px; }
+      th, td { padding: 12px 12px; }
+      .page-title h1 { font-size: 24px; }
+      .stat-value { font-size: 24px; }
+      .order-items { max-width: 140px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-left">
+      <div class="header-logo"><em>Timeout</em> Restaurant</div>
+      <div class="header-badge">Admin</div>
+    </div>
+    <div class="header-right">
+      <div class="live-dot">Live</div>
+      <button class="logout-btn" id="logoutBtn">Sign Out</button>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="page-title">
+      <h1>Good evening, <em>Admin</em> 👋</h1>
+      <p>Here's what's happening at Timeout Restaurant</p>
+      <div id="clockDisplay"></div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-label">Total Orders</div>
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-sub">All time</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-label">Total Revenue</div>
+        <div class="stat-value" id="statRevenue">₦0</div>
+        <div class="stat-sub">Paid orders only</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🕐</div>
+        <div class="stat-label">Today's Orders</div>
+        <div class="stat-value" id="statToday">0</div>
+        <div class="stat-sub" id="statTodayDate">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-label">Pending</div>
+        <div class="stat-value" id="statPending">0</div>
+        <div class="stat-sub">Awaiting action</div>
+      </div>
+    </div>
+
+    <!-- POPULAR ITEMS -->
+    <div class="section-header" style="animation: fadeUp 0.6s 0.42s ease both;">
+      <div class="section-title">Popular Items</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="popular-grid" id="popularGrid">
+      <div class="popular-item"><div class="popular-name" style="color:var(--text-soft)">No orders yet</div></div>
+    </div>
+
+    <!-- ORDERS TABLE -->
+    <div class="orders-section">
+      <div class="section-header">
+        <div class="section-title">All Orders</div>
+        <div class="section-line"></div>
+      </div>
+      <div class="table-controls">
+        <button class="filter-btn active" data-filter="All">All</button>
+        <button class="filter-btn" data-filter="Pending">Pending</button>
+        <button class="filter-btn" data-filter="Paid">Paid</button>
+        <button class="filter-btn" data-filter="Completed">Completed</button>
+        <button class="clear-btn" id="clearOrdersBtn">🗑 Clear All</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">
+    <span class="toast-icon">✅</span>
+    <span id="toastMsg">Status updated</span>
+  </div>
+
+  <script>
+    /* ─── AUTH GUARD ─── */
+    if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+      window.location.href = 'admin-login.html';
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('isAdminLoggedIn');
+      window.location.href = 'admin-login.html';
+    });
+
+    /* ─── CLOCK ─── */
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clockDisplay').textContent =
+        now.toLocaleDateString('en-NG', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) +
+        ' · ' + now.toLocaleTimeString('en-NG', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+    }
+    updateClock(); setInterval(updateClock, 1000);
+
+    /* ─── GREETING ─── */
+    const hr = new Date().getHours();
+    const greet = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
+    document.querySelector('.page-title h1').innerHTML = `${greet}, <em>Admin</em> 👋`;
+
+    /* ─── HELPERS ─── */
+    const naira = n => '₦' + Number(n).toLocaleString('en-NG');
+
+    function getOrders() {
+      try { return JSON.parse(localStorage.getItem('timeout_orders') || '[]'); }
+      catch { return []; }
+    }
+    function saveOrders(orders) {
+      localStorage.setItem('timeout_orders', JSON.stringify(orders));
+    }
+
+    /* ─── ANIMATED COUNTER ─── */
+    function animateCounter(el, target, prefix = '', suffix = '') {
+      const isNum = typeof target === 'number';
+      if (!isNum) { el.textContent = prefix + target + suffix; return; }
+      let start = 0; const dur = 900; const startTime = performance.now();
+      function step(now) {
+        const p = Math.min((now - startTime) / dur, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        const val = Math.round(start + (target - start) * ease);
+        el.textContent = prefix + val.toLocaleString('en-NG') + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    /* ─── STATS ─── */
+    function renderStats(orders) {
+      const today = new Date().toDateString();
+      const todayOrders = orders.filter(o => new Date(o.time).toDateString?.() === today ||
+        (o.time && o.time.includes(new Date().toLocaleDateString())));
+
+      const revenue = orders
+        .filter(o => o.status === 'Paid' || o.status === 'Completed')
+        .reduce((s, o) => s + (o.total || 0), 0);
+
+      const pending = orders.filter(o => o.status === 'Pending').length;
+
+      animateCounter(document.getElementById('statTotal'), orders.length);
+      animateCounter(document.getElementById('statRevenue'), revenue, '₦');
+      animateCounter(document.getElementById('statToday'), todayOrders.length);
+      animateCounter(document.getElementById('statPending'), pending);
+
+      document.getElementById('statTodayDate').textContent =
+        new Date().toLocaleDateString('en-NG', { month:'short', day:'numeric' });
+    }
+
+    /* ─── POPULAR ITEMS ─── */
+    function renderPopular(orders) {
+      const counts = {};
+      orders.forEach(o => {
+        (o.items || []).forEach(({ item, qty }) => {
+          if (!item?.name) return;
+          counts[item.name] = (counts[item.name] || 0) + qty;
+        });
+      });
+      const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, 6);
+      const max = sorted[0]?.[1] || 1;
+      const grid = document.getElementById('popularGrid');
+
+      if (!sorted.length) {
+        grid.innerHTML = '<div class="popular-item"><div class="popular-name" style="color:var(--text-soft)">No orders yet</div></div>';
+        return;
+      }
+      grid.innerHTML = sorted.map(([name, count]) => `
+        <div class="popular-item">
+          <div class="popular-name">${name}</div>
+          <div class="popular-count">🛒 ${count} order${count!==1?'s':''}</div>
+          <div class="popular-bar-wrap">
+            <div class="popular-bar" style="width:${Math.round((count/max)*100)}%"></div>
+          </div>
+        </div>`).join('');
+    }
+
+    /* ─── ORDERS TABLE ─── */
+    let activeFilter = 'All';
+
+    function renderOrders(filter = 'All') {
+      activeFilter = filter;
+      const orders = getOrders();
+      const filtered = filter === 'All' ? orders : orders.filter(o => o.status === filter);
+      const tbody = document.getElementById('ordersBody');
+
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="5">
+          <div class="empty-state">
+            <div class="icon">🍽️</div>
+            <p>${filter === 'All' ? 'No orders yet. Orders appear here after customers pay.' : `No ${filter} orders.`}</p>
+          </div></td></tr>`;
+        return;
+      }
+
+      // Sort newest first
+      const sorted = [...filtered].sort((a,b) => b.id - a.id);
+
+      tbody.innerHTML = sorted.map(order => {
+        const itemStr = (order.items || [])
+          .map(({ item, qty }) => `${item?.name || '?'} ×${qty}`)
+          .join(', ');
+        const shortId = String(order.id).slice(-6);
+        return `
+          <tr>
+            <td><div class="order-id">#${shortId}</div></td>
+            <td><div class="order-items">${itemStr || '—'}</div></td>
+            <td><div class="order-total">${naira(order.total || 0)}</div></td>
+            <td>
+              <button class="status-badge status-${order.status}"
+                onclick="cycleStatus(${order.id})"
+                title="Click to change status">
+                ${order.status}
+              </button>
+            </td>
+            <td><div class="order-time">${order.time || '—'}</div></td>
+          </tr>`;
+      }).join('');
+    }
+
+    /* ─── CYCLE STATUS ─── */
+    function cycleStatus(id) {
+      const cycle = { Pending: 'Paid', Paid: 'Completed', Completed: 'Pending' };
+      const orders = getOrders();
+      const order = orders.find(o => o.id === id);
+      if (!order) return;
+      order.status = cycle[order.status] || 'Pending';
+      saveOrders(orders);
+      renderAll();
+      showToast(`Order #${String(id).slice(-6)} → ${order.status}`);
+    }
+
+    /* ─── FILTER BUTTONS ─── */
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderOrders(btn.dataset.filter);
+      });
+    });
+
+    /* ─── CLEAR ALL ─── */
+    document.getElementById('clearOrdersBtn').addEventListener('click', () => {
+      if (confirm('Clear ALL orders? This cannot be undone.')) {
+        saveOrders([]);
+        renderAll();
+        showToast('All orders cleared');
+      }
+    });
+
+    /* ─── TOAST ─── */
+    let toastTimer;
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    /* ─── RENDER ALL ─── */
+    function renderAll() {
+      const orders = getOrders();
+      renderStats(orders);
+      renderPopular(orders);
+      renderOrders(activeFilter);
+    }
+
+    /* ─── LIVE REFRESH (poll localStorage every 5s) ─── */
+    renderAll();
+    setInterval(renderAll, 5000);
+
+    /* ─── STORAGE LISTENER (cross-tab updates) ─── */
+    window.addEventListener('storage', e => {
+      if (e.key === 'timeout_orders') renderAll();
+    });
+  </script>
+</body>
+</html>
