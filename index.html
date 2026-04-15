@@ -953,5 +953,39 @@ installBtn.addEventListener('click', async () => {
   }
 });
 </script>
+<script>
+// Stealth Admin Access — Triple-click logo within 1.5s (hidden passage)
+// FIXED: Prevents page reload on each click so the counter can actually reach 3 clicks
+// No UI changes • No visible hint • All animations & styles untouched
+
+document.addEventListener('DOMContentLoaded', () => {
+  const logoSelector = '.nav-logo';   // Targets your full logo link
+  
+  const logo = document.querySelector(logoSelector);
+  if (!logo) {
+    console.warn('⚠️ Logo not found for admin access. Check selector.');
+    return;
+  }
+
+  let clicks = [];
+
+  logo.addEventListener('click', (e) => {
+    // Prevent default link behavior (stops self-reload on index.html)
+    // This was the reason the triple-click wasn't working before
+    e.preventDefault();
+
+    const now = Date.now();
+    clicks.push(now);
+
+    // Keep only clicks from the last 1.5 seconds
+    clicks = clicks.filter(ts => now - ts <= 1500);
+
+    if (clicks.length >= 3) {
+      clicks = []; // reset
+      window.location.href = 'admin-login.html';
+    }
+  });
+});
+</script>
 </body>
 </html>
