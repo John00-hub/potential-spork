@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="preload" as="image" href="ola.webp">
+  <link rel="preload" as="image" href="./images/ola.webp">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Timeout Restaurant Premium Food Menu</title>
@@ -975,7 +975,7 @@ body.light-mode::before {
         ${item.pricePill === 'Premium' ? '<span class="card-badge">👑 Premium</span>' : ''}
       </div>
       <div class="card-img-wrap">
-        <img src="${item.img}" alt="${item.name}" loading="lazy" decoding="async"/>
+        <img src="${item.img}" alt="${item.name}" loading="eager" decoding="async" onerror="this.style.opacity='0'"/>
         ${item.rating ? `<div class="card-rating-chip"><span class="rating-star">★</span><span class="rating-num">${rating}</span></div>` : ''}
       </div>
       <div class="card-body">
@@ -1246,7 +1246,7 @@ body.light-mode::before {
         observer.unobserve(entry.target);
       }
     });
-  });
+  }, { rootMargin: '0px 0px 200px 0px', threshold: 0 });
 
   /* ─── EXPLORE BUTTON — scroll to menu ─── */
   document.getElementById('exploreBtn').addEventListener('click', () => {
