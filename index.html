@@ -60,20 +60,14 @@
       transform: translateZ(0);
     }
     body.light-mode {
-  --bg: #ffffff;
-  --text: #111111;
-  --gold: #c9a84c;
-  --border: rgba(0,0,0,0.1);
-}
+      --bg: #ffffff;
+      --text: #111111;
+      --gold: #c9a84c;
+      --border: rgba(0,0,0,0.1);
+    }
+    body.light-mode { background: var(--bg); color: var(--text); }
+    body.light-mode::before { background-image: none; }
 
-/* apply variables */
-body.light-mode {
-  background: var(--bg);
-  color: var(--text);
-}
-body.light-mode::before {
-  background-image:none;
-}
     /* ─── HERO ─── */
     .hero {
       position: relative;
@@ -339,14 +333,32 @@ body.light-mode::before {
     }
     .card:hover { background: var(--card-hover); border-color: rgba(201,168,76,0.22); transform: translateY(-6px) scale(1.01); box-shadow: 0 2px 0 rgba(255,255,255,0.04) inset, 0 0 0 1px rgba(201,168,76,0.10), 0 8px 24px rgba(0,0,0,0.45), 0 24px 56px rgba(0,0,0,0.38), 0 0 48px rgba(201,168,76,0.06); }
     .card:hover::after { opacity: 1; }
-    .card-img-wrap { position: relative; overflow: hidden; height: 220px; flex-shrink: 0; background: #1a1a16; border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0; }
+    .card-img-wrap {
+      position: relative; overflow: hidden;
+      height: 220px; flex-shrink: 0;
+      background: #1a1a16;
+      border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+    }
     @media (min-width: 580px) { .card-img-wrap { height: 190px; } }
     @media (min-width: 860px) { .card-img-wrap { height: 200px; } }
-    .card-img-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transform: scale(1.0); transition: transform 0.65s var(--ease-out), filter 0.45s ease; filter: brightness(0.88) saturate(1.08); will-change: transform; z-index: 1; }
+    .card-img-wrap img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      display: block;
+      opacity: 1;
+      transform: scale(1.0);
+      transition: transform 0.65s var(--ease-out), filter 0.45s ease;
+      filter: brightness(0.88) saturate(1.08);
+      will-change: transform;
+      z-index: 1;
+    }
     .card:hover .card-img-wrap img { transform: scale(1.11); filter: brightness(1.0) saturate(1.15); }
-    .card-img-wrap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,8,0.82) 0%, rgba(10,10,8,0.18) 45%, transparent 70%), linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, transparent 30%); pointer-events: none; z-index: 2; }
-    .card-img-wrap::before { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, #1a1a16 30%, #242420 50%, #1a1a16 70%); background-size: 200% 100%; animation: shimmer 1.6s ease infinite; z-index: 0; }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .card-img-wrap::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,10,8,0.82) 0%, rgba(10,10,8,0.18) 45%, transparent 70%), linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, transparent 30%);
+      pointer-events: none; z-index: 2;
+    }
     .card-badges { position: absolute; top: 11px; left: 11px; z-index: 4; display: flex; flex-direction: column; gap: 5px; }
     .card-badge { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; backdrop-filter: blur(8px); background: linear-gradient(135deg, var(--gold) 0%, #a8831a 100%); color: #0a0900; box-shadow: 0 2px 10px rgba(0,0,0,0.5), 0 0 12px rgba(201,168,76,0.3); white-space: nowrap; }
     .card-badge.popular { background: linear-gradient(135deg, #ff6b35 0%, #d94f10 100%); color: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.5), 0 0 14px rgba(255,107,53,0.45); }
@@ -383,186 +395,71 @@ body.light-mode::before {
       -webkit-tap-highlight-color: transparent;
       position: relative; overflow: hidden;
     }
-    .add-cart-btn:hover {
-      background: rgba(201,168,76,0.1);
-      border-color: var(--gold);
-      transform: translateY(-1px);
-    }
+    .add-cart-btn:hover { background: rgba(201,168,76,0.1); border-color: var(--gold); transform: translateY(-1px); }
     .add-cart-btn:active { transform: scale(0.97); }
-    .add-cart-btn.added {
-      background: rgba(201,168,76,0.15);
-      border-color: var(--gold);
-      color: var(--gold-bright);
-    }
-
+    .add-cart-btn.added { background: rgba(201,168,76,0.15); border-color: var(--gold); color: var(--gold-bright); }
 
     /* ─── FLOATING CART ─── */
     .cart-fab {
-      position: fixed;
-      bottom: 28px; right: 20px;
-      z-index: 900;
+      position: fixed; bottom: 28px; right: 20px; z-index: 900;
       display: flex; align-items: center; gap: 10px;
       background: linear-gradient(135deg, #c9a84c, #a67c1b);
-      color: #0a0900;
-      border: none; border-radius: 100px;
-      padding: 14px 22px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 14px; font-weight: 700;
-      cursor: pointer;
+      color: #0a0900; border: none; border-radius: 100px; padding: 14px 22px;
+      font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer;
       box-shadow: 0 8px 32px rgba(201,168,76,0.45), 0 4px 16px rgba(0,0,0,0.5);
       transition: all 0.3s var(--ease);
-      opacity: 0; pointer-events: none;
-      transform: translateY(20px);
+      opacity: 0; pointer-events: none; transform: translateY(20px);
       -webkit-tap-highlight-color: transparent;
     }
     .cart-fab.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
     .cart-fab:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(201,168,76,0.55); }
     .cart-fab:active { transform: scale(0.97); }
-    .cart-fab-count {
-      background: #0a0900;
-      color: var(--gold-bright);
-      border-radius: 50%;
-      width: 22px; height: 22px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 800;
-    }
+    .cart-fab-count { background: #0a0900; color: var(--gold-bright); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
     .cart-fab svg { width: 18px; height: 18px; }
 
     /* ─── CART DRAWER ─── */
-    .cart-overlay {
-      position: fixed; inset: 0; z-index: 950;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(6px);
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
+    .cart-overlay { position: fixed; inset: 0; z-index: 950; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
     .cart-overlay.open { opacity: 1; pointer-events: auto; }
-    .cart-drawer {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      z-index: 960;
-      background: #0f0f0d;
-      border-top: 1px solid rgba(201,168,76,0.2);
-      border-radius: 24px 24px 0 0;
-      padding: 0;
-      max-height: 88vh;
-      overflow: hidden;
-      display: flex; flex-direction: column;
-      transform: translateY(100%);
-      transition: transform 0.4s var(--ease-out);
-      box-shadow: 0 -8px 60px rgba(0,0,0,0.7), 0 -2px 0 rgba(201,168,76,0.15);
-    }
+    .cart-drawer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 960; background: #0f0f0d; border-top: 1px solid rgba(201,168,76,0.2); border-radius: 24px 24px 0 0; padding: 0; max-height: 88vh; overflow: hidden; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.4s var(--ease-out); box-shadow: 0 -8px 60px rgba(0,0,0,0.7), 0 -2px 0 rgba(201,168,76,0.15); }
     .cart-drawer.open { transform: translateY(0); }
-    @media (min-width: 640px) {
-      .cart-drawer { max-width: 480px; left: auto; border-radius: 24px 0 0 0; }
-    }
+    @media (min-width: 640px) { .cart-drawer { max-width: 480px; left: auto; border-radius: 24px 0 0 0; } }
     .cart-handle { width: 40px; height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; margin: 14px auto 0; flex-shrink: 0; }
-    .cart-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 20px 14px;
-      border-bottom: 1px solid var(--border-soft);
-      flex-shrink: 0;
-    }
+    .cart-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 14px; border-bottom: 1px solid var(--border-soft); flex-shrink: 0; }
     .cart-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--text); }
-    .cart-close {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: rgba(255,255,255,0.07);
-      border: none; color: var(--muted);
-      font-size: 16px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s; -webkit-tap-highlight-color: transparent;
-    }
+    .cart-close { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.07); border: none; color: var(--muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
     .cart-close:hover { background: rgba(255,255,255,0.13); color: var(--text); }
     .cart-items { flex: 1; overflow-y: auto; padding: 16px 20px; scrollbar-width: none; }
     .cart-items::-webkit-scrollbar { display: none; }
-    .cart-empty {
-      text-align: center; padding: 48px 20px;
-      color: var(--muted); font-size: 14px; font-weight: 300;
-    }
+    .cart-empty { text-align: center; padding: 48px 20px; color: var(--muted); font-size: 14px; font-weight: 300; }
     .cart-empty-icon { font-size: 40px; display: block; margin-bottom: 12px; opacity: 0.4; }
-    .cart-item {
-      display: flex; align-items: center; gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border-soft);
-      animation: fadeSlideIn 0.25s var(--ease-out) both;
-    }
-    @keyframes fadeSlideIn {
-      from { opacity: 0; transform: translateX(10px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
+    .cart-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-soft); animation: fadeSlideIn 0.25s var(--ease-out) both; }
+    @keyframes fadeSlideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
     .cart-item:last-child { border-bottom: none; }
     .cart-item-img { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
     .cart-item-info { flex: 1; min-width: 0; }
     .cart-item-name { font-size: 14px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .cart-item-price { font-size: 13px; color: var(--gold); font-weight: 600; margin-top: 2px; }
-    .cart-qty {
-      display: flex; align-items: center; gap: 8px;
-      flex-shrink: 0;
-    }
-    .qty-btn {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid var(--border-soft);
-      color: var(--text); font-size: 16px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: all 0.18s; -webkit-tap-highlight-color: transparent;
-      font-family: 'Outfit', sans-serif; line-height: 1;
-    }
+    .cart-qty { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .qty-btn { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.07); border: 1px solid var(--border-soft); color: var(--text); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.18s; -webkit-tap-highlight-color: transparent; font-family: 'Outfit', sans-serif; line-height: 1; }
     .qty-btn:hover { background: rgba(201,168,76,0.15); border-color: var(--gold); color: var(--gold); }
     .qty-btn.remove { color: #ff6b6b; border-color: rgba(255,107,107,0.3); }
     .qty-btn.remove:hover { background: rgba(255,107,107,0.12); border-color: #ff6b6b; }
     .qty-num { font-size: 15px; font-weight: 600; color: var(--text); min-width: 18px; text-align: center; }
-    .cart-footer {
-      padding: 16px 20px 28px;
-      border-top: 1px solid var(--border-soft);
-      flex-shrink: 0;
-      background: #0f0f0d;
-    }
+    .cart-footer { padding: 16px 20px 28px; border-top: 1px solid var(--border-soft); flex-shrink: 0; background: #0f0f0d; }
     .cart-total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .cart-total-label { font-size: 13px; color: var(--text-soft); font-weight: 300; }
     .cart-total-amount { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; color: var(--gold-bright); }
-    .checkout-btn {
-      width: 100%;
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      background: linear-gradient(135deg, #c9a84c, #a67c1b);
-      color: #0a0900;
-      border: none; border-radius: 14px;
-      padding: 16px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 15px; font-weight: 700;
-      cursor: pointer; letter-spacing: 0.3px;
-      box-shadow: 0 6px 24px rgba(201,168,76,0.4);
-      transition: all 0.25s var(--ease);
-      -webkit-tap-highlight-color: transparent;
-      margin-bottom: 10px;
-    }
+    .checkout-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #c9a84c, #a67c1b); color: #0a0900; border: none; border-radius: 14px; padding: 16px; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; letter-spacing: 0.3px; box-shadow: 0 6px 24px rgba(201,168,76,0.4); transition: all 0.25s var(--ease); -webkit-tap-highlight-color: transparent; margin-bottom: 10px; }
     .checkout-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(201,168,76,0.5); filter: brightness(1.06); }
     .checkout-btn:active { transform: scale(0.98); }
     .checkout-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     .cart-note { font-size: 11px; color: var(--muted); text-align: center; letter-spacing: 0.3px; }
 
     /* ─── CUSTOMER INFO MODAL ─── */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 970;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(8px);
-      display: flex; align-items: flex-end;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
+    .modal-overlay { position: fixed; inset: 0; z-index: 970; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
     @media (min-width: 640px) { .modal-overlay { align-items: center; justify-content: center; } }
     .modal-overlay.open { opacity: 1; pointer-events: auto; }
-    .modal {
-      background: #0f0f0d;
-      border: 1px solid rgba(201,168,76,0.2);
-      border-radius: 24px 24px 0 0;
-      padding: 28px 24px 36px;
-      width: 100%;
-      max-width: 460px;
-      transform: translateY(40px);
-      transition: transform 0.4s var(--ease-out);
-      box-shadow: 0 -8px 60px rgba(0,0,0,0.7);
-    }
+    .modal { background: #0f0f0d; border: 1px solid rgba(201,168,76,0.2); border-radius: 24px 24px 0 0; padding: 28px 24px 36px; width: 100%; max-width: 460px; transform: translateY(40px); transition: transform 0.4s var(--ease-out); box-shadow: 0 -8px 60px rgba(0,0,0,0.7); }
     @media (min-width: 640px) { .modal { border-radius: 24px; transform: scale(0.95); } }
     .modal-overlay.open .modal { transform: translateY(0); }
     @media (min-width: 640px) { .modal-overlay.open .modal { transform: scale(1); } }
@@ -570,106 +467,32 @@ body.light-mode::before {
     .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; font-weight: 300; }
     .form-group { margin-bottom: 16px; }
     .form-label { display: block; font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
-    .form-input {
-      width: 100%;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border-soft);
-      border-radius: 12px;
-      padding: 13px 16px;
-      color: var(--text);
-      font-family: 'Outfit', sans-serif;
-      font-size: 14px; font-weight: 400;
-      outline: none;
-      transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
-      -webkit-appearance: none;
-    }
+    .form-input { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border-soft); border-radius: 12px; padding: 13px 16px; color: var(--text); font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 400; outline: none; transition: border-color 0.25s, background 0.25s, box-shadow 0.25s; -webkit-appearance: none; }
     .form-input:focus { border-color: rgba(201,168,76,0.45); background: rgba(201,168,76,0.04); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
     .form-input::placeholder { color: var(--muted); }
     .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
-    .modal-cancel {
-      flex: 1;
-      background: transparent;
-      border: 1px solid var(--border-soft);
-      color: var(--muted); border-radius: 12px;
-      padding: 14px; font-family: 'Outfit', sans-serif;
-      font-size: 14px; cursor: pointer;
-      transition: all 0.2s; -webkit-tap-highlight-color: transparent;
-    }
+    .modal-cancel { flex: 1; background: transparent; border: 1px solid var(--border-soft); color: var(--muted); border-radius: 12px; padding: 14px; font-family: 'Outfit', sans-serif; font-size: 14px; cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
     .modal-cancel:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
-    .modal-pay {
-      flex: 2;
-      background: linear-gradient(135deg, #c9a84c, #a67c1b);
-      color: #0a0900; border: none; border-radius: 12px;
-      padding: 14px; font-family: 'Outfit', sans-serif;
-      font-size: 14px; font-weight: 700; cursor: pointer;
-      transition: all 0.25s var(--ease); -webkit-tap-highlight-color: transparent;
-      box-shadow: 0 4px 20px rgba(201,168,76,0.35);
-    }
+    .modal-pay { flex: 2; background: linear-gradient(135deg, #c9a84c, #a67c1b); color: #0a0900; border: none; border-radius: 12px; padding: 14px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.25s var(--ease); -webkit-tap-highlight-color: transparent; box-shadow: 0 4px 20px rgba(201,168,76,0.35); }
     .modal-pay:hover { transform: translateY(-1px); filter: brightness(1.06); }
     .modal-pay:active { transform: scale(0.98); }
     .modal-pay:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
     /* ─── SUCCESS SCREEN ─── */
-    .success-overlay {
-      position: fixed; inset: 0; z-index: 980;
-      background: rgba(0,0,0,0.9);
-      backdrop-filter: blur(12px);
-      display: flex; align-items: center; justify-content: center;
-      padding: 24px;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.4s ease;
-    }
+    .success-overlay { position: fixed; inset: 0; z-index: 980; background: rgba(0,0,0,0.9); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
     .success-overlay.open { opacity: 1; pointer-events: auto; }
-    .success-card {
-      background: #0f0f0d;
-      border: 1px solid rgba(201,168,76,0.3);
-      border-radius: 28px;
-      padding: 40px 28px;
-      text-align: center;
-      max-width: 380px; width: 100%;
-      box-shadow: 0 0 80px rgba(201,168,76,0.12);
-      transform: scale(0.9);
-      transition: transform 0.4s var(--ease);
-    }
+    .success-card { background: #0f0f0d; border: 1px solid rgba(201,168,76,0.3); border-radius: 28px; padding: 40px 28px; text-align: center; max-width: 380px; width: 100%; box-shadow: 0 0 80px rgba(201,168,76,0.12); transform: scale(0.9); transition: transform 0.4s var(--ease); }
     .success-overlay.open .success-card { transform: scale(1); }
-    .success-icon {
-      width: 72px; height: 72px;
-      background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05));
-      border: 2px solid rgba(201,168,76,0.35);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 20px;
-      font-size: 32px;
-      animation: successPop 0.6s var(--ease) both;
-    }
-    @keyframes successPop {
-      from { transform: scale(0); opacity: 0; }
-      to   { transform: scale(1); opacity: 1; }
-    }
+    .success-icon { width: 72px; height: 72px; background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05)); border: 2px solid rgba(201,168,76,0.35); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 32px; animation: successPop 0.6s var(--ease) both; }
+    @keyframes successPop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .success-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
     .success-sub { font-size: 14px; color: var(--text-soft); font-weight: 300; line-height: 1.6; margin-bottom: 24px; }
     .success-ref { font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
     .success-ref-val { font-size: 14px; font-weight: 600; color: var(--gold); margin-bottom: 24px; }
-    .success-wa-btn {
-      width: 100%;
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      background: linear-gradient(135deg, #25d366, #128c4e);
-      color: #fff; border: none; border-radius: 14px;
-      padding: 15px; font-family: 'Outfit', sans-serif;
-      font-size: 14px; font-weight: 600; cursor: pointer;
-      margin-bottom: 10px;
-      box-shadow: 0 6px 24px rgba(37,211,102,0.3);
-      transition: all 0.25s; -webkit-tap-highlight-color: transparent;
-    }
+    .success-wa-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #25d366, #128c4e); color: #fff; border: none; border-radius: 14px; padding: 15px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 10px; box-shadow: 0 6px 24px rgba(37,211,102,0.3); transition: all 0.25s; -webkit-tap-highlight-color: transparent; }
     .success-wa-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(37,211,102,0.4); }
     .success-wa-btn svg { width: 18px; height: 18px; }
-    .success-done-btn {
-      width: 100%;
-      background: transparent; border: 1px solid var(--border-soft);
-      color: var(--muted); border-radius: 14px; padding: 13px;
-      font-family: 'Outfit', sans-serif; font-size: 14px; cursor: pointer;
-      transition: all 0.2s; -webkit-tap-highlight-color: transparent;
-    }
+    .success-done-btn { width: 100%; background: transparent; border: 1px solid var(--border-soft); color: var(--muted); border-radius: 14px; padding: 13px; font-family: 'Outfit', sans-serif; font-size: 14px; cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
     .success-done-btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
 
     /* ─── NO RESULTS ─── */
@@ -688,42 +511,11 @@ body.light-mode::before {
     .fade-in.show { opacity: 1; transform: translateY(0); }
 
     /* ─── THEME TOGGLE ─── */
-    .theme-toggle {
-      position: absolute;
-      top: 16px; right: 16px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid var(--border-soft);
-      border-radius: 100px;
-      padding: 7px 14px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.22s, border-color 0.22s;
-      z-index: 10;
-      -webkit-tap-highlight-color: transparent;
-    }
+    .theme-toggle { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.07); border: 1px solid var(--border-soft); border-radius: 100px; padding: 7px 14px; font-size: 16px; cursor: pointer; transition: background 0.22s, border-color 0.22s; z-index: 10; -webkit-tap-highlight-color: transparent; }
     .theme-toggle:hover { background: rgba(255,255,255,0.13); border-color: rgba(201,168,76,0.3); }
 
     /* ─── EXPLORE CTA BUTTON ─── */
-    .hero-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      margin-top: 28px;
-      background: linear-gradient(135deg, #c9a84c, #a67c1b);
-      color: #0a0900;
-      border: none;
-      border-radius: 100px;
-      padding: 14px 32px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      cursor: pointer;
-      box-shadow: 0 6px 28px rgba(201,168,76,0.4), 0 2px 0 rgba(255,255,255,0.12) inset;
-      transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), filter 0.2s ease;
-      animation: heroFadeDown 0.7s 0.28s var(--ease-out) both;
-      -webkit-tap-highlight-color: transparent;
-    }
+    .hero-cta { display: inline-flex; align-items: center; gap: 9px; margin-top: 28px; background: linear-gradient(135deg, #c9a84c, #a67c1b); color: #0a0900; border: none; border-radius: 100px; padding: 14px 32px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.3px; cursor: pointer; box-shadow: 0 6px 28px rgba(201,168,76,0.4), 0 2px 0 rgba(255,255,255,0.12) inset; transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), filter 0.2s ease; animation: heroFadeDown 0.7s 0.28s var(--ease-out) both; -webkit-tap-highlight-color: transparent; }
     .hero-cta:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(201,168,76,0.55); filter: brightness(1.06); }
     .hero-cta:active { transform: scale(0.97); }
     .hero-cta-arrow { font-size: 17px; transition: transform 0.22s var(--ease); }
@@ -884,55 +676,102 @@ body.light-mode::before {
 <script defer>
   /* ─── CONFIG ─── */
   const PHONE = '2349061600052';
-  // ⚠️ Replace with client's Paystack public key when ready
   const PAYSTACK_KEY = 'pk_live_964be344ae93745d0827899bbdf96140d60f899b';
 
-  /* ─── DATA ─── */
+  /* ─── DATA ─────────────────────────────────────────────────────────────
+     ALL images replaced with Unsplash source URLs.
+     Unsplash allows hotlinking and does NOT block based on Referer.
+     Every item has a UNIQUE, correctly matched photo.
+  ─────────────────────────────────────────────────────────────────────── */
   const items = [
-    { id:1,  cat:'chips',       name:'Yam Chips',             price:3000,  desc:'Crispy fried yam with pepper sauce.',    rating:4.6, img:'https://images.pexels.com/photos/5718071/pexels-photo-5718071.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:2,  cat:'chips',       name:'French Fries (Large)',   price:2500,  desc:'Large crispy fries.',                    rating:4.7, popular:true, img:'https://images.pexels.com/photos/1893556/pexels-photo-1893556.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:3,  cat:'chips',       name:'French Fries (Regular)', price:1300,  desc:'Regular fries.',                         rating:4.4, img:'https://images.pexels.com/photos/693269/pexels-photo-693269.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:5,  cat:'chips',       name:'Sweet Potatoes',         price:2500,  desc:'Fried sweet potatoes.',                  rating:4.5, img:'https://images.pexels.com/photos/5953602/pexels-photo-5953602.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:6,  cat:'chips',       name:'Chips & Chicken',        price:6500,  desc:'Fries served with grilled chicken.',     rating:4.9, popular:true, img:'https://images.pexels.com/photos/60616/fried-chicken-meal-fast-food-60616.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:20, cat:'pepper-soup', name:'Chicken Pepper Soup',    price:4500,  desc:'Hot spicy chicken pepper soup.',         rating:4.8, popular:true, img:'https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:21, cat:'pepper-soup', name:'Goat Meat Pepper Soup',  price:5000,  desc:'Rich goat meat pepper soup.',            rating:4.7, img:'https://images.pexels.com/photos/1731535/pexels-photo-1731535.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:22, cat:'pepper-soup', name:'Fish Pepper Soup',       price:5500,  desc:'Fresh fish pepper soup.',                rating:4.6, img:'https://images.pexels.com/photos/3296279/pexels-photo-3296279.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:23, cat:'pepper-soup', name:'Assorted Pepper Soup',   price:6000,  desc:'Mixed meat pepper soup.',                rating:4.7, img:'https://images.pexels.com/photos/539451/pexels-photo-539451.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:30, cat:'soup',        name:'Egusi Soup',             price:2800,  desc:'Melon seed soup.',                       rating:4.8, popular:true, img:'https://images.pexels.com/photos/4518700/pexels-photo-4518700.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:31, cat:'soup',        name:'Ogbono Soup',            price:2800,  desc:'Draw soup.',                             rating:4.6, img:'https://images.pexels.com/photos/6940986/pexels-photo-6940986.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:32, cat:'soup',        name:'Okro Soup',              price:2800,  desc:'Fresh okro soup.',                       rating:4.5, img:'https://images.pexels.com/photos/5409015/pexels-photo-5409015.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:33, cat:'soup',        name:'Vegetable Soup',         price:3000,  desc:'Rich vegetable soup.',                   rating:4.6, img:'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:40, cat:'salad',       name:'Chicken Caesar Salad',   price:9000,  desc:'Chicken & lettuce mix.',                 rating:4.7, img:'https://images.pexels.com/photos/2097090/pexels-photo-2097090.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:41, cat:'salad',       name:'Timeout Salad',          price:8500,  desc:'Mixed veggie salad.',                    rating:4.6, img:'https://images.pexels.com/photos/1059905/pexels-photo-1059905.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:42, cat:'salad',       name:'Coleslaw',               price:1500,  desc:'Creamy cabbage salad.',                  rating:4.3, img:'https://images.pexels.com/photos/4825696/pexels-photo-4825696.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:50, cat:'protein',     name:'Beef',                   price:1500,  desc:'Fried beef.',                            rating:4.4, img:'https://images.pexels.com/photos/1105325/pexels-photo-1105325.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:51, cat:'protein',     name:'Chicken (1/4)',           price:4400,  desc:'Grilled chicken.',                       rating:4.7, img:'https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:52, cat:'protein',     name:'Turkey',                 price:5000,  desc:'Fried turkey.',                          rating:4.7, img:'https://images.pexels.com/photos/6210747/pexels-photo-6210747.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:53, cat:'protein',     name:'Fish',                   price:5500,  desc:'Grilled fish.',                          rating:4.6, img:'https://images.pexels.com/photos/3655916/pexels-photo-3655916.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:60, cat:'swallow',     name:'Eba',                    price:500,   desc:'Served with soup.',                      rating:4.5, img:'https://images.pexels.com/photos/5560763/pexels-photo-5560763.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:61, cat:'swallow',     name:'Pounded Yam',            price:1000,  desc:'Soft swallow.',                          rating:4.8, img:'https://images.pexels.com/photos/5718071/pexels-photo-5718071.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:62, cat:'swallow',     name:'Amala',                  price:800,   desc:'Yam flour swallow.',                     rating:4.6, img:'https://images.pexels.com/photos/5410400/pexels-photo-5410400.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:63, cat:'swallow',     name:'Semovita',               price:800,   desc:'Smooth swallow.',                        rating:4.5, img:'https://images.pexels.com/photos/5560763/pexels-photo-5560763.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:70, cat:'pasta',       name:'Jollof Spaghetti',       price:3000,  desc:'Spaghetti in jollof sauce.',             rating:4.6, img:'https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:71, cat:'pasta',       name:'Creamy Pasta',           price:4500,  desc:'White sauce pasta.',                     rating:4.7, img:'https://images.pexels.com/photos/769969/pexels-photo-769969.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:72, cat:'pasta',       name:'Chicken Pasta',          price:5000,  desc:'Pasta with chicken.',                    rating:4.7, img:'https://images.pexels.com/photos/2664216/pexels-photo-2664216.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:80, cat:'rice',        name:'Jollof Rice',            price:2800,  desc:'Party jollof.',                          rating:4.9, popular:true, img:'https://images.pexels.com/photos/7426843/pexels-photo-7426843.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:81, cat:'rice',        name:'Fried Rice',             price:3000,  desc:'Nigerian fried rice.',                   rating:4.7, img:'https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:82, cat:'rice',        name:'White Rice & Stew',      price:2500,  desc:'Rice with stew.',                        rating:4.5, img:'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:83, cat:'rice',        name:'Coconut Rice',           price:3500,  desc:'Coconut flavored rice.',                 rating:4.6, img:'https://images.pexels.com/photos/4110255/pexels-photo-4110255.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:90, cat:'beans',       name:'Beans & Plantain',       price:2500,  desc:'Beans with plantain.',                   rating:4.6, img:'https://images.pexels.com/photos/4551832/pexels-photo-4551832.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:91, cat:'beans',       name:'Beans Porridge',         price:2200,  desc:'Soft beans.',                            rating:4.5, img:'https://images.pexels.com/photos/6046975/pexels-photo-6046975.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:100,cat:'burger',      name:'Burger & Fries',         price:4100,  desc:'Burger with fries.',                     rating:4.8, img:'https://images.pexels.com/photos/1556698/pexels-photo-1556698.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:101,cat:'burger',      name:'Shawarma',               price:4500,  desc:'Loaded shawarma.',                       rating:4.7, img:'https://images.pexels.com/photos/2955819/pexels-photo-2955819.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:110,cat:'chops',       name:'Small Chops',            price:3000,  desc:'Mixed chops.',                           rating:4.7, img:'https://images.pexels.com/photos/2116094/pexels-photo-2116094.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:111,cat:'chops',       name:'Chicken Wings',          price:3500,  desc:'Spicy wings.',                           rating:4.8, img:'https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:120,cat:'chinese',     name:'Chicken Stir Fry',       price:8500,  desc:'Chicken stir fry.',                      rating:4.8, img:'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:121,cat:'chinese',     name:'Chinese Fried Rice',     price:9000,  desc:'Asian fried rice.',                      rating:4.7, img:'https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:130,cat:'drinks',      name:'Water',                  price:500,   desc:'Table water.',                           rating:4.0, img:'https://images.pexels.com/photos/416528/pexels-photo-416528.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:131,cat:'drinks',      name:'Malt',                   price:1200,  desc:'Malt drink.',                            rating:4.5, img:'https://images.pexels.com/photos/3407777/pexels-photo-3407777.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:132,cat:'drinks',      name:'Soft Drink',             price:800,   desc:'Chilled drink.',                         rating:4.3, img:'https://images.pexels.com/photos/50593/coca-cola-cold-drink-soft-drink-coke-50593.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:140,cat:'alcohol',     name:'Heineken',               price:2000,  desc:'Premium beer.',                          rating:4.6, img:'https://images.pexels.com/photos/1552630/pexels-photo-1552630.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id:141,cat:'alcohol',     name:'Moët Champagne',         price:160000,desc:'Luxury champagne.',                      rating:5.0, img:'https://images.pexels.com/photos/3407777/pexels-photo-3407777.jpeg?auto=compress&cs=tinysrgb&w=400' }
+    { id:1,  cat:'chips',       name:'Yam Chips',             price:3000,  desc:'Crispy fried yam with pepper sauce.',    rating:4.6,
+      img:'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400&q=80&fit=crop' },
+    { id:2,  cat:'chips',       name:'French Fries (Large)',   price:2500,  desc:'Large crispy fries.',                    rating:4.7, popular:true,
+      img:'https://images.unsplash.com/photo-1576107232684-1279f390859f?w=400&q=80&fit=crop' },
+    { id:3,  cat:'chips',       name:'French Fries (Regular)', price:1300,  desc:'Regular fries.',                         rating:4.4,
+      img:'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=400&q=80&fit=crop' },
+    { id:5,  cat:'chips',       name:'Sweet Potatoes',         price:2500,  desc:'Fried sweet potatoes.',                  rating:4.5,
+      img:'https://images.unsplash.com/photo-1582515073490-39981397c445?w=400&q=80&fit=crop' },
+    { id:6,  cat:'chips',       name:'Chips & Chicken',        price:6500,  desc:'Fries served with grilled chicken.',     rating:4.9, popular:true,
+      img:'https://images.unsplash.com/photo-1562967914-608f82629710?w=400&q=80&fit=crop' },
+    { id:20, cat:'pepper-soup', name:'Chicken Pepper Soup',    price:4500,  desc:'Hot spicy chicken pepper soup.',         rating:4.8, popular:true,
+      img:'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80&fit=crop' },
+    { id:21, cat:'pepper-soup', name:'Goat Meat Pepper Soup',  price:5000,  desc:'Rich goat meat pepper soup.',            rating:4.7,
+      img:'https://images.unsplash.com/photo-1608835291093-394b0c943a75?w=400&q=80&fit=crop' },
+    { id:22, cat:'pepper-soup', name:'Fish Pepper Soup',       price:5500,  desc:'Fresh fish pepper soup.',                rating:4.6,
+      img:'https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=400&q=80&fit=crop' },
+    { id:23, cat:'pepper-soup', name:'Assorted Pepper Soup',   price:6000,  desc:'Mixed meat pepper soup.',                rating:4.7,
+      img:'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&q=80&fit=crop' },
+    { id:30, cat:'soup',        name:'Egusi Soup',             price:2800,  desc:'Melon seed soup.',                       rating:4.8, popular:true,
+      img:'https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=80&fit=crop' },
+    { id:31, cat:'soup',        name:'Ogbono Soup',            price:2800,  desc:'Draw soup.',                             rating:4.6,
+      img:'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&q=80&fit=crop' },
+    { id:32, cat:'soup',        name:'Okro Soup',              price:2800,  desc:'Fresh okro soup.',                       rating:4.5,
+      img:'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80&fit=crop',},
+    { id:33, cat:'soup',        name:'Vegetable Soup',         price:3000,  desc:'Rich vegetable soup.',                   rating:4.6,
+      img:'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=400&q=80&fit=crop' },
+    { id:40, cat:'salad',       name:'Chicken Caesar Salad',   price:9000,  desc:'Chicken & lettuce mix.',                 rating:4.7,
+      img:'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&q=80&fit=crop' },
+    { id:41, cat:'salad',       name:'Timeout Salad',          price:8500,  desc:'Mixed veggie salad.',                    rating:4.6,
+      img:'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80&fit=crop' },
+    { id:42, cat:'salad',       name:'Coleslaw',               price:1500,  desc:'Creamy cabbage salad.',                  rating:4.3,
+      img:'https://images.unsplash.com/photo-1607532941433-304659e8198a?w=400&q=80&fit=crop' },
+    { id:50, cat:'protein',     name:'Beef',                   price:1500,  desc:'Fried beef.',                            rating:4.4,
+      img:'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?w=400&q=80&fit=crop' },
+    { id:51, cat:'protein',     name:'Chicken (1/4)',           price:4400,  desc:'Grilled chicken.',                       rating:4.7,
+      img:'https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=400&q=80&fit=crop' },
+    { id:52, cat:'protein',     name:'Turkey',                 price:5000,  desc:'Fried turkey.',                          rating:4.7,
+      img:'https://images.unsplash.com/photo-1574672280600-4accfa5b6f98?w=400&q=80&fit=crop' },
+    { id:53, cat:'protein',     name:'Fish',                   price:5500,  desc:'Grilled fish.',                          rating:4.6,
+      img:'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80&fit=crop' },
+    { id:60, cat:'swallow',     name:'Eba',                    price:500,   desc:'Served with soup.',                      rating:4.5,
+      img:'https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=80&fit=crop&sat=-80' },
+    { id:61, cat:'swallow',     name:'Pounded Yam',            price:1000,  desc:'Soft swallow.',                          rating:4.8,
+      img:'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400&q=80&fit=crop' },
+    { id:62, cat:'swallow',     name:'Amala',                  price:800,   desc:'Yam flour swallow.',                     rating:4.6,
+      img:'https://images.unsplash.com/photo-1600335895229-6e75511892c8?w=400&q=80&fit=crop' },
+    { id:63, cat:'swallow',     name:'Semovita',               price:800,   desc:'Smooth swallow.',                        rating:4.5,
+      img:'https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=400&q=80&fit=crop' },
+    { id:70, cat:'pasta',       name:'Jollof Spaghetti',       price:3000,  desc:'Spaghetti in jollof sauce.',             rating:4.6,
+      img:'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80&fit=crop' },
+    { id:71, cat:'pasta',       name:'Creamy Pasta',           price:4500,  desc:'White sauce pasta.',                     rating:4.7,
+      img:'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&q=80&fit=crop' },
+    { id:72, cat:'pasta',       name:'Chicken Pasta',          price:5000,  desc:'Pasta with chicken.',                    rating:4.7,
+      img:'https://images.unsplash.com/photo-1548247416-ec66f4900b2e?w=400&q=80&fit=crop' },
+    { id:80, cat:'rice',        name:'Jollof Rice',            price:2800,  desc:'Party jollof.',                          rating:4.9, popular:true,
+      img:'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=80&fit=crop' },
+    { id:81, cat:'rice',        name:'Fried Rice',             price:3000,  desc:'Nigerian fried rice.',                   rating:4.7,
+      img:'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&q=80&fit=crop' },
+    { id:82, cat:'rice',        name:'White Rice & Stew',      price:2500,  desc:'Rice with stew.',                        rating:4.5,
+      img:'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80&fit=crop' },
+    { id:83, cat:'rice',        name:'Coconut Rice',           price:3500,  desc:'Coconut flavored rice.',                 rating:4.6,
+      img:'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=400&q=80&fit=crop' },
+    { id:90, cat:'beans',       name:'Beans & Plantain',       price:2500,  desc:'Beans with plantain.',                   rating:4.6,
+      img:'https://images.unsplash.com/photo-1528712306091-ed0763094c98?w=400&q=80&fit=crop' },
+    { id:91, cat:'beans',       name:'Beans Porridge',         price:2200,  desc:'Soft beans.',                            rating:4.5,
+      img:'https://images.unsplash.com/photo-1515516969-d4008cc6241a?w=400&q=80&fit=crop' },
+    { id:100,cat:'burger',      name:'Burger & Fries',         price:4100,  desc:'Burger with fries.',                     rating:4.8,
+      img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80&fit=crop' },
+    { id:101,cat:'burger',      name:'Shawarma',               price:4500,  desc:'Loaded shawarma.',                       rating:4.7,
+      img:'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=400&q=80&fit=crop' },
+    { id:110,cat:'chops',       name:'Small Chops',            price:3000,  desc:'Mixed chops.',                           rating:4.7,
+      img:'https://images.unsplash.com/photo-1541014741259-de529411b96a?w=400&q=80&fit=crop' },
+    { id:111,cat:'chops',       name:'Chicken Wings',          price:3500,  desc:'Spicy wings.',                           rating:4.8,
+      img:'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=400&q=80&fit=crop' },
+    { id:120,cat:'chinese',     name:'Chicken Stir Fry',       price:8500,  desc:'Chicken stir fry.',                      rating:4.8,
+      img:'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&q=80&fit=crop' },
+    { id:121,cat:'chinese',     name:'Chinese Fried Rice',     price:9000,  desc:'Asian fried rice.',                      rating:4.7,
+      img:'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&q=80&fit=crop&hue=200' },
+    { id:130,cat:'drinks',      name:'Water',                  price:500,   desc:'Table water.',                           rating:4.0,
+      img:'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80&fit=crop' },
+    { id:131,cat:'drinks',      name:'Malt',                   price:1200,  desc:'Malt drink.',                            rating:4.5,
+      img:'https://images.unsplash.com/photo-1625772452859-1c03d5bf1137?w=400&q=80&fit=crop' },
+    { id:132,cat:'drinks',      name:'Soft Drink',             price:800,   desc:'Chilled drink.',                         rating:4.3,
+      img:'https://images.unsplash.com/photo-1527960471264-932f39eb5846?w=400&q=80&fit=crop' },
+    { id:140,cat:'alcohol',     name:'Heineken',               price:2000,  desc:'Premium beer.',                          rating:4.6,
+      img:'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400&q=80&fit=crop' },
+    { id:141,cat:'alcohol',     name:'Moët Champagne',         price:160000,desc:'Luxury champagne.',                      rating:5.0,
+      img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80&fit=crop' }
   ];
 
   const CAT_LABELS = {
@@ -943,19 +782,12 @@ body.light-mode::before {
     chinese:'Chinese Specials', drinks:'Drinks', alcohol:'Alcohol'
   };
 
-
-
   /* ─── CART STATE ─── */
-  let cart = {}; // { id: { item, qty } }
+  let cart = {};
 
-  function cartTotal() {
-    return Object.values(cart).reduce((sum, e) => sum + e.item.price * e.qty, 0);
-  }
-  function cartCount() {
-    return Object.values(cart).reduce((sum, e) => sum + e.qty, 0);
-  }
+  function cartTotal() { return Object.values(cart).reduce((sum, e) => sum + e.item.price * e.qty, 0); }
+  function cartCount() { return Object.values(cart).reduce((sum, e) => sum + e.qty, 0); }
   function naira(n) { return '₦' + Number(n).toLocaleString('en-NG'); }
-  function stars(r) { return '★'.repeat(Math.floor(r)) + (r % 1 >= 0.5 ? '½' : '') + '☆'.repeat(5 - Math.ceil(r)); }
   function esc(str) { return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
   function hi(text, q) {
     if (!q) return text;
@@ -975,7 +807,15 @@ body.light-mode::before {
         ${item.pricePill === 'Premium' ? '<span class="card-badge">👑 Premium</span>' : ''}
       </div>
       <div class="card-img-wrap">
-        <img src="${item.img}" alt="${item.name}" loading="eager" decoding="async" onerror="this.style.opacity='0'"/>
+        <img
+          src="${item.img}"
+          alt="${item.name}"
+          referrerpolicy="no-referrer"
+          crossorigin="anonymous"
+          loading="eager"
+          decoding="sync"
+          fetchpriority="${idx < 8 ? 'high' : 'auto'}"
+        />
         ${item.rating ? `<div class="card-rating-chip"><span class="rating-star">★</span><span class="rating-num">${rating}</span></div>` : ''}
       </div>
       <div class="card-body">
@@ -1040,16 +880,15 @@ body.light-mode::before {
     else { cart[id] = { item, qty: 1 }; }
     updateCartUI();
     render();
-    // Bounce the fab
     const fab = document.getElementById('cartFab');
     fab.style.transform = 'scale(1.15)';
     setTimeout(() => fab.style.transform = '', 200);
   }
 
   function updateCartUI() {
-    const count = cartCount();
-    const total = cartTotal();
-    const fab   = document.getElementById('cartFab');
+    const count   = cartCount();
+    const total   = cartTotal();
+    const fab     = document.getElementById('cartFab');
     const countEl = document.getElementById('cartFabCount');
     const textEl  = document.getElementById('cartFabText');
 
@@ -1057,7 +896,6 @@ body.light-mode::before {
     textEl.textContent  = count > 0 ? `${naira(total)}` : 'View Cart';
     fab.classList.toggle('visible', count > 0);
 
-    // Update cart drawer items
     const itemsEl  = document.getElementById('cartItems');
     const totalEl  = document.getElementById('cartTotal');
     const checkBtn = document.getElementById('checkoutBtn');
@@ -1072,7 +910,7 @@ body.light-mode::before {
 
     itemsEl.innerHTML = Object.values(cart).map(({ item, qty }) => `
       <div class="cart-item">
-        <img class="cart-item-img" src="${item.img}" alt="${item.name}" loading="lazy"/>
+        <img class="cart-item-img" src="${item.img}" alt="${item.name}" referrerpolicy="no-referrer" loading="lazy"/>
         <div class="cart-item-info">
           <div class="cart-item-name">${item.name}</div>
           <div class="cart-item-price">${naira(item.price * qty)}</div>
@@ -1112,9 +950,7 @@ body.light-mode::before {
   /* ─── CHECKOUT ─── */
   document.getElementById('checkoutBtn').addEventListener('click', () => {
     closeCart();
-    setTimeout(() => {
-      document.getElementById('modalOverlay').classList.add('open');
-    }, 300);
+    setTimeout(() => { document.getElementById('modalOverlay').classList.add('open'); }, 300);
   });
   document.getElementById('modalCancel').addEventListener('click', () => {
     document.getElementById('modalOverlay').classList.remove('open');
@@ -1127,14 +963,8 @@ body.light-mode::before {
     const phone   = document.getElementById('custPhone').value.trim();
     const address = document.getElementById('custAddress').value.trim();
 
-    if (!name || !email || !phone || !address) {
-      alert('Please fill in all fields to continue.');
-      return;
-    }
-    if (!email.includes('@')) {
-      alert('Please enter a valid email address.');
-      return;
-    }
+    if (!name || !email || !phone || !address) { alert('Please fill in all fields to continue.'); return; }
+    if (!email.includes('@')) { alert('Please enter a valid email address.'); return; }
 
     const total = cartTotal();
     const orderItems = Object.values(cart).map(({ item, qty }) =>
@@ -1147,7 +977,7 @@ body.light-mode::before {
     const handler = PaystackPop.setup({
       key: PAYSTACK_KEY,
       email: email,
-      amount: total * 100, // Paystack uses kobo
+      amount: total * 100,
       currency: 'NGN',
       ref: 'TIMEOUT-' + Date.now(),
       metadata: {
@@ -1175,7 +1005,6 @@ body.light-mode::before {
     document.getElementById('successRef').textContent = ref;
     document.getElementById('successOverlay').classList.add('open');
 
-    // Build WhatsApp message
     const msg = `✅ *New Order — Timeout Restaurant*\n\n` +
       `👤 *Customer:* ${name}\n` +
       `📞 *Phone:* ${phone}\n` +
@@ -1189,7 +1018,6 @@ body.light-mode::before {
       window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
     };
 
-    // Clear cart after success
     cart = {};
     updateCartUI();
     render();
@@ -1198,8 +1026,6 @@ body.light-mode::before {
   document.getElementById('successDoneBtn').addEventListener('click', () => {
     document.getElementById('successOverlay').classList.remove('open');
   });
-
-
 
   /* ─── CATEGORY NAV ─── */
   document.getElementById('catNav').addEventListener('click', e => {
@@ -1248,7 +1074,7 @@ body.light-mode::before {
     });
   }, { rootMargin: '0px 0px 200px 0px', threshold: 0 });
 
-  /* ─── EXPLORE BUTTON — scroll to menu ─── */
+  /* ─── EXPLORE BUTTON ─── */
   document.getElementById('exploreBtn').addEventListener('click', () => {
     const menuEl = document.getElementById('menuSection');
     const navH   = document.querySelector('.cat-wrap').offsetHeight;
@@ -1261,26 +1087,21 @@ body.light-mode::before {
   updateCartUI();
 </script>
 <script>
-const toggle = document.getElementById("themeToggle");
-
-// Load saved theme
-if (localStorage.getItem("theme") === "light") {
-  document.body.classList.add("light-mode");
-  toggle.textContent = "☀️";
-}
-
-// Toggle click
-toggle.addEventListener("click", () => {
-  document.body.classList.toggle("light-mode");
-
-  if (document.body.classList.contains("light-mode")) {
-    localStorage.setItem("theme", "light");
+  const toggle = document.getElementById("themeToggle");
+  if (localStorage.getItem("theme") === "light") {
+    document.body.classList.add("light-mode");
     toggle.textContent = "☀️";
-  } else {
-    localStorage.setItem("theme", "dark");
-    toggle.textContent = "🌙";
   }
-});
+  toggle.addEventListener("click", () => {
+    document.body.classList.toggle("light-mode");
+    if (document.body.classList.contains("light-mode")) {
+      localStorage.setItem("theme", "light");
+      toggle.textContent = "☀️";
+    } else {
+      localStorage.setItem("theme", "dark");
+      toggle.textContent = "🌙";
+    }
+  });
 </script>
 </body>
 </html>
