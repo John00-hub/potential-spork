@@ -61,7 +61,6 @@
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      /* Optimised: w=800, q=60, auto=format (WebP where supported) */
       background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=60&auto=format&fit=crop');
       background-size: cover;
       background-position: center;
@@ -574,20 +573,26 @@
 <div class="cat-wrap">
   <nav class="cat-nav" id="catNav">
     <button class="cat-btn active" data-cat="all">🍽 All</button>
-    <button class="cat-btn" data-cat="chips">🍟 Chips</button>
+    <button class="cat-btn" data-cat="chips">🍟 Chips & Fries</button>
     <button class="cat-btn" data-cat="pepper-soup">🍲 Pepper Soup</button>
-    <button class="cat-btn" data-cat="soup">🥘 Soups</button>
+    <button class="cat-btn" data-cat="soup">🥘 Nigerian Soup</button>
     <button class="cat-btn" data-cat="salad">🥗 Salads</button>
     <button class="cat-btn" data-cat="protein">🍖 Protein</button>
-    <button class="cat-btn" data-cat="swallow">🍚 Swallow</button>
+    <button class="cat-btn" data-cat="swallow">🫙 Swallow</button>
     <button class="cat-btn" data-cat="pasta">🍝 Pasta</button>
-    <button class="cat-btn" data-cat="rice">🍛 Rice</button>
-    <button class="cat-btn" data-cat="beans">🫘 Beans</button>
-    <button class="cat-btn" data-cat="burger">🍔 Burgers</button>
-    <button class="cat-btn" data-cat="chops">🍢 Chops</button>
-    <button class="cat-btn" data-cat="chinese">🍱 Chinese</button>
+    <button class="cat-btn" data-cat="rice">🍛 Rice Meal</button>
+    <button class="cat-btn" data-cat="beans">🫘 Beans Speciale</button>
+    <button class="cat-btn" data-cat="burger">🍔 Burgers & Shawarma</button>
+    <button class="cat-btn" data-cat="chops">🍢 Special Chops</button>
+    <button class="cat-btn" data-cat="chinese">🍱 Chinese Special</button>
     <button class="cat-btn" data-cat="drinks">🥤 Drinks</button>
-    <button class="cat-btn" data-cat="alcohol">🍾 Alcohol</button>
+    <button class="cat-btn" data-cat="beer">🍺 Beer</button>
+    <button class="cat-btn" data-cat="juice">🍊 Fresh Juice</button>
+    <button class="cat-btn" data-cat="cocktails">🍹 Cocktails</button>
+    <button class="cat-btn" data-cat="cigarette">🚬 Cigarette</button>
+    <button class="cat-btn" data-cat="whisky">🥃 Whisky</button>
+    <button class="cat-btn" data-cat="wine">🍷 Wines</button>
+    <button class="cat-btn" data-cat="champagne">🍾 Champagne</button>
   </nav>
 </div>
 
@@ -607,7 +612,7 @@
 
 <footer>
   <div class="footer-logo">Timeout</div>
-  <div class="footer-sub">Restaurant ● Grill ● Bar</div>
+  <div class="footer-sub">Restaurant ● Grill ● Bar · Abuja</div>
 </footer>
 
 <!-- FLOATING CART BUTTON -->
@@ -709,15 +714,7 @@
   const PHONE = '2349061600052';
   const PAYSTACK_KEY = 'pk_live_964be344ae93745d0827899bbdf96140d60f899b';
 
-  /* ─── IMAGE URL HELPER ───────────────────────────────────────────────
-     Rewrites Unsplash URLs to:
-       • w=300  (matches max card display width on mobile grids)
-       • q=60   (good visual quality, ~40% smaller payload)
-       • auto=format  (serves WebP to supporting browsers)
-       • fit=crop  (preserve existing crop behaviour)
-     For above-the-fold (LCP candidate) images we use w=400&q=70
-     to maintain crispness on the first visible cards.
-  ─────────────────────────────────────────────────────────────────── */
+  /* ─── IMAGE URL HELPER ─── */
   function imgUrl(raw, eager) {
     try {
       const u = new URL(raw);
@@ -725,109 +722,334 @@
       u.searchParams.set('q', eager ? '70' : '60');
       u.searchParams.set('auto', 'format');
       u.searchParams.set('fit', 'crop');
-      /* Remove any stale width/quality params already in the original */
       return u.toString();
     } catch (_) { return raw; }
   }
 
-  /* ─── DATA ─── */
+  /* ════════════════════════════════════════════════════════════════
+     MENU DATA  — Part 1 UPDATED (Chips → Swallow), Part 2 pending
+     All names and prices match the PDF exactly.
+  ════════════════════════════════════════════════════════════════ */
   const items = [
-    { id:1,  cat:'chips',       name:'Yam Chips',             price:3000,  desc:'Crispy fried yam with pepper sauce.',    rating:4.6,
-      img:'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d' },
-    { id:2,  cat:'chips',       name:'French Fries (Large)',   price:2500,  desc:'Large crispy fries.',                    rating:4.7, popular:true,
-      img:'https://images.unsplash.com/photo-1576107232684-1279f390859f' },
-    { id:3,  cat:'chips',       name:'French Fries (Regular)', price:1300,  desc:'Regular fries.',                         rating:4.4,
-      img:'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5' },
-    { id:5,  cat:'chips',       name:'Sweet Potatoes',         price:2500,  desc:'Fried sweet potatoes.',                  rating:4.5,
-      img:'https://images.unsplash.com/photo-1582515073490-39981397c445' },
-    { id:6,  cat:'chips',       name:'Chips & Chicken',        price:6500,  desc:'Fries served with grilled chicken.',     rating:4.9, popular:true,
-      img:'https://images.unsplash.com/photo-1562967914-608f82629710' },
-    { id:20, cat:'pepper-soup', name:'Chicken Pepper Soup',    price:4500,  desc:'Hot spicy chicken pepper soup.',         rating:4.8, popular:true,
-      img:'https://images.unsplash.com/photo-1547592180-85f173990554' },
-    { id:21, cat:'pepper-soup', name:'Goat Meat Pepper Soup',  price:5000,  desc:'Rich goat meat pepper soup.',            rating:4.7,
-      img:'https://images.unsplash.com/photo-1608835291093-394b0c943a75' },
-    { id:22, cat:'pepper-soup', name:'Fish Pepper Soup',       price:5500,  desc:'Fresh fish pepper soup.',                rating:4.6,
-      img:'https://images.unsplash.com/photo-1519984388953-d2406bc725e1' },
-    { id:23, cat:'pepper-soup', name:'Assorted Pepper Soup',   price:6000,  desc:'Mixed meat pepper soup.',                rating:4.7,
-      img:'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d' },
-    { id:30, cat:'soup',        name:'Egusi Soup',             price:2800,  desc:'Melon seed soup.',                       rating:4.8, popular:true,
-      img:'https://images.unsplash.com/photo-1574484284002-952d92456975' },
-    { id:31, cat:'soup',        name:'Ogbono Soup',            price:2800,  desc:'Draw soup.',                             rating:4.6,
-      img:'https://images.unsplash.com/photo-1512058564366-18510be2db19' },
-    { id:32, cat:'soup',        name:'Okro Soup',              price:2800,  desc:'Fresh okro soup.',                       rating:4.5,
-      img:'https://images.unsplash.com/photo-1551326844-4df70f2d7ee8' },
-    { id:33, cat:'soup',        name:'Vegetable Soup',         price:3000,  desc:'Rich vegetable soup.',                   rating:4.6,
-      img:'https://images.unsplash.com/photo-1534939561126-855b8675edd7' },
-    { id:40, cat:'salad',       name:'Chicken Caesar Salad',   price:9000,  desc:'Chicken & lettuce mix.',                 rating:4.7,
-      img:'https://images.unsplash.com/photo-1546793665-c74683f339c1' },
-    { id:41, cat:'salad',       name:'Timeout Salad',          price:8500,  desc:'Mixed veggie salad.',                    rating:4.6,
-      img:'https://images.unsplash.com/photo-1512621776951-a57141f2eefd' },
-    { id:42, cat:'salad',       name:'Coleslaw',               price:1500,  desc:'Creamy cabbage salad.',                  rating:4.3,
-      img:'https://images.unsplash.com/photo-1607532941433-304659e8198a' },
-    { id:50, cat:'protein',     name:'Beef',                   price:1500,  desc:'Fried beef.',                            rating:4.4,
-      img:'https://images.unsplash.com/photo-1588168333986-5078d3ae3976' },
-    { id:51, cat:'protein',     name:'Chicken (1/4)',           price:4400,  desc:'Grilled chicken.',                       rating:4.7,
-      img:'https://images.unsplash.com/photo-1598103442097-8b74394b95c8' },
-    { id:52, cat:'protein',     name:'Turkey',                 price:5000,  desc:'Fried turkey.',                          rating:4.7,
-      img:'https://images.unsplash.com/photo-1574672280600-4accfa5b6f98' },
-    { id:53, cat:'protein',     name:'Fish',                   price:5500,  desc:'Grilled fish.',                          rating:4.6,
-      img:'https://images.unsplash.com/photo-1467003909585-2f8a72700288' },
-    { id:60, cat:'swallow',     name:'Eba',                    price:500,   desc:'Served with soup.',                      rating:4.5,
-      img:'https://images.unsplash.com/photo-1574484284002-952d92456975' },
-    { id:61, cat:'swallow',     name:'Pounded Yam',            price:1000,  desc:'Soft swallow.',                          rating:4.8,
-      img:'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26' },
-    { id:62, cat:'swallow',     name:'Amala',                  price:800,   desc:'Yam flour swallow.',                     rating:4.6,
-      img:'https://images.unsplash.com/photo-1600335895229-6e75511892c8' },
-    { id:63, cat:'swallow',     name:'Semovita',               price:800,   desc:'Smooth swallow.',                        rating:4.5,
-      img:'https://images.unsplash.com/photo-1603105037880-880cd4edfb0d' },
-    { id:70, cat:'pasta',       name:'Jollof Spaghetti',       price:3000,  desc:'Spaghetti in jollof sauce.',             rating:4.6,
-      img:'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb' },
-    { id:71, cat:'pasta',       name:'Creamy Pasta',           price:4500,  desc:'White sauce pasta.',                     rating:4.7,
-      img:'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9' },
-    { id:72, cat:'pasta',       name:'Chicken Pasta',          price:5000,  desc:'Pasta with chicken.',                    rating:4.7,
-      img:'https://images.unsplash.com/photo-1548247416-ec66f4900b2e' },
-    { id:80, cat:'rice',        name:'Jollof Rice',            price:2800,  desc:'Party jollof.',                          rating:4.9, popular:true,
-      img:'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445' },
-    { id:81, cat:'rice',        name:'Fried Rice',             price:3000,  desc:'Nigerian fried rice.',                   rating:4.7,
-      img:'https://images.unsplash.com/photo-1603133872878-684f208fb84b' },
-    { id:82, cat:'rice',        name:'White Rice & Stew',      price:2500,  desc:'Rice with stew.',                        rating:4.5,
-      img:'https://images.unsplash.com/photo-1516684732162-798a0062be99' },
-    { id:83, cat:'rice',        name:'Coconut Rice',           price:3500,  desc:'Coconut flavored rice.',                 rating:4.6,
-      img:'https://images.unsplash.com/photo-1596797038530-2c107229654b' },
-    { id:90, cat:'beans',       name:'Beans & Plantain',       price:2500,  desc:'Beans with plantain.',                   rating:4.6,
-      img:'https://images.unsplash.com/photo-1528712306091-ed0763094c98' },
-    { id:91, cat:'beans',       name:'Beans Porridge',         price:2200,  desc:'Soft beans.',                            rating:4.5,
-      img:'https://images.unsplash.com/photo-1515516969-d4008cc6241a' },
-    { id:100,cat:'burger',      name:'Burger & Fries',         price:4100,  desc:'Burger with fries.',                     rating:4.8,
-      img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd' },
-    { id:101,cat:'burger',      name:'Shawarma',               price:4500,  desc:'Loaded shawarma.',                       rating:4.7,
-      img:'https://images.unsplash.com/photo-1529006557810-274b9b2fc783' },
-    { id:110,cat:'chops',       name:'Small Chops',            price:3000,  desc:'Mixed chops.',                           rating:4.7,
-      img:'https://images.unsplash.com/photo-1541014741259-de529411b96a' },
-    { id:111,cat:'chops',       name:'Chicken Wings',          price:3500,  desc:'Spicy wings.',                           rating:4.8,
-      img:'https://images.unsplash.com/photo-1527477396000-e27163b481c2' },
-    { id:120,cat:'chinese',     name:'Chicken Stir Fry',       price:8500,  desc:'Chicken stir fry.',                      rating:4.8,
-      img:'https://images.unsplash.com/photo-1512058533999-b8a2509223ee' },
-    { id:121,cat:'chinese',     name:'Chinese Fried Rice',     price:9000,  desc:'Asian fried rice.',                      rating:4.7,
-      img:'https://images.unsplash.com/photo-1603133872878-684f208fb84b' },
-    { id:130,cat:'drinks',      name:'Water',                  price:500,   desc:'Table water.',                           rating:4.0,
-      img:'https://images.unsplash.com/photo-1548839140-29a749e1cf4d' },
-    { id:131,cat:'drinks',      name:'Malt',                   price:1200,  desc:'Malt drink.',                            rating:4.5,
-      img:'https://images.unsplash.com/photo-1625772452859-1c03d5bf1137' },
-    { id:132,cat:'drinks',      name:'Soft Drink',             price:800,   desc:'Chilled drink.',                         rating:4.3,
-      img:'https://images.unsplash.com/photo-1527960471264-932f39eb5846' },
-    { id:140,cat:'alcohol',     name:'Heineken',               price:2000,  desc:'Premium beer.',                          rating:4.6,
-      img:'https://images.unsplash.com/photo-1608270586620-248524c67de9' },
-    { id:141,cat:'alcohol',     name:'Moët Champagne',         price:160000,desc:'Luxury champagne.',                      rating:5.0,
-      img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64' }
+
+    /* ── CHIPS & FRIES ── */
+    { id:1,  cat:'chips', name:'Yam Chips (Boiled/Fried)',          price:3000, desc:'Served with Stew.',                                                             rating:4.6,
+      img:'images/yam-chips.webp' },
+    { id:2,  cat:'chips', name:'Sweet Potatoes (Large Size)',        price:2500, desc:'Served with Stew.',                                                             rating:4.5,
+      img:'images/sweet-potatoes-large.webp' },
+    { id:3,  cat:'chips', name:'Sweet Potatoes (Regular Size)',      price:1300, desc:'Sweet potato chips.',                                                           rating:4.3,
+      img:'images/sweet-potatoes-regular.webp' },
+    { id:4,  cat:'chips', name:'French Fries (Large Size)',          price:2500, desc:'Served with ketchup.',                                                          rating:4.7, popular:true,
+      img:'images/french-fries-large.webp' },
+    { id:5,  cat:'chips', name:'French Fries (Regular Size)',        price:1300, desc:'Served with ketchup.',                                                          rating:4.4,
+      img:'images/french-fries-regular.webp' },
+    { id:6,  cat:'chips', name:'Plantain (Boiled/Fried)',            price:2000, desc:'Served with stew.',                                                             rating:4.5,
+      img:'images/plantain.webp' },
+    { id:7,  cat:'chips', name:'Chef Precious Chips & Chicken',      price:6500, desc:'Special crispy fresh fries & soulfully spiced fried ¼ chicken.',               rating:4.9, popular:true,
+      img:'images/chef-precious-chips-and-chicken.webp' },
+    { id:8,  cat:'chips', name:'Yam Porridge',                       price:3000, desc:'Rich and hearty Nigerian yam porridge.',                                        rating:4.5,
+      img:'images/yam-porridge.webp' },
+    { id:9,  cat:'chips', name:'Plain Omelette',                     price:3000, desc:'Fluffy plain omelette.',                                                        rating:4.3,
+      img:'images/plain-omelette.webp' },
+    { id:10, cat:'chips', name:'Sardine Omelette',                   price:4400, desc:'Omelette with sardine filling.',                                                rating:4.4,
+      img:'images/sardine-omelette.webp' },
+
+    /* ── NIGERIA PEPPER SOUP ── */
+    { id:20, cat:'pepper-soup', name:'Chicken Pepper Soup',          price:4500, desc:'Served with Bread Rolls.',                                                     rating:4.8, popular:true,
+      img:'images/chicken-pepper-soup.webp' },
+    { id:21, cat:'pepper-soup', name:'Goat Meat Pepper Soup',        price:5000, desc:'Served with Bread Rolls.',                                                     rating:4.7,
+      img:'images/goat-meat-pepper-soup.webp' },
+    { id:22, cat:'pepper-soup', name:'Fish Pepper Soup',             price:5500, desc:'Served with Bread Rolls.',                                                     rating:4.6,
+      img:'images/fish-pepper-soup.webp' },
+    { id:23, cat:'pepper-soup', name:'Croaker Fish Pepper Soup',     price:5500, desc:'Served with Bread Rolls.',                                                     rating:4.7,
+      img:'images/croaker-fish-pepper-soup.webp' },
+    { id:24, cat:'pepper-soup', name:'Dry Fish Pepper Soup',         price:6000, desc:'Served with Bread Rolls.',                                                     rating:4.6,
+      img:'images/dry-fish-pepper-soup.webp' },
+
+    /* ── NIGERIAN SOUP ── */
+    { id:30, cat:'soup', name:'Ogbono',                              price:2800, desc:'Classic Nigerian ogbono draw soup.',                                           rating:4.7,
+      img:'images/ogbono.webp' },
+    { id:31, cat:'soup', name:'Egusi',                               price:2800, desc:'Rich melon seed soup.',                                                        rating:4.8, popular:true,
+      img:'images/egusi.webp' },
+    { id:32, cat:'soup', name:'Okro',                                price:3000, desc:'Fresh okro soup.',                                                             rating:4.5,
+      img:'images/okro.webp' },
+    { id:33, cat:'soup', name:'Afang',                               price:3500, desc:'Traditional Afang soup.',                                                      rating:4.7,
+      img:'images/afang.webp' },
+    { id:34, cat:'soup', name:'Bitter Leaf',                         price:3000, desc:'Nutritious bitter leaf soup.',                                                 rating:4.5,
+      img:'images/bitter-leaf.webp' },
+    { id:35, cat:'soup', name:'Vegetable Soup',                           price:3000, desc:'Fresh vegetable soup.',                                                        rating:4.6,
+      img:'images/vegetable-soup.webp' },
+    { id:36, cat:'soup', name:'Fisherman Soup',                      price:12500, desc:'Special fisherman soup.',                                                     rating:4.9,
+      img:'images/fisherman-soup.webp' },
+    { id:37, cat:'soup', name:'Seafood Okro',                        price:12500, desc:'Premium seafood okro soup.',                                                  rating:4.9, popular:true,
+      img:'images/seafood-okro.webp' },
+
+    /* ── SALAD & SANDWICHES ── */
+    { id:40, cat:'salad', name:'Chicken Caesar Salad',               price:9000, desc:'Farm fresh lettuce, cucumber, chicken breast, parmesan cheese, almond seeds, green & black olives, mustard sauce.', rating:4.7,
+      img:'images/chicken-caesar-salad.webp' },
+    { id:41, cat:'salad', name:'Timeout Salad',                      price:8500, desc:'Lettuce, shredded carrots, bell pepper, chicken breast, cabbage, cucumber, almond nuts, green and black olives.', rating:4.6,
+      img:'images/timeout-salad.webp' },
+    { id:42, cat:'salad', name:'Prawns and Avocado Salad',           price:9000, desc:'Steamed prawns, farm fresh lettuce, cabbage, cucumber, black and green olives, shredded carrots, sliced avocado.', rating:4.8,
+      img:'images/prawns-and-avocado-salad.webp' },
+    { id:43, cat:'salad', name:'Chicken Club Sandwich',              price:4000, desc:'Sliced tomato, seasoned chicken crumbs, lettuce, cucumber, served with crispy French fries.',                     rating:4.6,
+      img:'images/chicken-club-sandwich.webp' },
+    { id:44, cat:'salad', name:'Avocado Salad',                      price:8000, desc:'Fresh avocado salad.',                                                         rating:4.6,
+      img:'images/avocado-salad.webp' },
+    { id:45, cat:'salad', name:'Salad (Coleslaw)',                   price:1500, desc:'Creamy coleslaw salad.',                                                       rating:4.3,
+      img:'images/salad-coleslaw.webp' },
+    { id:46, cat:'salad', name:'Vegetable Salad',                    price:4500, desc:'Fresh vegetable salad.',                                                       rating:4.4,
+      img:'images/vegetable-salad.webp' },
+
+    /* ── PROTEIN ── */
+    { id:50, cat:'protein', name:'Beef',                             price:1500, desc:'Fried / grilled beef.',                                                        rating:4.4,
+      img:'images/beef.webp' },
+    { id:51, cat:'protein', name:'Goat Meat',                        price:1500, desc:'Tender goat meat.',                                                            rating:4.5,
+      img:'images/goat-meat.webp' },
+    { id:52, cat:'protein', name:'Chicken (1/8)',                    price:2200, desc:'Fried or grilled chicken, 1/8 portion.',                                       rating:4.5,
+      img:'images/chicken-eighth.webp' },
+    { id:53, cat:'protein', name:'Chicken (1/4)',                    price:4400, desc:'Fried or grilled chicken, 1/4 portion.',                                       rating:4.7, popular:true,
+      img:'images/chicken-quarter.webp' },
+    { id:54, cat:'protein', name:'Catfish',                          price:5000, desc:'Grilled or fried catfish.',                                                    rating:4.6,
+      img:'images/catfish.webp' },
+    { id:55, cat:'protein', name:'Croaker',                          price:5500, desc:'Grilled or fried croaker fish.',                                               rating:4.7,
+      img:'images/croake.webp' },
+    { id:56, cat:'protein', name:'Snail',                            price:7500, desc:'Per lobe. Perfectly seasoned snail.',                                          rating:4.8,
+      img:'images/snail.webp' },
+
+    /* ── SWALLOW ── */
+    { id:60, cat:'swallow', name:'Semo',                             price:1000, desc:'Per wrap. Served with soup of choice.',                                        rating:4.5,
+      img:'images/semo.webp' },
+    { id:61, cat:'swallow', name:'Eba',                              price:1000, desc:'Per wrap. Served with soup of choice.',                                        rating:4.5,
+      img:'images/eba.webp' },
+    { id:62, cat:'swallow', name:'Oatmeal',                          price:1200, desc:'Smooth oatmeal swallow.',                                                      rating:4.4,
+      img:'images/oatmeal.webp' },
+    { id:63, cat:'swallow', name:'Plantain Flour',                   price:1200, desc:'Smooth plantain flour swallow.',                                               rating:4.4,
+      img:'images/plantain-flour.webp' },
+    { id:64, cat:'swallow', name:'Poundo Yam',                       price:1200, desc:'Smooth poundo yam swallow.',                                                   rating:4.6,
+      img:'images/poundo-yam.webp' },
+    { id:65, cat:'swallow', name:'Pounded Yam',                      price:1200, desc:'Freshly pounded yam.',                                                         rating:4.8, popular:true,
+      img:'images/pounded-yam.webp' },
+
+    /* ══════════════════════════════════════════════════════════════
+       PART 2 — COMPLETE (Pasta → Champagne)
+       All names and prices verified against PDF exactly.
+    ══════════════════════════════════════════════════════════════ */
+
+    /* ── PASTA ── */
+    { id:70, cat:'pasta', name:'Indomie (Special) Egg',              price:3500, desc:'Special indomie with egg.',                                                    rating:4.5,
+      img:'images/indomie-special-egg.webp' },
+    { id:71, cat:'pasta', name:'Indomie with 1/8 Chicken',           price:4800, desc:'Indomie noodles served with 1/8 chicken.',                                    rating:4.6,
+      img:'images/indomie-with-chicken.webp' },
+    { id:72, cat:'pasta', name:'Spaghetti Napolitano',                price:3500, desc:'Classic spaghetti napolitano.',                                               rating:4.5,
+      img:'images/spaghetti-napolitano.webp' },
+    { id:73, cat:'pasta', name:'Spaghetti Napolitano with Crocker or Catfish', price:7500, desc:'Spaghetti napolitano served with crocker or catfish.', rating:4.7,
+      img:'images/spaghetti-napolitano-with-fish.webp' },
+
+    /* ── RICE MEAL ── */
+    { id:80, cat:'rice', name:'Jollof Rice',                         price:2800, desc:'Party jollof rice.',                                                           rating:4.9, popular:true,
+      img:'images/jollof-rice.webp' },
+    { id:81, cat:'rice', name:'Fried Rice',                          price:3000, desc:'Nigerian fried rice.',                                                         rating:4.7,
+      img:'images/fried-rice.webp' },
+    { id:82, cat:'rice', name:'Basmati White Rice',                  price:4000, desc:'Premium basmati white rice.',                                                  rating:4.6,
+      img:'images/basmati-white-rice.webp' },
+    { id:83, cat:'rice', name:'Coconut Basmati Rice',                price:4000, desc:'Fragrant coconut basmati rice.',                                               rating:4.7,
+      img:'images/coconut-basmati-rice.webp' },
+    { id:84, cat:'rice', name:'Coconut Rice',                        price:3000, desc:'Nigerian coconut rice.',                                                       rating:4.6,
+      img:'images/coconut-rice.webp' },
+    { id:85, cat:'rice', name:'White Rice',                          price:3000, desc:'Plain white rice.',                                                            rating:4.4,
+      img:'images/white-rice.webp' },
+    { id:86, cat:'rice', name:'Basmati Rice (White Seafood Sauce)',  price:9200, desc:'Premium basmati rice with white seafood sauce.',                               rating:4.9,
+      img:'images/basmati-rice-seafood-sauce.webp' },
+
+    /* ── BEANS SPECIALE ── */
+    { id:90, cat:'beans', name:'Vegetable Beans',                    price:4000, desc:'Delicious honey beans garnished with fresh vegetables.',                       rating:4.6,
+      img:'images/vegetable-beans.webp' },
+    { id:91, cat:'beans', name:'Akidi (Black Beans) with Yam/Plantain/Sweet Potato', price:5200, desc:'Black beans served with choice of yam, plantain or sweet potato.',          rating:4.7,
+      img:'images/akidi-black-beans.webp' },
+
+    /* ── BURGERS & SHAWARMA ── */
+    { id:100, cat:'burger', name:'Chicken/Beef Burger without French Fries', price:2800, desc:'Beef/chicken patty, lettuce, cheese, tomatoes, steamed onions, cucumber.',    rating:4.5,
+      img:'images/chicken-beef-burger.webp' },
+    { id:101, cat:'burger', name:'Chicken/Beef Burger with Fries (Regular)', price:4100, desc:'Burger with regular size french fries.',                              rating:4.7, popular:true,
+      img:'images/chicken-beef-burger-with-fries-regular.webp' },
+    { id:102, cat:'burger', name:'Chicken/Beef Burger with Fries (Large)', price:5300, desc:'Burger with large size french fries.',                                  rating:4.7,
+      img:'images/chicken-beef-burger-with-fries-large.webp' },
+    { id:103, cat:'burger', name:'Regular Shawarma (Beef/Chicken/Goat)', price:3600, desc:'Regular-sized shawarma.',                                                 rating:4.6,
+      img:'images/regular-shawarma.webp' },
+    { id:104, cat:'burger', name:'Jumbo Shawarma (Beef/Chicken/Goat)', price:4500, desc:'Jumbo-sized shawarma.',                                                     rating:4.7,
+      img:'images/jumbo-shawarma.webp' },
+    { id:105, cat:'burger', name:'Extra Sausage',                    price:800,  desc:'Add extra sausage to your order.',                                             rating:4.2,
+      img:'images/extra-sausage.webp' },
+    { id:106, cat:'burger', name:'Extra Burger Patty',               price:1600, desc:'Add an extra patty to your burger.',                                          rating:4.3,
+      img:'images/extra-burger-patty.webp' },
+
+    /* ── SPECIAL CHOPS ── */
+    { id:110, cat:'chops', name:'Chef Monica',                       price:7000, desc:'Croaker/catfish/dryfish special chops.',                                      rating:4.8, popular:true,
+      img:'images/chef-monica.webp' },
+    { id:111, cat:'chops', name:'Pepper Goat Meat',                  price:4500, desc:'Spicy pepper goat meat.',                                                     rating:4.7,
+      img:'images/pepper-goat-meat.webp' },
+    { id:112, cat:'chops', name:'Pepper Beef',                       price:4500, desc:'Spicy pepper beef.',                                                          rating:4.6,
+      img:'images/pepper-beef.webp' },
+    { id:113, cat:'chops', name:'Pepper Chicken',                    price:5000, desc:'Spicy pepper chicken.',                                                       rating:4.7,
+      img:'images/pepper-chicken.webp' },
+    { id:114, cat:'chops', name:'Goat Head (Isi Ewu)',                price:10000, desc:'Traditional Isi Ewu — goat head pepper soup.',                              rating:4.9,
+      img:'images/goat-head-isi-ewu.webp' },
+    { id:115, cat:'chops', name:'Nkwobi',                            price:10000, desc:'Spiced cow foot Nkwobi.',                                                    rating:4.9,
+      img:'images/nkwobi.webp' },
+    { id:116, cat:'chops', name:'Pepper Catfish',                    price:5000, desc:'Spicy pepper catfish.',                                                       rating:4.7,
+      img:'images/pepper-catfish.webp' },
+
+    /* ── CHINESE SPECIAL ── */
+    { id:120, cat:'chinese', name:'Chinese Fried Rice',              price:4700, desc:'Basmati rice sautéed with shrimps and tasty Chinese seasons.',                rating:4.7,
+      img:'images/chinese-fried-rice.webp' },
+    { id:121, cat:'chinese', name:'Seafood Sauce with Basmati Rice', price:9200, desc:'A sauce of calamari fish, prawns and shrimps served with basmati rice.',      rating:4.9, popular:true,
+      img:'images/seafood-sauce-with-basmati-rice.webp' },
+
+    /* ── DRINKS/JUICES ── */
+    { id:130, cat:'drinks', name:'Water',                            price:500,  desc:'Table water.',                                                                 rating:4.0,
+      img:'images/water.webp' },
+    { id:131, cat:'drinks', name:'Minerals',                         price:600,  desc:'Chilled soft drink.',                                                          rating:4.2,
+      img:'images/minerals.webp' },
+    { id:132, cat:'drinks', name:'Malt',                             price:1200, desc:'Premium malt drink.',                                                          rating:4.5,
+      img:'images/malt.webp' },
+    { id:133, cat:'drinks', name:'Five Alive',                       price:2500, desc:'Five Alive fruit juice.',                                                      rating:4.4,
+      img:'images/five-alive.webp' },
+    { id:134, cat:'drinks', name:'Cranberry (Big Pack)',             price:4500, desc:'Big pack cranberry juice.',                                                    rating:4.4,
+      img:'images/cranberry-big-pack.webp' },
+    { id:135, cat:'drinks', name:'Origin Bitters',                   price:2500, desc:'Origin bitters.',                                                             rating:4.3,
+      img:'images/origin-bitters.webp' },
+    { id:136, cat:'drinks', name:'Double Black',                     price:2500, desc:'Double black drink.',                                                         rating:4.3,
+      img:'images/double-black.webp' },
+
+    /* ── BEER ── */
+    { id:140, cat:'beer', name:'Heineken',                           price:2000, desc:'Premium lager beer.',                                                          rating:4.6,
+      img:'images/heineken.webp' },
+    { id:141, cat:'beer', name:'Budweiser',                          price:1700, desc:'Budweiser beer.',                                                              rating:4.4,
+      img:'images/budweiser.webp' },
+    { id:142, cat:'beer', name:'B/Stout',                            price:2300, desc:'Guinness stout.',                                                              rating:4.5,
+      img:'images/b-stout.webp' },
+    { id:143, cat:'beer', name:'M/Stout',                            price:1600, desc:'Malta stout.',                                                                 rating:4.3,
+      img:'images/m-stout.webp' },
+    { id:144, cat:'beer', name:'M/Extra Smooth',                     price:1500, desc:'Malta extra smooth.',                                                          rating:4.3,
+      img:'images/m-extra-smooth.webp' },
+    { id:145, cat:'beer', name:'Star',                               price:1700, desc:'Star lager beer.',                                                             rating:4.4,
+      img:'images/star.webp' },
+    { id:146, cat:'beer', name:'Hero',                               price:1500, desc:'Hero lager beer.',                                                             rating:4.3,
+      img:'images/hero.webp' },
+    { id:147, cat:'beer', name:'Trophy',                             price:1500, desc:'Trophy lager beer.',                                                           rating:4.3,
+      img:'images/trophy.webp' },
+    { id:148, cat:'beer', name:'Tiger',                              price:1500, desc:'Tiger beer.',                                                                  rating:4.3,
+      img:'images/tiger.webp' },
+    { id:149, cat:'beer', name:'Star Radler',                        price:1500, desc:'Star Radler.',                                                                 rating:4.3,
+      img:'images/star-radler.webp' },
+    { id:150, cat:'beer', name:'Gulder',                             price:2000, desc:'Gulder premium lager.',                                                        rating:4.5,
+      img:'images/gulder.webp' },
+    { id:151, cat:'beer', name:'Legend',                             price:1500, desc:'Legend extra stout.',                                                          rating:4.3,
+      img:'images/legend.webp' },
+
+    /* ── FRESH JUICE ── */
+    { id:160, cat:'juice', name:'Orange Juice (35cl)',               price:2800, desc:'Freshly squeezed orange juice.',                                               rating:4.7,
+      img:'images/orange-juice.webp' },
+    { id:161, cat:'juice', name:'Watermelon Juice (35cl)',           price:2600, desc:'Fresh watermelon juice.',                                                      rating:4.7,
+      img:'images/watermelon-juice.webp' },
+    { id:162, cat:'juice', name:'Watermelon & Orange (35cl)',        price:3000, desc:'Blend of watermelon and orange.',                                              rating:4.7,
+      img:'images/watermelon-and-orange-juice.webp' },
+    { id:163, cat:'juice', name:'Mix of Orange & Pineapple (35cl)',  price:3000, desc:'Orange and pineapple blend.',                                                  rating:4.6,
+      img:'images/mix-orange-and-pineapple.webp' },
+    { id:164, cat:'juice', name:'Mix of Apple & Cucumber (35cl)',    price:3500, desc:'Apple and cucumber blend.',                                                    rating:4.6,
+      img:'images/mix-apple-and-cucumber.webp' },
+    { id:165, cat:'juice', name:'Mix of Carrot, Pineapple & Apple (35cl)', price:3500, desc:'Carrot, pineapple and apple blend.',                                   rating:4.7,
+      img:'images/mix-carrot-pineapple-apple.webp' },
+    { id:166, cat:'juice', name:'Mix of Apple, Pineapple, Cucumber (35cl)', price:3600, desc:'Apple, pineapple and cucumber blend.',                                 rating:4.6,
+      img:'images/mix-apple-pineapple-cucumber.webp' },
+    { id:167, cat:'juice', name:'Any Other Mixture of Choice (35cl)', price:3600, desc:'Custom juice blend of your choice.',                                         rating:4.7, popular:true,
+      img:'images/any-other-mixture.webp' },
+
+    /* ── COCKTAILS ── */
+    { id:170, cat:'cocktails', name:'Sex on the Beach',              price:6000, desc:'Peach schnapps, vodka, cranberry, orange.',                                   rating:4.8,
+      img:'images/sex-on-the-beach.webp' },
+    { id:171, cat:'cocktails', name:'Pinacolada',                    price:6000, desc:'Malibu rum, coconut milk, pineapple juice & wedge.',                          rating:4.8,
+      img:'images/pinacolada.webp' },
+    { id:172, cat:'cocktails', name:'Timeout Special',               price:6000, desc:'Cointreau, tequila, rum, vodka, cranberry, triple sec, fresh juice.',         rating:4.9, popular:true,
+      img:'images/timeout-special-cocktail.webp' },
+
+    /* ── CIGARETTE ── */
+    { id:175, cat:'cigarette', name:'Benson',                           price:2500, desc:'Benson cigarettes.',                                                          rating:4.0,
+      img:'images/benson.webp' },
+    { id:176, cat:'cigarette', name:'Benson Switch',                    price:2500, desc:'Benson Switch cigarettes.',                                                   rating:4.0,
+      img:'images/benson-switch.webp' },
+    { id:177, cat:'cigarette', name:'Rothmans',                         price:2500, desc:'Rothmans cigarettes.',                                                        rating:4.0,
+      img:'images/rothmans.webp' },
+    { id:178, cat:'cigarette', name:'Dunhill Switch',                   price:2500, desc:'Dunhill Switch cigarettes.',                                                  rating:4.0,
+      img:'images/dunhill-switch.webp' },
+
+    /* ── WHISKY ── */
+    { id:180, cat:'whisky', name:'Glenfiddich 15',                   price:75000,  desc:'Single malt Scotch whisky, aged 15 years.',                                 rating:4.8,
+      img:'images/glenfiddich-15.webp' },
+    { id:181, cat:'whisky', name:'Glenfiddich 18',                   price:145000, desc:'Single malt Scotch whisky, aged 18 years.',                                 rating:4.9,
+      img:'images/glenfiddich-18.webp' },
+    { id:182, cat:'whisky', name:'Glenfiddich 21',                   price:280000, desc:'Single malt Scotch whisky, aged 21 years.',                                 rating:5.0,
+      img:'images/glenfiddich-21.webp' },
+    { id:183, cat:'whisky', name:'Red Label',                        price:30000,  desc:'Johnnie Walker Red Label.',                                                  rating:4.5,
+      img:'images/red-label.webp' },
+    { id:184, cat:'whisky', name:'Black Label',                      price:48000,  desc:'Johnnie Walker Black Label.',                                                rating:4.7,
+      img:'images/black-label.webp' },
+    { id:185, cat:'whisky', name:'Jack Daniel',                      price:40000,  desc:"Jack Daniel's Tennessee Whiskey.",                                           rating:4.7,
+      img:'images/jack-daniel.webp' },
+    { id:186, cat:'whisky', name:'Jameson Green',                    price:30000,  desc:'Jameson Green Spot Irish Whiskey.',                                          rating:4.6,
+      img:'images/jameson-green.webp' },
+    { id:187, cat:'whisky', name:'Jameson Black Barrel',             price:50000,  desc:'Jameson Black Barrel Irish Whiskey.',                                        rating:4.8,
+      img:'images/jameson-black-barrel.webp' },
+    { id:188, cat:'whisky', name:'Observatory 20',                   price:48000,  desc:'Observatory 20 premium spirit.',                                             rating:4.7,
+      img:'images/observatory-20.webp' },
+
+    /* ── RED/WHITE WINES ── */
+    { id:190, cat:'wine', name:'Escudo Rojo',                        price:38000,  desc:'Premium Chilean red wine.',                                                  rating:4.7,
+      img:'images/escudo-rojo.webp' },
+    { id:191, cat:'wine', name:'Carlo Rossi',                        price:15000,  desc:'Carlo Rossi red wine.',                                                      rating:4.4,
+      img:'images/carlo-rossi.webp' },
+    { id:192, cat:'wine', name:'Carlo Rossi (Sweet)',                price:20000,  desc:'Carlo Rossi sweet wine.',                                                    rating:4.5,
+      img:'images/carlo-rossi-sweet.webp' },
+    { id:193, cat:'wine', name:'Four Cousins',                       price:13000,  desc:'Four Cousins South African wine.',                                           rating:4.4,
+      img:'images/four-cousins.webp' },
+
+    /* ── CHAMPAGNE ── */
+    { id:200, cat:'champagne', name:'Moët Rosé',                     price:210000, desc:'Moët & Chandon Rosé Impérial champagne.',                                   rating:5.0,
+      img:'images/moet-rose.webp' },
+    { id:201, cat:'champagne', name:'Moët Brut',                     price:160000, desc:'Moët & Chandon Brut Impérial champagne.',                                   rating:4.9,
+      img:'images/moet-brut.webp' },
+    { id:202, cat:'champagne', name:'Veuve Clicquot Brut',           price:155000, desc:'Veuve Clicquot Yellow Label Brut.',                                          rating:4.9,
+      img:'images/veuve-clicquot-brut.webp' },
+    { id:203, cat:'champagne', name:'Veuve Clicquot Rosé',           price:180000, desc:'Veuve Clicquot Rosé champagne.',                                             rating:5.0,
+      img:'images/veuve-clicquot-rose.webp' },
+    { id:204, cat:'champagne', name:'Andre Rosé',                    price:32000,  desc:'Andre Rosé sparkling wine.',                                                 rating:4.5,
+      img:'images/andre-rose.webp' },
+    { id:205, cat:'champagne', name:'Andre Brut',                    price:25000,  desc:'Andre Brut sparkling wine.',                                                 rating:4.4,
+      img:'images/andre-brut.webp' },
   ];
 
   const CAT_LABELS = {
-    all:'All Items', chips:'Chips & Fries', 'pepper-soup':'Pepper Soup',
-    soup:'Nigerian Soups', salad:'Salads', protein:'Protein',
-    swallow:'Swallow', pasta:'Pasta', rice:'Rice Meals',
-    beans:'Beans', burger:'Burgers & Shawarma', chops:'Special Chops',
-    chinese:'Chinese Specials', drinks:'Drinks', alcohol:'Alcohol'
+    all:       'All Items',
+    chips:     'Chips & Fries',
+    'pepper-soup': 'Nigeria Pepper Soup',
+    soup:      'Nigerian Soup',
+    salad:     'Salad & Sandwiches',
+    protein:   'Protein',
+    swallow:   'Swallow',
+    pasta:     'Pasta',
+    rice:      'Rice Meal',
+    beans:     'Beans Speciale',
+    burger:    'Burgers & Shawarma',
+    chops:     'Special Chops',
+    chinese:   'Chinese Special',
+    drinks:    'Drinks/Juices',
+    beer:      'Beer',
+    juice:     'Fresh Juice',
+    cocktails: 'Cocktails',
+    cigarette: 'Cigarette',
+    whisky:    'Whisky',
+    wine:      'Red/White Wines',
+    champagne: 'Champagne',
   };
 
   /* ─── CART STATE ─── */
@@ -842,15 +1064,6 @@
     return text.replace(new RegExp('(' + esc(q) + ')', 'gi'), '<mark>$1</mark>');
   }
 
-  /* ─── RENDER CARD ─────────────────────────────────────────────────────
-     Above-the-fold threshold: first 4 cards on mobile (2-col grid),
-     first 6 on tablet (3-col), first 4 on desktop (4-col).
-     We use idx < 4 as a safe conservative threshold for all viewports.
-     These get: loading="eager", fetchpriority="high", decoding="async",
-                larger optimised image (w=400&q=70).
-     All others get: loading="lazy", fetchpriority="auto", decoding="async",
-                     smaller image (w=300&q=60).
-  ─────────────────────────────────────────────────────────────────────── */
   function renderCard(item, idx, query) {
     const rating  = item.rating || 4.5;
     const isOut   = item.out;
@@ -1040,8 +1253,6 @@
     payBtn.disabled    = true;
     payBtn.textContent = 'Opening payment…';
 
-    /* PaystackPop is available because the script was deferred but the
-       DOM is fully parsed before this click can fire. */
     const handler = PaystackPop.setup({
       key:      PAYSTACK_KEY,
       email:    email,
@@ -1136,12 +1347,12 @@
   searchClear.addEventListener('click', doClearSearch);
   document.getElementById('clearBarBtn').addEventListener('click', doClearSearch);
 
-  /* ─── INTERSECTION OBSERVER (fade-in cards as they enter viewport) ─── */
+  /* ─── INTERSECTION OBSERVER ─── */
   const observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
         entry.target.classList.add('show');
-        observer.unobserve(entry.target); /* fixed typo: was entry.targeGt */
+        observer.unobserve(entry.target);
       }
     });
   }, { rootMargin: '0px 0px 200px 0px', threshold: 0 });
