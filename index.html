@@ -522,6 +522,7 @@
     /* ─── THEME TOGGLE ─── */
     .theme-toggle { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.07); border: 1px solid var(--border-soft); border-radius: 100px; padding: 7px 14px; font-size: 16px; cursor: pointer; transition: background 0.22s, border-color 0.22s; z-index: 10; -webkit-tap-highlight-color: transparent; }
     .theme-toggle:hover { background: rgba(255,255,255,0.13); border-color: rgba(201,168,76,0.3); }
+    .nav-logo { height: 30px; width: auto; object-fit: contain; display: block; pointer-events: none; }
 
     /* ─── EXPLORE CTA BUTTON ─── */
     .hero-cta { display: inline-flex; align-items: center; gap: 9px; margin-top: 28px; background: linear-gradient(135deg, #c9a84c, #a67c1b); color: #0a0900; border: none; border-radius: 100px; padding: 14px 32px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.3px; cursor: pointer; box-shadow: 0 6px 28px rgba(201,168,76,0.4), 0 2px 0 rgba(255,255,255,0.12) inset; transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), filter 0.2s ease; animation: heroFadeDown 0.7s 0.28s var(--ease-out) both; -webkit-tap-highlight-color: transparent; }
@@ -536,7 +537,7 @@
 <!-- HERO -->
 <header class="hero">
   <div class="hero-inner">
-    <button id="themeToggle" class="theme-toggle">🌙</button>
+    <button id="themeToggle" class="theme-toggle"><img src="images/logo.png" alt="Timeout Logo" class="nav-logo"></button>
     <div class="hero-pill">
       <div class="hero-pill-dot"></div>
       Now Taking Orders
@@ -568,6 +569,419 @@
     </div>
   </div>
 </header>
+
+<!-- ─── PROMO SECTION ─── -->
+<section class="promo-section" id="promoBanner" aria-label="Featured deal">
+
+  <div class="promo-card">
+
+    <!-- Animated glow orbs (CSS only, pointer-events:none) -->
+    <div class="promo-orb promo-orb--left"  aria-hidden="true"></div>
+    <div class="promo-orb promo-orb--right" aria-hidden="true"></div>
+
+    <!-- Left: image -->
+    <div class="promo-visual">
+      <div class="promo-img-frame">
+        <img
+          src="images/jollof-chicken.webp"
+          alt="Jollof Rice and Chicken"
+          loading="lazy"
+          decoding="async"
+          width="320"
+          height="260"
+          class="promo-img"
+        />
+        <div class="promo-img-shine" aria-hidden="true"></div>
+      </div>
+      <!-- floating savings pill on the image -->
+      <div class="promo-savings" aria-label="Great value combo">
+        <span class="promo-savings-icon">🍽</span>
+        <span>Combo Deal</span>
+      </div>
+    </div>
+
+    <!-- Right: content -->
+    <div class="promo-body">
+
+      <div class="promo-top-row">
+        <span class="promo-badge">
+          <span class="promo-badge-dot" aria-hidden="true"></span>
+          🔥 PROMO DEAL
+        </span>
+        <span class="promo-tag">Limited Time</span>
+      </div>
+
+      <h2 class="promo-title">Jollof Rice<br/><em>+ Chicken</em></h2>
+
+      <p class="promo-sub">Hot &amp; Fresh &nbsp;•&nbsp; Made to Order &nbsp;•&nbsp; Premium Quality</p>
+
+      <div class="promo-pricing">
+        <div class="promo-price-block">
+          <span class="promo-price-label">Special Price</span>
+          <span class="promo-price">₦4,000</span>
+        </div>
+        <div class="promo-divider" aria-hidden="true"></div>
+        <div class="promo-perks">
+          <div class="promo-perk">✓ &nbsp;Jollof Rice</div>
+          <div class="promo-perk">✓ &nbsp;Chicken (¼)</div>
+        </div>
+      </div>
+
+      <button class="promo-cta" id="promoCta" aria-label="Add promo deal to cart">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Order Now — ₦4,000
+      </button>
+
+      <p class="promo-footnote">⚡ Tap once to add to cart &amp; checkout instantly</p>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ══════════════════════════════════════════
+     PROMO SECTION — scoped to .promo-section
+  ══════════════════════════════════════════ */
+  .promo-section {
+    max-width: 1120px;
+    margin: 28px auto 0;
+    padding: 0 20px;
+    animation: heroFadeDown 0.7s 0.42s var(--ease-out) both; /* reuse existing keyframe */
+  }
+
+  /* ── Card shell ── */
+  .promo-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(201,168,76,0.32);
+    background:
+      linear-gradient(135deg,
+        rgba(18,16,10,0.97) 0%,
+        rgba(22,19,11,0.97) 50%,
+        rgba(14,12,8,0.97) 100%);
+    box-shadow:
+      0 0 0 1px rgba(201,168,76,0.07) inset,
+      0 2px 0  rgba(255,255,255,0.04) inset,
+      0 20px 60px rgba(0,0,0,0.7),
+      0 4px  20px rgba(0,0,0,0.5),
+      0 0   80px rgba(201,168,76,0.05);
+    backdrop-filter: blur(16px);
+  }
+
+  /* top shimmer line */
+  .promo-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 8%; right: 8%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(201,168,76,0.55), transparent);
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  /* bottom accent line */
+  .promo-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0.7;
+  }
+
+  /* ── Ambient glow orbs ── */
+  .promo-orb {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .promo-orb--left {
+    width: 340px; height: 340px;
+    top: -100px; left: -80px;
+    background: radial-gradient(circle, rgba(201,168,76,0.10) 0%, transparent 65%);
+  }
+  .promo-orb--right {
+    width: 260px; height: 260px;
+    bottom: -80px; right: 10%;
+    background: radial-gradient(circle, rgba(255,107,53,0.07) 0%, transparent 65%);
+  }
+
+  /* ── Visual (image side) ── */
+  .promo-visual {
+    position: relative;
+    flex-shrink: 0;
+    width: 42%;
+    max-width: 340px;
+    /* explicit height so the frame has a real dimension to fill */
+    min-height: 280px;
+    z-index: 1;
+    overflow: hidden;
+    border-radius: calc(var(--radius-lg) - 1px) 0 0 calc(var(--radius-lg) - 1px);
+  }
+
+  .promo-img-frame {
+    position: absolute; /* fills .promo-visual edge-to-edge */
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+  }
+
+  .promo-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;      /* no stretch, crops to fill */
+    object-position: center;
+    display: block;
+    filter: brightness(0.82) saturate(1.15) contrast(1.04);
+    transition: transform 0.7s var(--ease-out), filter 0.5s ease;
+    will-change: transform;
+  }
+  .promo-card:hover .promo-img {
+    transform: scale(1.07);
+    filter: brightness(0.95) saturate(1.25) contrast(1.04);
+  }
+
+  /* image-to-content fade */
+  .promo-img-shine {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right,  transparent 55%, rgba(14,12,8,0.97) 100%),
+      linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 40%),
+      linear-gradient(to top,    rgba(0,0,0,0.45) 0%, transparent 35%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* floating combo pill */
+  .promo-savings {
+    position: absolute;
+    bottom: 14px;
+    left: 14px;
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(8,7,5,0.82);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 100px;
+    padding: 5px 13px 5px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold-bright);
+    backdrop-filter: blur(10px);
+    letter-spacing: 0.2px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+  }
+  .promo-savings-icon { font-size: 14px; line-height: 1; }
+
+  /* ── Body (text side) ── */
+  .promo-body {
+    flex: 1;
+    padding: 28px 32px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* top row: badge + tag */
+  .promo-top-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .promo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #fff;
+    background: #ff4d00;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    box-shadow: 0 4px 16px rgba(255,77,0,0.45), 0 0 0 2px rgba(255,77,0,0.2);
+  }
+  .promo-badge-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: #ff6b35;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #ff6b35;
+    animation: pulse 2s ease infinite;
+  }
+
+  .promo-tag {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-soft);
+    border-radius: 100px;
+    padding: 4px 10px;
+  }
+
+  /* headline */
+  .promo-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(26px, 4.5vw, 40px);
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.05;
+    letter-spacing: -0.3px;
+    margin-bottom: 10px;
+  }
+  .promo-title em {
+    font-style: italic;
+    background: linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 65%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .promo-sub {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-soft);
+    letter-spacing: 0.3px;
+    margin-bottom: 20px;
+  }
+
+  /* pricing block */
+  .promo-pricing {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 20px;
+    background: rgba(201,168,76,0.055);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+  }
+  .promo-price-block {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .promo-price-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .promo-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 700;
+    color: var(--gold-bright);
+    letter-spacing: -1px;
+    line-height: 1;
+    text-shadow: 0 0 28px rgba(201,168,76,0.35);
+  }
+  .promo-divider {
+    width: 1px;
+    align-self: stretch;
+    background: rgba(255,255,255,0.08);
+    flex-shrink: 0;
+  }
+  .promo-perks {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .promo-perk {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-soft);
+    letter-spacing: 0.2px;
+  }
+
+  /* CTA button */
+  .promo-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    width: 100%;
+    background: linear-gradient(135deg, #d9b456 0%, #c9a84c 45%, #a67c1b 100%);
+    color: #0a0900;
+    border: none;
+    border-radius: 14px;
+    padding: 15px 28px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    box-shadow:
+      0 6px 28px rgba(201,168,76,0.45),
+      0 2px 0  rgba(255,255,255,0.15) inset,
+      0 -1px 0 rgba(0,0,0,0.2) inset;
+    transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease), filter 0.18s ease;
+    -webkit-tap-highlight-color: transparent;
+    margin-bottom: 10px;
+  }
+  .promo-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(201,168,76,0.55), 0 2px 0 rgba(255,255,255,0.15) inset;
+    filter: brightness(1.06);
+  }
+  .promo-cta:active { transform: scale(0.98); }
+
+  .promo-footnote {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 0.2px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .promo-card { flex-direction: column; }
+    .promo-visual {
+      width: 100%;
+      max-width: 100%;
+      min-height: 220px;
+      height: 220px;          /* explicit height on mobile so image fills it */
+      border-radius: calc(var(--radius-lg) - 1px) calc(var(--radius-lg) - 1px) 0 0;
+    }
+    .promo-img-frame { border-radius: inherit; }
+    .promo-img-shine {
+      background:
+        linear-gradient(to bottom, transparent 50%, rgba(14,12,8,0.97) 100%),
+        linear-gradient(to top,    rgba(0,0,0,0.2) 0%, transparent 30%);
+    }
+    .promo-savings { bottom: 12px; left: 12px; }
+    .promo-body { padding: 22px 20px 24px; }
+    .promo-title { font-size: clamp(24px, 7vw, 32px); }
+  }
+
+  @media (max-width: 380px) {
+    .promo-visual { min-height: 180px; height: 180px; }
+    .promo-pricing { gap: 14px; padding: 13px 14px; }
+    .promo-price { font-size: 32px; }
+  }
+</style>
 
 <!-- CATEGORY NAV -->
 <div class="cat-wrap">
@@ -694,16 +1108,13 @@
     var toggle = document.getElementById('themeToggle');
     if (localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light-mode');
-      toggle.textContent = '☀️';
     }
     toggle.addEventListener('click', function () {
       document.body.classList.toggle('light-mode');
       if (document.body.classList.contains('light-mode')) {
         localStorage.setItem('theme', 'light');
-        toggle.textContent = '☀️';
       } else {
         localStorage.setItem('theme', 'dark');
-        toggle.textContent = '🌙';
       }
     });
   })();
@@ -777,7 +1188,7 @@
       img:'images/afang.webp' },
     { id:34, cat:'soup', name:'Bitter Leaf',                         price:3000, desc:'Nutritious bitter leaf soup.',                                                 rating:4.5,
       img:'images/bitter-leaf.webp' },
-    { id:35, cat:'soup', name:'Vegetable Soup',                           price:3000, desc:'Fresh vegetable soup.',                                                        rating:4.6,
+    { id:35, cat:'soup', name:'Vegetable',                           price:3000, desc:'Fresh vegetable soup.',                                                        rating:4.6,
       img:'images/vegetable-soup.webp' },
     { id:36, cat:'soup', name:'Fisherman Soup',                      price:12500, desc:'Special fisherman soup.',                                                     rating:4.9,
       img:'images/fisherman-soup.webp' },
@@ -812,7 +1223,7 @@
     { id:54, cat:'protein', name:'Catfish',                          price:5000, desc:'Grilled or fried catfish.',                                                    rating:4.6,
       img:'images/catfish.webp' },
     { id:55, cat:'protein', name:'Croaker',                          price:5500, desc:'Grilled or fried croaker fish.',                                               rating:4.7,
-      img:'images/croake.webp' },
+      img:'images/croaker.webp' },
     { id:56, cat:'protein', name:'Snail',                            price:7500, desc:'Per lobe. Perfectly seasoned snail.',                                          rating:4.8,
       img:'images/snail.webp' },
 
@@ -1026,6 +1437,11 @@
       img:'images/andre-rose.webp' },
     { id:205, cat:'champagne', name:'Andre Brut',                    price:25000,  desc:'Andre Brut sparkling wine.',                                                 rating:4.4,
       img:'images/andre-brut.webp' },
+
+    /* ── PROMO BUNDLE — hidden from menu, only added via the promo button ── */
+    { id:999, cat:'__promo__', name:'Jollof Rice + Chicken (Offer)', price:4000,
+      desc:'Special promo bundle — Jollof Rice & Chicken (1/4).', rating:4.9,
+      img:'images/jollof-chicken.webp' },
   ];
 
   const CAT_LABELS = {
@@ -1115,6 +1531,7 @@
 
   function filtered() {
     let list = activeCat === 'all' ? items : items.filter(i => i.cat === activeCat);
+    list = list.filter(i => i.cat !== '__promo__'); /* always hide promo bundle from grid */
     if (query) {
       const q = query.toLowerCase();
       list = list.filter(i =>
@@ -1363,6 +1780,12 @@
     const navH   = document.querySelector('.cat-wrap').offsetHeight;
     const top    = menuEl.getBoundingClientRect().top + window.scrollY - navH - 10;
     window.scrollTo({ top: top, behavior: 'smooth' });
+  });
+
+  /* ─── PROMO CTA ─── */
+  document.getElementById('promoCta').addEventListener('click', function () {
+    addToCart(999); /* Promo bundle: Jollof Rice + Chicken @ ₦4,000 */
+    openCart();
   });
 
   /* ─── INIT ─── */
