@@ -530,6 +530,70 @@
     .hero-cta:active { transform: scale(0.97); }
     .hero-cta-arrow { font-size: 17px; transition: transform 0.22s var(--ease); }
     .hero-cta:hover .hero-cta-arrow { transform: translateY(3px); }
+    .footer {
+  background: #111;
+  padding: 30px 20px;
+  text-align: center;
+  color: #fff;
+}
+
+.footer-logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: gold;
+}
+
+.footer-sub {
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 15px;
+}
+
+.footer-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+/* 3D BUTTON STYLE */
+.btn-3d {
+  display: inline-block;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+  text-align: center;
+  transform: translateY(0);
+  transition: 0.2s ease;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.3);
+}
+
+/* press effect */
+.btn-3d:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.3);
+}
+
+/* colors */
+.btn-3d.order {
+  background: #c9a84c;
+}
+
+.btn-3d.visit {
+  background: #1e90ff;
+}
+
+.btn-3d.contact {
+  background: #25d366;
+}
+
+.footer-info {
+  font-size: 12px;
+  color: #888;
+  margin-top: 15px;
+}
   </style>
 </head>
 <body>
@@ -1024,11 +1088,22 @@
   <div class="menu-grid" id="menuGrid"></div>
 </main>
 
-<footer>
+<footer class="footer">
+
   <div class="footer-logo">Timeout</div>
   <div class="footer-sub">Restaurant ● Grill ● Bar · Abuja</div>
-</footer>
 
+  <div class="footer-buttons">
+
+    <a href="visit-us.html" class="btn-3d visit">📍 Directions</a>
+
+    <a href="contact.html" class="btn-3d contact">📞 Contact</a>
+
+  </div>
+
+  <p class="footer-info">Garki, Abuja | +2349061600052</p>
+
+</footer>
 <!-- FLOATING CART BUTTON -->
 <button class="cart-fab" id="cartFab">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
