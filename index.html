@@ -1802,9 +1802,13 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
         ]
       },
       callback: function (response) {
-        document.getElementById('modalOverlay').classList.remove('open');
-        showSuccess(response.reference, name, phone, address, orderItems, total);
-      },
+  document.getElementById('modalOverlay').classList.remove('open');
+  fbq('track', 'Purchase', {
+    value: total,
+    currency: 'NGN'
+  });
+  showSuccess(response.reference, name, phone, address, orderItems, total);
+},
       onClose: function () {
         payBtn.disabled    = false;
         payBtn.textContent = 'Pay Now 🔒';
