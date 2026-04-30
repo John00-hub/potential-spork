@@ -1807,7 +1807,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
           return { name: e.item.name, note: null, qty: e.qty, unitPrice: e.item.price };
         });
 
-        // ── Save full order to sessionStorage so checkout-success.html can read it ──
+        // ── Save full order to sessionStorage so check-out.html can read it ──
         sessionStorage.setItem('timeoutOrder', JSON.stringify({
           id:            'TOR-' + Date.now(),
           reference:     response.reference,
@@ -1832,7 +1832,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       }
     });
 
-    // ── Change URL to /checkout-success.html the moment Paystack popup opens ──
+    // ── Change URL to /check-out.html the moment Paystack popup opens ──
     history.pushState(null, '', '/check-out.html');
     handler.openIframe();
   });
