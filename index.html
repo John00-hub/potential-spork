@@ -1825,10 +1825,15 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
         window.location.href = 'checkout-success.html';
       },
       onClose: function () {
+        // ── Restore original URL when user cancels/closes Paystack ──
+        history.replaceState(null, '', '/');
         payBtn.disabled    = false;
         payBtn.textContent = 'Pay Now 🔒';
       }
     });
+
+    // ── Change URL to /checkout-success.html the moment Paystack popup opens ──
+    history.pushState(null, '', '/checkout-success.html');
     handler.openIframe();
   });
 
