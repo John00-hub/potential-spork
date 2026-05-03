@@ -1418,8 +1418,6 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       img:'images/chicken-caesar-salad.webp' },
     { id:41, cat:'salad', name:'Timeout Salad',                      price:8500, desc:'Lettuce, shredded carrots, bell pepper, chicken breast, cabbage, cucumber, almond nuts, green and black olives.', rating:9.0,
       img:'images/timeout-salad.webp' },
-    { id:42, cat:'salad', name:'Prawns and Avocado Salad',           price:9000, desc:'Steamed prawns, farm fresh lettuce, cabbage, cucumber, black and green olives, shredded carrots, sliced avocado.', rating:9.3,
-      img:'images/prawns-and-avocado-salad.webp' },
     { id:43, cat:'salad', name:'Chicken Club Sandwich',              price:4000, desc:'Sliced tomato, seasoned chicken crumbs, lettuce, cucumber, served with crispy French fries.',                     rating:8.9,
       img:'images/chicken-club-sandwich.webp' },
     { id:44, cat:'salad', name:'Avocado Salad',                      price:8000, desc:'Fresh avocado salad.',                                                         rating:9.0,
@@ -1436,11 +1434,11 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       img:'images/goat-meat.webp' },
     { id:52, cat:'protein', name:'Chicken (1/8)',                    price:2600, desc:'Fried or grilled chicken, 1/8 portion.',                                       rating:8.7,
       img:'images/chicken-eighth.webp' },
-    { id:53, cat:'protein', name:'Chicken',                          price:5000, desc:'Fried or grilled chicken.',                                                     rating:9.3, popular:true,
+    { id:53, cat:'protein', name:'Chicken (1/4)',                    price:5000, desc:'Fried or grilled chicken, 1/4 portion.',                                       rating:9.3, popular:true,
       img:'images/chicken-quarter.webp' },
     { id:54, cat:'protein', name:'Catfish',                          price:5000, desc:'Grilled or fried catfish.',                                                    rating:9.0,
       img:'images/catfish.webp' },
-    { id:55, cat:'protein', name:'Croaker',                          price:5500, desc:'Grilled or fried croaker fish.',                                               rating:9.1,
+    { id:55, cat:'protein', name:'Croaker',                          price:6000, desc:'Grilled or fried croaker fish.',                                               rating:9.1,
       img:'images/croake.webp' },
     { id:56, cat:'protein', name:'Snail',                            price:8500, desc:'Per lobe. Perfectly seasoned snail.',                                          rating:9.5,
       img:'images/snail.webp' },
@@ -1456,8 +1454,6 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       img:'images/plantain-flour.webp' },
     { id:64, cat:'swallow', name:'Poundo Yam',                       price:1500, desc:'Smooth poundo yam swallow.',                                                   rating:8.8,
       img:'images/poundo-yam.webp' },
-    { id:65, cat:'swallow', name:'Pounded Yam',                      price:1200, desc:'Freshly pounded yam.',                                                         rating:9.2, popular:true,
-      img:'images/pounded-yam.webp' },
 
     /* ══════════════════════════════════════════════════════════════
        PART 2 — COMPLETE (Pasta → Champagne)
@@ -1680,7 +1676,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
    */
   function isPromoActive() {
     const now   = new Date();
-    const start = new Date('2026-05-04T00:00:00');
+    const start = new Date('2026-05-04T07:00:00');
     const end   = new Date('2026-05-19T23:59:59');
     return now >= start && now <= end;
   }
