@@ -407,6 +407,15 @@
       box-shadow: 0 2px 16px rgba(212,175,55,0.18);
     }
     .promo-banner-text { flex: 1; font-weight: 600; letter-spacing: 0.3px; }
+    .promo-pct {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffffff;
+      font-family: 'Outfit', sans-serif;
+      letter-spacing: 0px;
+      text-shadow: 0 0 20px rgba(255,255,255,0.6);
+      vertical-align: middle;
+    }
     .promo-countdown {
       font-size: 13px;
       color: #e8c84a;
@@ -427,7 +436,7 @@
     /* When banner is showing, push page content down */
     body.promo-active { padding-top: 46px; }
 
-    /* Price display: NEW price leads (gold), OLD follows crossed out (gray) */
+    /* Price display: NEW price leads (gold), OLD follows crossed out */
     .price-new {
       color: #c9a84c;
       font-weight: 700;
@@ -437,12 +446,13 @@
     }
     .price-old {
       text-decoration: line-through;
-      color: #666;
-      font-size: 12px;
-      font-weight: 400;
-      margin-left: 5px;
+      text-decoration-thickness: 1.5px;
+      color: #c8b89a;
+      font-size: 14px;
+      font-weight: 600;
+      margin-left: 6px;
       white-space: nowrap;
-      opacity: 0.85;
+      opacity: 1;
     }
     /* Promo badge on card */
     .promo-discount-badge {
@@ -463,7 +473,7 @@
       white-space: nowrap;
     }
     /* Cart item promo price */
-    .cart-item-price-old { text-decoration: line-through; color: #666; font-size: 11px; margin-right: 4px; }
+    .cart-item-price-old { text-decoration: line-through; text-decoration-thickness: 1.5px; color: #c8b89a; font-size: 12px; font-weight: 600; margin-right: 5px; }
     .cart-item-price-new { color: #d4af37; font-weight: 600; }
 
     /* ─── CARD BUTTONS ─── */
@@ -705,7 +715,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 <!-- ─── PROMO TOP BANNER ─── -->
 <!-- Shown only when isPromoActive() === true. JS controls visibility. -->
 <div id="promo-banner" class="promo-banner" role="alert" aria-live="polite" style="display:none;">
-  <span class="promo-banner-text">🔥 20% OFF ALL MENU ITEMS — Limited Time!</span>
+  <span class="promo-banner-text">🔥 <strong class="promo-pct">20% OFF</strong> ALL MENU ITEMS — Limited Time!</span>
   <span id="countdown" class="promo-countdown"></span>
   <button id="close-banner" class="promo-banner-close" aria-label="Close promotion banner">&times;</button>
 </div>
@@ -800,8 +810,11 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 
       <div class="promo-pricing">
         <div class="promo-price-block">
-          <span class="promo-price-label">Special Price</span>
-          <span class="promo-price">₦5,200</span>
+          <span class="promo-price-label" id="promoPriceLabel">Special Price</span>
+          <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;line-height:1;">
+            <span class="promo-price" id="promoPriceMain">₦5,200</span>
+            <span id="promoPriceWas" style="display:none;text-decoration:line-through;text-decoration-thickness:1.5px;color:#c8b89a;font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;line-height:1;">₦5,200</span>
+          </div>
         </div>
         <div class="promo-divider" aria-hidden="true"></div>
         <div class="promo-perks">
@@ -812,7 +825,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 
       <button class="promo-cta" id="promoCta" aria-label="Add promo deal to cart">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        Order Now — ₦5,200
+        Order Now — <span id="promoCTAPrice">₦5,200</span>
       </button>
 
       <p class="promo-footnote">⚡ Tap once to add to cart &amp; checkout instantly</p>
@@ -2054,35 +2067,45 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 
   /* ─── PROMO BANNER INIT ─── */
   (function () {
-    const banner    = document.getElementById('promo-banner');
-    const closeBtn  = document.getElementById('close-banner');
-    const countdown = document.getElementById('countdown');
+    var banner    = document.getElementById('promo-banner');
+    var closeBtn  = document.getElementById('close-banner');
+    var countdown = document.getElementById('countdown');
 
     if (!isPromoActive()) {
-      // Before May 4 or after May 19 — keep banner hidden
       banner.style.display = 'none';
       return;
     }
 
-    // Show banner, push page content down
     banner.style.display = 'flex';
     document.body.classList.add('promo-active');
 
-    // Countdown: days remaining until May 19
     function updateCountdown() {
-      const now  = new Date();
+      var now  = new Date();
       now.setHours(0, 0, 0, 0);
-      const end  = new Date('2026-05-20'); // day AFTER end so May 19 shows "1 day left"
-      const diff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+      var end  = new Date('2026-05-20');
+      var diff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
       countdown.textContent = diff > 0 ? '⏳ ' + diff + (diff === 1 ? ' day left' : ' days left') : '';
     }
     updateCountdown();
 
-    // Close button — hide banner and restore body padding
     closeBtn.addEventListener('click', function () {
       banner.style.display = 'none';
       document.body.classList.remove('promo-active');
     });
+
+    /* Apply -20% to hero promo deal card */
+    var ORIG = 5200;
+    var DISC = Math.round(ORIG * 0.8); /* 4160 */
+
+    var priceMain  = document.getElementById('promoPriceMain');
+    var priceWas   = document.getElementById('promoPriceWas');
+    var priceLabel = document.getElementById('promoPriceLabel');
+    var ctaPrice   = document.getElementById('promoCTAPrice');
+
+    if (priceMain)  priceMain.textContent  = '₦' + DISC.toLocaleString();
+    if (priceWas)   { priceWas.textContent = '₦' + ORIG.toLocaleString(); priceWas.style.display = 'inline'; }
+    if (priceLabel) priceLabel.textContent = '20% Off — Save ₦1,040';
+    if (ctaPrice)   ctaPrice.innerHTML = '<s style="color:#c8b89a;font-weight:600;font-size:0.85em;">₦5,200</s>&nbsp;₦4,160';
   })();
 
   /* ─── INIT ─── */
