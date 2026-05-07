@@ -715,7 +715,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 <!-- ─── PROMO TOP BANNER ─── -->
 <!-- Shown only when isPromoActive() === true. JS controls visibility. -->
 <div id="promo-banner" class="promo-banner" role="alert" aria-live="polite" style="display:none;">
-  <span class="promo-banner-text">🔥 <strong class="promo-pct">20% OFF</strong> ALL MENU ITEMS — Limited Time!</span>
+  <span class="promo-banner-text">🔥 <strong class="promo-pct">20% OFF</strong> ALL FOOD ITEMS — Limited Time!</span>
   <span id="countdown" class="promo-countdown"></span>
   <button id="close-banner" class="promo-banner-close" aria-label="Close promotion banner">&times;</button>
 </div>
@@ -1370,8 +1370,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   }
 
   /* ════════════════════════════════════════════════════════════════
-     MENU DATA  — Part 1 UPDATED (Chips → Swallow), Part 2 pending
-     All names and prices match the PDF exactly.
+     MENU DATA
   ════════════════════════════════════════════════════════════════ */
   const items = [
 
@@ -1418,7 +1417,6 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       img:'images/okro.webp' },
     { id:33, cat:'soup', name:'Afang',                               price:3500, desc:'Traditional Afang soup.',                                                      rating:9.1,
       img:'images/afang.webp' },
-  
     { id:35, cat:'soup', name:'Vegetable',                           price:3000, desc:'Fresh vegetable soup.',                                                        rating:8.8,
       img:'images/vegetable-soup.webp' },
     { id:36, cat:'soup', name:'Fisherman Soup',                      price:12500, desc:'Special fisherman soup.',                                                     rating:9.5,
@@ -1467,11 +1465,6 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       img:'images/plantain-flour.webp' },
     { id:64, cat:'swallow', name:'Poundo Yam',                       price:1500, desc:'Smooth poundo yam swallow.',                                                   rating:8.8,
       img:'images/poundo-yam.webp' },
-
-    /* ══════════════════════════════════════════════════════════════
-       PART 2 — COMPLETE (Pasta → Champagne)
-       All names and prices verified against PDF exactly.
-    ══════════════════════════════════════════════════════════════ */
 
     /* ── PASTA ── */
     { id:70, cat:'pasta', name:'Indomie (Special) Egg',              price:3500, desc:'Special indomie with egg.',                                                    rating:8.8,
@@ -1684,9 +1677,11 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 
   /* ─── PROMO ENGINE ─── */
   /**
-   * Returns true if today falls within the promotion window (May 4–19 2026).
-   * Uses local date — no server dependency.
+   * Drink categories excluded from food promo.
+   * Promo is for food items ONLY — not drinks, beer, juice, cocktails, whisky, wine, or champagne.
    */
+  const DRINK_CATS = new Set(['drinks', 'beer', 'juice', 'cocktails', 'whisky', 'wine', 'champagne']);
+
   function isPromoActive() {
     const now   = new Date();
     const start = new Date('2026-05-04T07:00:00');
@@ -1694,8 +1689,8 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     return now >= start && now <= end;
   }
 
-  function getDiscountedPrice(price) {
-    if (!isPromoActive()) return price;
+  function getDiscountedPrice(price, cat) {
+    if (!isPromoActive() || DRINK_CATS.has(cat)) return price;
     return Math.round(price * 0.8);
   }
 
@@ -1703,8 +1698,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   let cart = {};
 
   function cartTotal() {
-    // Always charge discounted price if promo is active
-    return Object.values(cart).reduce((s, e) => s + getDiscountedPrice(e.item.price) * e.qty, 0);
+    return Object.values(cart).reduce((s, e) => s + getDiscountedPrice(e.item.price, e.item.cat) * e.qty, 0);
   }
   function cartCount() { return Object.values(cart).reduce((s, e) => s + e.qty, 0); }
   function naira(n)    { return '₦' + Number(n).toLocaleString('en-NG'); }
@@ -1723,10 +1717,11 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     const loading = eager ? 'eager' : 'lazy';
     const fetchp  = eager ? 'high'  : 'auto';
 
-    /* ── PROMO PRICE DISPLAY ── */
-    const discountedPrice = getDiscountedPrice(item.price);
+    /* ── PROMO PRICE DISPLAY — food only, no drinks ── */
+    const isFood = !DRINK_CATS.has(item.cat);
+    const discountedPrice = getDiscountedPrice(item.price, item.cat);
     let priceHTML;
-    if (isPromoActive()) {
+    if (isPromoActive() && isFood) {
       priceHTML = `<span class="price-new">${naira(discountedPrice)}</span><span class="price-old">${naira(item.price)}</span>`;
     } else {
       priceHTML = `<span class="card-price">${naira(item.price)}</span>`;
@@ -1738,7 +1733,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
         ${item.popular ? '<span class="card-badge popular">🔥 Popular</span>' : ''}
         ${item.pricePill === 'Premium' ? '<span class="card-badge">👑 Premium</span>' : ''}
       </div>
-      ${isPromoActive() ? '<span class="promo-discount-badge">−20%</span>' : ''}
+      ${isPromoActive() && isFood ? '<span class="promo-discount-badge">−20%</span>' : ''}
       <div class="card-img-wrap">
         <img
           src="${src}"
@@ -1848,10 +1843,10 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     }
 
     itemsEl.innerHTML = Object.values(cart).map(({ item, qty }) => {
-      // Build per-item price display — show strikethrough original if promo active
-      const unitDiscounted = getDiscountedPrice(item.price);
+      const unitDiscounted = getDiscountedPrice(item.price, item.cat);
       const lineTotal = unitDiscounted * qty;
-      const cartPriceHTML = isPromoActive()
+      const isFood = !DRINK_CATS.has(item.cat);
+      const cartPriceHTML = isPromoActive() && isFood
         ? `<span class="cart-item-price-new">${naira(lineTotal)}</span><span class="cart-item-price-old">${naira(item.price * qty)}</span>`
         : `<span>${naira(item.price * qty)}</span>`;
 
@@ -1916,7 +1911,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 
     const total      = cartTotal();
     const orderItems = Object.values(cart).map(({ item, qty }) =>
-      item.name + ' x' + qty + ' = ' + naira(getDiscountedPrice(item.price) * qty)
+      item.name + ' x' + qty + ' = ' + naira(getDiscountedPrice(item.price, item.cat) * qty)
     ).join('\n');
 
     const payBtn = document.getElementById('modalPay');
@@ -1938,12 +1933,10 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
         ]
       },
       callback: function (response) {
-        // ── Build cart items array for sessionStorage ──
         var cartItemsArr = Object.values(cart).map(function(e) {
-          return { name: e.item.name, note: null, qty: e.qty, unitPrice: getDiscountedPrice(e.item.price) };
+          return { name: e.item.name, note: null, qty: e.qty, unitPrice: getDiscountedPrice(e.item.price, e.item.cat) };
         });
 
-        // ── Save full order to sessionStorage so check-out.html can read it ──
         sessionStorage.setItem('timeoutOrder', JSON.stringify({
           id:            'TOR-' + Date.now(),
           reference:     response.reference,
@@ -1954,21 +1947,17 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
           serviceCharge: 0
         }));
 
-        // ── Track purchase in Meta Pixel ──
         fbq('track', 'Purchase', { value: total, currency: 'NGN' });
 
-        // ── Redirect to dedicated success page ──
         window.location.href = '/check-out.html';
       },
       onClose: function () {
-        // ── Restore original URL when user cancels/closes Paystack ──
         history.replaceState(null, '', '/');
         payBtn.disabled    = false;
         payBtn.textContent = 'Pay Now 🔒';
       }
     });
 
-    // ── Change URL to /check-out.html the moment Paystack popup opens ──
     history.pushState(null, '', '/check-out.html');
     handler.openIframe();
   });
@@ -2061,7 +2050,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 
   /* ─── PROMO CTA ─── */
   document.getElementById('promoCta').addEventListener('click', function () {
-    addToCart(999); /* Promo bundle: Jollof Rice + Chicken @ ₦4,000 */
+    addToCart(999); /* Promo bundle: Jollof Rice + Chicken */
     openCart();
   });
 
@@ -2093,7 +2082,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       document.body.classList.remove('promo-active');
     });
 
-    /* Apply -20% to hero promo deal card */
+    /* Apply -20% to hero promo deal card (Jollof Rice + Chicken is a food item) */
     var ORIG = 5200;
     var DISC = Math.round(ORIG * 0.8); /* 4160 */
 
