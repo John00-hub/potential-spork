@@ -690,7 +690,25 @@
       .item-name small { display: none; }
     }
   </style>
-  <!-- Meta Pixel Code -->
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XZPSKNV74Y"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XZPSKNV74Y');
+  gtag('config', 'AW-18076585067');
+</script>
+
+<!-- Event snippet for Purchase conversion page -->
+<script>
+  gtag('event', 'conversion', {
+    'send_to': 'AW-18076585067/vbkoCLbj0q4cEOuYy6tD',
+    'transaction_id': ''
+  });
+</script>
+
+<!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -707,16 +725,8 @@ fbq('track', 'PageView');
 src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
-<!-- Google Ads Conversion Event -->
-<script>
-  gtag('event', 'conversion', {
-    'send_to': 'AW-18076585067/purchase',
-    'transaction_id': ''
-  });
-</script>
 </head>
 <body>
-
   <!-- Atmospheric background glow -->
   <div class="bg-glow" aria-hidden="true"></div>
 
