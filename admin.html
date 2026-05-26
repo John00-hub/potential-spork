@@ -13,7 +13,6 @@
       --gold:        #d4af37;
       --gold-bright: #e8c84a;
       --gold-dim:    rgba(212,175,55,0.10);
-      --gold-glow:   rgba(212,175,55,0.22);
       --bg:          #0a0a0a;
       --surface:     #0f0f0f;
       --card:        #141414;
@@ -23,9 +22,6 @@
       --text:        #ede8de;
       --text-soft:   #8a857a;
       --muted:       #4a4540;
-      --pending:     #e8a630;
-      --paid:        #4caf84;
-      --completed:   #5b8af0;
       --radius:      16px;
     }
 
@@ -38,8 +34,6 @@
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
-
-    /* Ambient glow */
     body::before {
       content: '';
       position: fixed; top: 0; left: 0; right: 0; height: 60vh;
@@ -53,287 +47,87 @@
       background: rgba(10,10,10,0.88);
       border-bottom: 1px solid var(--border);
       backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
       padding: 0 32px;
       display: flex; align-items: center; justify-content: space-between;
       height: 64px;
       animation: slideDown 0.5s ease both;
     }
-    @keyframes slideDown {
-      from { transform: translateY(-100%); opacity: 0; }
-      to   { transform: translateY(0); opacity: 1; }
-    }
+    @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .header-left { display: flex; align-items: center; gap: 14px; }
-    .header-logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px; font-weight: 700;
-      color: var(--text); letter-spacing: -0.2px;
-    }
+    .header-logo { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--text); }
     .header-logo span { color: var(--gold); font-style: italic; }
-    .header-badge {
-      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--gold); background: var(--gold-dim);
-      border: 1px solid rgba(212,175,55,0.2);
-      padding: 3px 10px; border-radius: 100px; font-weight: 600;
-    }
+    .header-badge { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); background: var(--gold-dim); border: 1px solid rgba(212,175,55,0.2); padding: 3px 10px; border-radius: 100px; font-weight: 600; }
     .header-right { display: flex; align-items: center; gap: 16px; }
-    .live-dot {
-      display: flex; align-items: center; gap: 7px;
-      font-size: 11px; color: var(--text-soft); letter-spacing: 0.5px;
-    }
-    .live-dot::before {
-      content: '';
-      width: 7px; height: 7px; border-radius: 50%;
-      background: #4caf84;
-      box-shadow: 0 0 8px #4caf84;
-      animation: livePulse 2s ease infinite;
-    }
-    @keyframes livePulse {
-      0%,100% { opacity: 1; transform: scale(1); }
-      50%      { opacity: 0.5; transform: scale(0.7); }
-    }
-    .logout-btn {
-      font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
-      color: var(--text-soft); background: none;
-      border: 1px solid var(--border-soft);
-      border-radius: 8px; padding: 7px 14px;
-      cursor: pointer; font-family: 'Outfit', sans-serif;
-      transition: color 0.2s, border-color 0.2s;
-    }
+    .live-dot { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--text-soft); }
+    .live-dot::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #4caf84; box-shadow: 0 0 8px #4caf84; animation: livePulse 2s ease infinite; }
+    @keyframes livePulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.7); } }
+    .logout-btn { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-soft); background: none; border: 1px solid var(--border-soft); border-radius: 8px; padding: 7px 14px; cursor: pointer; font-family: 'Outfit', sans-serif; transition: color 0.2s, border-color 0.2s; }
     .logout-btn:hover { color: var(--gold); border-color: var(--border); }
 
-    /* ─── MAIN LAYOUT ─── */
-    .main {
-      position: relative; z-index: 1;
-      max-width: 1200px; margin: 0 auto;
-      padding: 36px 24px 80px;
-    }
-
-    .page-title {
-      margin-bottom: 32px;
-      animation: fadeUp 0.6s 0.1s ease both;
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .page-title h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 32px; font-weight: 700;
-      color: var(--text); letter-spacing: -0.5px;
-      margin-bottom: 6px;
-    }
+    /* ─── MAIN ─── */
+    .main { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 36px 24px 80px; }
+    .page-title { margin-bottom: 32px; animation: fadeUp 0.6s 0.1s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .page-title h1 { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
     .page-title h1 em { color: var(--gold); font-style: italic; }
-    .page-title p {
-      font-size: 13px; color: var(--text-soft);
-      letter-spacing: 0.3px;
-    }
-    #clockDisplay {
-      font-size: 12px; color: var(--gold);
-      font-weight: 500; letter-spacing: 1px;
-      margin-top: 4px;
-    }
+    .page-title p { font-size: 13px; color: var(--text-soft); }
+    #clockDisplay { font-size: 12px; color: var(--gold); font-weight: 500; letter-spacing: 1px; margin-top: 4px; }
 
     /* ─── STAT CARDS ─── */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px; margin-bottom: 32px;
-    }
-
-    .stat-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 26px 24px;
-      position: relative; overflow: hidden;
-      cursor: default;
-      transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1), box-shadow 0.3s ease, border-color 0.3s;
-      animation: fadeUp 0.6s ease both;
-    }
-    .stat-card:nth-child(1) { animation-delay: 0.15s; }
-    .stat-card:nth-child(2) { animation-delay: 0.22s; }
-    .stat-card:nth-child(3) { animation-delay: 0.29s; }
-    .stat-card:nth-child(4) { animation-delay: 0.36s; }
-    .stat-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(to right, transparent, var(--gold), transparent);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .stat-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(212,175,55,0.28);
-      box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 40px rgba(212,175,55,0.05);
-    }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; position: relative; overflow: hidden; transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1), box-shadow 0.3s ease; animation: fadeUp 0.6s ease both; }
+    .stat-card:nth-child(1){animation-delay:.15s}.stat-card:nth-child(2){animation-delay:.22s}.stat-card:nth-child(3){animation-delay:.29s}.stat-card:nth-child(4){animation-delay:.36s}.stat-card:nth-child(5){animation-delay:.43s}.stat-card:nth-child(6){animation-delay:.50s}
+    .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(to right, transparent, var(--gold), transparent); opacity: 0; transition: opacity 0.3s; }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.4); }
     .stat-card:hover::before { opacity: 1; }
+    .stat-icon { width: 42px; height: 42px; background: var(--gold-dim); border: 1px solid rgba(212,175,55,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 16px; }
+    .stat-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-soft); font-weight: 500; margin-bottom: 8px; }
+    .stat-value { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--gold-bright); letter-spacing: -1px; line-height: 1; }
+    .stat-sub { font-size: 11px; color: var(--muted); margin-top: 6px; }
 
-    .stat-icon {
-      width: 42px; height: 42px;
-      background: var(--gold-dim);
-      border: 1px solid rgba(212,175,55,0.15);
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; margin-bottom: 16px;
-    }
-    .stat-label {
-      font-size: 10px; letter-spacing: 2px;
-      text-transform: uppercase; color: var(--text-soft);
-      font-weight: 500; margin-bottom: 8px;
-    }
-    .stat-value {
-      font-family: 'Playfair Display', serif;
-      font-size: 30px; font-weight: 700;
-      color: var(--gold-bright); letter-spacing: -1px;
-      line-height: 1;
-    }
-    .stat-sub {
-      font-size: 11px; color: var(--muted);
-      margin-top: 6px; letter-spacing: 0.3px;
-    }
+    /* ─── SECTION HEADER ─── */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; color: var(--text); }
+    .section-line { height: 1px; flex: 1; margin-left: 16px; background: linear-gradient(to right, var(--border), transparent); }
 
-    /* ─── POPULAR ITEMS ─── */
-    .section-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 16px;
-    }
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 18px; font-weight: 600;
-      color: var(--text); letter-spacing: -0.2px;
-    }
-    .section-line {
-      height: 1px; flex: 1; margin-left: 16px;
-      background: linear-gradient(to right, var(--border), transparent);
-    }
-
-    .popular-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 12px; margin-bottom: 36px;
-      animation: fadeUp 0.6s 0.4s ease both;
-    }
-    .popular-item {
-      background: var(--card);
-      border: 1px solid var(--border-soft);
-      border-radius: 12px;
-      padding: 16px;
-      transition: border-color 0.25s, transform 0.25s;
-    }
+    /* ─── POPULAR ─── */
+    .popular-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 36px; animation: fadeUp 0.6s 0.4s ease both; }
+    .popular-item { background: var(--card); border: 1px solid var(--border-soft); border-radius: 12px; padding: 16px; transition: border-color 0.25s, transform 0.25s; }
     .popular-item:hover { border-color: var(--border); transform: translateY(-2px); }
     .popular-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
-    .popular-count {
-      font-size: 11px; color: var(--text-soft);
-      display: flex; align-items: center; gap: 6px;
-    }
-    .popular-bar-wrap {
-      height: 3px; background: rgba(255,255,255,0.05);
-      border-radius: 2px; margin-top: 10px; overflow: hidden;
-    }
-    .popular-bar {
-      height: 100%;
-      background: linear-gradient(to right, var(--gold), var(--gold-bright));
-      border-radius: 2px;
-      transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
-    }
+    .popular-count { font-size: 11px; color: var(--text-soft); }
+    .popular-bar-wrap { height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+    .popular-bar { height: 100%; background: linear-gradient(to right, var(--gold), var(--gold-bright)); border-radius: 2px; transition: width 1.2s cubic-bezier(0.22,1,0.36,1); }
 
-    /* ─── ORDERS TABLE ─── */
+    /* ─── TABLE ─── */
     .orders-section { animation: fadeUp 0.6s 0.5s ease both; }
-
-    .table-controls {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 16px; flex-wrap: wrap;
-    }
-    .filter-btn {
-      font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase;
-      color: var(--text-soft); background: var(--card);
-      border: 1px solid var(--border-soft);
-      border-radius: 8px; padding: 7px 14px;
-      cursor: pointer; font-family: 'Outfit', sans-serif;
-      transition: all 0.2s;
-    }
-    .filter-btn.active, .filter-btn:hover {
-      color: var(--gold); border-color: var(--border);
-      background: var(--gold-dim);
-    }
-    .clear-btn {
-      margin-left: auto;
-      font-size: 11px; color: #e05555;
-      background: rgba(224,85,85,0.08);
-      border: 1px solid rgba(224,85,85,0.2);
-      border-radius: 8px; padding: 7px 14px;
-      cursor: pointer; font-family: 'Outfit', sans-serif;
-      transition: all 0.2s; letter-spacing: 0.5px;
-    }
+    .table-controls { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .filter-btn { font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-soft); background: var(--card); border: 1px solid var(--border-soft); border-radius: 8px; padding: 7px 14px; cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.2s; }
+    .filter-btn.active, .filter-btn:hover { color: var(--gold); border-color: var(--border); background: var(--gold-dim); }
+    .search-orders { background: var(--card); border: 1px solid var(--border-soft); border-radius: 8px; padding: 7px 14px; color: var(--text); font-family: 'Outfit', sans-serif; font-size: 12px; outline: none; width: 200px; transition: border-color 0.2s; }
+    .search-orders:focus { border-color: var(--border); }
+    .search-orders::placeholder { color: var(--muted); }
+    .clear-btn { margin-left: auto; font-size: 11px; color: #e05555; background: rgba(224,85,85,0.08); border: 1px solid rgba(224,85,85,0.2); border-radius: 8px; padding: 7px 14px; cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.2s; }
     .clear-btn:hover { background: rgba(224,85,85,0.15); }
 
-    .table-wrap {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    table {
-      width: 100%; border-collapse: collapse;
-    }
-    thead tr {
-      background: rgba(212,175,55,0.04);
-      border-bottom: 1px solid var(--border);
-    }
-    th {
-      padding: 14px 18px;
-      text-align: left;
-      font-size: 9.5px; letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-soft); font-weight: 600;
-    }
-    tbody tr {
-      border-bottom: 1px solid var(--border-soft);
-      transition: background 0.2s;
-    }
+    .table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: rgba(212,175,55,0.04); border-bottom: 1px solid var(--border); }
+    th { padding: 14px 18px; text-align: left; font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-soft); font-weight: 600; }
+    tbody tr { border-bottom: 1px solid var(--border-soft); transition: background 0.2s; }
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: rgba(255,255,255,0.02); }
-    td {
-      padding: 16px 18px;
-      font-size: 13px; color: var(--text);
-      vertical-align: middle;
-    }
-    .order-id {
-      font-family: 'Playfair Display', serif;
-      font-size: 12px; color: var(--gold);
-      font-weight: 600; letter-spacing: 0.5px;
-    }
-    .order-items {
-      font-size: 12px; color: var(--text-soft);
-      max-width: 260px; line-height: 1.5;
-    }
-    .order-total {
-      font-weight: 600; color: var(--gold-bright);
-      font-size: 14px; letter-spacing: -0.3px;
-      white-space: nowrap;
-    }
-    .order-time {
-      font-size: 11px; color: var(--muted);
-      white-space: nowrap;
-    }
-
-    /* Status badge */
-    .status-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 5px 12px; border-radius: 100px;
-      font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      white-space: nowrap; border: none;
-      font-family: 'Outfit', sans-serif;
-    }
+    td { padding: 14px 18px; font-size: 13px; color: var(--text); vertical-align: top; }
+    .order-id { font-family: 'Playfair Display', serif; font-size: 12px; color: var(--gold); font-weight: 600; }
+    .order-ref { font-size: 10px; color: var(--muted); margin-top: 3px; font-family: monospace; letter-spacing: 0.3px; }
+    .customer-name { font-weight: 500; color: var(--text); }
+    .customer-detail { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+    .order-items { font-size: 12px; color: var(--text-soft); max-width: 220px; line-height: 1.6; }
+    .order-total { font-weight: 600; color: var(--gold-bright); font-size: 14px; white-space: nowrap; }
+    .order-time { font-size: 11px; color: var(--muted); white-space: nowrap; }
+    .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 100px; font-size: 11px; font-weight: 600; cursor: pointer; transition: transform 0.2s; white-space: nowrap; border: none; font-family: 'Outfit', sans-serif; }
     .status-badge:hover { transform: scale(1.05); }
-    .status-badge::before {
-      content: '';
-      width: 5px; height: 5px;
-      border-radius: 50%;
-    }
+    .status-badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
     .status-Pending  { background: rgba(232,166,48,0.12);  color: #e8a630; border: 1px solid rgba(232,166,48,0.25); }
     .status-Pending::before  { background: #e8a630; box-shadow: 0 0 6px #e8a630; }
     .status-Paid     { background: rgba(76,175,132,0.12);  color: #4caf84; border: 1px solid rgba(76,175,132,0.25); }
@@ -341,39 +135,56 @@
     .status-Completed{ background: rgba(91,138,240,0.12);  color: #5b8af0; border: 1px solid rgba(91,138,240,0.25); }
     .status-Completed::before{ background: #5b8af0; box-shadow: 0 0 6px #5b8af0; }
 
-    .empty-state {
-      text-align: center; padding: 64px 24px;
-      color: var(--text-soft);
-    }
+    /* ─── ORDER DETAIL DRAWER ─── */
+    .detail-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+    .detail-overlay.open { opacity: 1; pointer-events: auto; }
+    .detail-drawer { position: fixed; right: 0; top: 0; bottom: 0; width: 420px; max-width: 100vw; background: #111; border-left: 1px solid var(--border); z-index: 210; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.22,1,0.36,1); overflow-y: auto; display: flex; flex-direction: column; }
+    .detail-drawer.open { transform: translateX(0); }
+    .detail-header { padding: 24px; border-bottom: 1px solid var(--border-soft); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: #111; z-index: 1; }
+    .detail-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--gold); }
+    .detail-close { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.07); border: none; color: var(--muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .detail-close:hover { color: var(--text); background: rgba(255,255,255,0.13); }
+    .detail-body { padding: 24px; flex: 1; }
+    .detail-section { margin-bottom: 24px; }
+    .detail-section-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 12px; }
+    .detail-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; gap: 12px; }
+    .detail-row-key { font-size: 12px; color: var(--text-soft); flex-shrink: 0; }
+    .detail-row-val { font-size: 13px; color: var(--text); font-weight: 500; text-align: right; word-break: break-all; }
+    .detail-ref { font-family: monospace; font-size: 12px; color: var(--gold); }
+    .detail-items-list { display: flex; flex-direction: column; gap: 10px; }
+    .detail-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--card2); border-radius: 10px; }
+    .detail-item-name { font-size: 13px; color: var(--text); }
+    .detail-item-qty { font-size: 11px; color: var(--text-soft); margin-top: 3px; }
+    .detail-item-price { font-size: 14px; color: var(--gold-bright); font-weight: 600; }
+    .detail-total { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--gold-dim); border: 1px solid var(--border); border-radius: 10px; margin-top: 12px; }
+    .detail-total-label { font-size: 12px; color: var(--text-soft); }
+    .detail-total-val { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--gold-bright); font-weight: 700; }
+    .detail-wa-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 9px; background: linear-gradient(135deg, #25d366, #128c4e); color: #fff; border: none; border-radius: 12px; padding: 14px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 20px; transition: all 0.25s; }
+    .detail-wa-btn:hover { filter: brightness(1.08); transform: translateY(-2px); }
+
+    /* ─── VIEW BUTTON ─── */
+    .view-btn { font-size: 11px; color: var(--text-soft); background: none; border: 1px solid var(--border-soft); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.2s; margin-top: 4px; white-space: nowrap; }
+    .view-btn:hover { color: var(--gold); border-color: var(--border); }
+
+    /* ─── EMPTY ─── */
+    .empty-state { text-align: center; padding: 64px 24px; color: var(--text-soft); }
     .empty-state .icon { font-size: 40px; margin-bottom: 14px; opacity: 0.4; }
-    .empty-state p { font-size: 14px; letter-spacing: 0.3px; }
+    .empty-state p { font-size: 14px; }
 
     /* ─── TOAST ─── */
-    .toast {
-      position: fixed; bottom: 28px; right: 28px; z-index: 999;
-      background: var(--card2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 20px;
-      font-size: 13px; color: var(--text);
-      box-shadow: 0 16px 48px rgba(0,0,0,0.5);
-      display: flex; align-items: center; gap: 10px;
-      transform: translateY(80px); opacity: 0;
-      transition: transform 0.4s cubic-bezier(0.34,1.2,0.64,1), opacity 0.3s;
-      pointer-events: none;
-    }
+    .toast { position: fixed; bottom: 28px; right: 28px; z-index: 999; background: var(--card2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 20px; font-size: 13px; color: var(--text); box-shadow: 0 16px 48px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; transform: translateY(80px); opacity: 0; transition: transform 0.4s cubic-bezier(0.34,1.2,0.64,1), opacity 0.3s; pointer-events: none; }
     .toast.show { transform: translateY(0); opacity: 1; }
-    .toast-icon { font-size: 16px; }
 
     @media (max-width: 640px) {
       .header { padding: 0 16px; }
       .main { padding: 24px 16px 60px; }
-      th, td { padding: 12px 12px; }
+      th, td { padding: 10px 10px; }
       .page-title h1 { font-size: 24px; }
-      .stat-value { font-size: 24px; }
-      .order-items { max-width: 140px; }
+      th:nth-child(3), td:nth-child(3) { display: none; } /* hide items col on mobile */
+      .detail-drawer { width: 100vw; }
     }
   </style>
+  
 </head>
 <body>
 
@@ -407,7 +218,7 @@
         <div class="stat-icon">💰</div>
         <div class="stat-label">Total Revenue</div>
         <div class="stat-value" id="statRevenue">₦0</div>
-        <div class="stat-sub">Paid orders only</div>
+        <div class="stat-sub">Paid + Completed</div>
       </div>
       <div class="stat-card">
         <div class="stat-icon">🕐</div>
@@ -420,6 +231,18 @@
         <div class="stat-label">Pending</div>
         <div class="stat-value" id="statPending">0</div>
         <div class="stat-sub">Awaiting action</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-label">Unique Customers</div>
+        <div class="stat-value" id="statCustomers">0</div>
+        <div class="stat-sub">By phone number</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🛒</div>
+        <div class="stat-label">Avg Order Value</div>
+        <div class="stat-value" id="statAvg">₦0</div>
+        <div class="stat-sub">All orders</div>
       </div>
     </div>
 
@@ -443,13 +266,15 @@
         <button class="filter-btn" data-filter="Pending">Pending</button>
         <button class="filter-btn" data-filter="Paid">Paid</button>
         <button class="filter-btn" data-filter="Completed">Completed</button>
+        <input class="search-orders" type="search" id="searchOrders" placeholder="Search name, phone, ref…"/>
         <button class="clear-btn" id="clearOrdersBtn">🗑 Clear All</button>
       </div>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Order ID</th>
+              <th>Order</th>
+              <th>Customer</th>
               <th>Items</th>
               <th>Total</th>
               <th>Status</th>
@@ -462,17 +287,26 @@
     </div>
   </main>
 
+  <!-- ORDER DETAIL DRAWER -->
+  <div class="detail-overlay" id="detailOverlay"></div>
+  <div class="detail-drawer" id="detailDrawer">
+    <div class="detail-header">
+      <div class="detail-title" id="detailTitle">#000000</div>
+      <button class="detail-close" id="detailClose">✕</button>
+    </div>
+    <div class="detail-body" id="detailBody"></div>
+  </div>
+
   <div class="toast" id="toast">
-    <span class="toast-icon">✅</span>
+    <span>✅</span>
     <span id="toastMsg">Status updated</span>
   </div>
 
   <script>
-    /* ─── AUTH GUARD ─── */
+    /* ─── AUTH ─── */
     if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
       window.location.href = 'admin-login.html';
     }
-
     document.getElementById('logoutBtn').addEventListener('click', () => {
       localStorage.removeItem('isAdminLoggedIn');
       window.location.href = 'admin-login.html';
@@ -496,23 +330,19 @@
     const naira = n => '₦' + Number(n).toLocaleString('en-NG');
 
     function getOrders() {
-      try { return JSON.parse(localStorage.getItem('timeout_orders') || '[]'); }
-      catch { return []; }
+      try { return JSON.parse(localStorage.getItem('timeout_orders') || '[]'); } catch { return []; }
     }
     function saveOrders(orders) {
       localStorage.setItem('timeout_orders', JSON.stringify(orders));
     }
 
-    /* ─── ANIMATED COUNTER ─── */
-    function animateCounter(el, target, prefix = '', suffix = '') {
-      const isNum = typeof target === 'number';
-      if (!isNum) { el.textContent = prefix + target + suffix; return; }
-      let start = 0; const dur = 900; const startTime = performance.now();
+    function animateCounter(el, target, prefix = '') {
+      if (typeof target !== 'number') { el.textContent = prefix + target; return; }
+      let start = 0; const dur = 900; const t0 = performance.now();
       function step(now) {
-        const p = Math.min((now - startTime) / dur, 1);
+        const p = Math.min((now - t0) / dur, 1);
         const ease = 1 - Math.pow(1 - p, 3);
-        const val = Math.round(start + (target - start) * ease);
-        el.textContent = prefix + val.toLocaleString('en-NG') + suffix;
+        el.textContent = prefix + Math.round(start + (target - start) * ease).toLocaleString('en-NG');
         if (p < 1) requestAnimationFrame(step);
       }
       requestAnimationFrame(step);
@@ -520,9 +350,10 @@
 
     /* ─── STATS ─── */
     function renderStats(orders) {
-      const today = new Date().toDateString();
-      const todayOrders = orders.filter(o => new Date(o.time).toDateString?.() === today ||
-        (o.time && o.time.includes(new Date().toLocaleDateString())));
+      const todayStr = new Date().toDateString();
+      const todayOrders = orders.filter(o => {
+        try { return new Date(o.time).toDateString() === todayStr; } catch { return false; }
+      });
 
       const revenue = orders
         .filter(o => o.status === 'Paid' || o.status === 'Completed')
@@ -530,16 +361,21 @@
 
       const pending = orders.filter(o => o.status === 'Pending').length;
 
+      // Unique customers by phone
+      const phones = new Set(orders.map(o => o.customer?.phone).filter(Boolean));
+      const avg = orders.length ? Math.round(orders.reduce((s, o) => s + (o.total || 0), 0) / orders.length) : 0;
+
       animateCounter(document.getElementById('statTotal'), orders.length);
       animateCounter(document.getElementById('statRevenue'), revenue, '₦');
       animateCounter(document.getElementById('statToday'), todayOrders.length);
       animateCounter(document.getElementById('statPending'), pending);
-
+      animateCounter(document.getElementById('statCustomers'), phones.size);
+      animateCounter(document.getElementById('statAvg'), avg, '₦');
       document.getElementById('statTodayDate').textContent =
         new Date().toLocaleDateString('en-NG', { month:'short', day:'numeric' });
     }
 
-    /* ─── POPULAR ITEMS ─── */
+    /* ─── POPULAR ─── */
     function renderPopular(orders) {
       const counts = {};
       orders.forEach(o => {
@@ -551,7 +387,6 @@
       const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, 6);
       const max = sorted[0]?.[1] || 1;
       const grid = document.getElementById('popularGrid');
-
       if (!sorted.length) {
         grid.innerHTML = '<div class="popular-item"><div class="popular-name" style="color:var(--text-soft)">No orders yet</div></div>';
         return;
@@ -559,7 +394,7 @@
       grid.innerHTML = sorted.map(([name, count]) => `
         <div class="popular-item">
           <div class="popular-name">${name}</div>
-          <div class="popular-count">🛒 ${count} order${count!==1?'s':''}</div>
+          <div class="popular-count">🛒 ${count} order${count !== 1 ? 's' : ''}</div>
           <div class="popular-bar-wrap">
             <div class="popular-bar" style="width:${Math.round((count/max)*100)}%"></div>
           </div>
@@ -568,39 +403,58 @@
 
     /* ─── ORDERS TABLE ─── */
     let activeFilter = 'All';
+    let searchQuery  = '';
 
-    function renderOrders(filter = 'All') {
-      activeFilter = filter;
-      const orders = getOrders();
-      const filtered = filter === 'All' ? orders : orders.filter(o => o.status === filter);
+    function renderOrders() {
+      let orders = getOrders();
+
+      // Filter by status
+      if (activeFilter !== 'All') orders = orders.filter(o => o.status === activeFilter);
+
+      // Filter by search
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        orders = orders.filter(o =>
+          o.customer?.name?.toLowerCase().includes(q) ||
+          o.customer?.phone?.toLowerCase().includes(q) ||
+          o.customer?.email?.toLowerCase().includes(q) ||
+          o.ref?.toLowerCase().includes(q) ||
+          String(o.id).includes(q) ||
+          (o.items || []).some(e => e.item?.name?.toLowerCase().includes(q))
+        );
+      }
+
       const tbody = document.getElementById('ordersBody');
-
-      if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="5">
+      if (!orders.length) {
+        tbody.innerHTML = `<tr><td colspan="6">
           <div class="empty-state">
             <div class="icon">🍽️</div>
-            <p>${filter === 'All' ? 'No orders yet. Orders appear here after customers pay.' : `No ${filter} orders.`}</p>
+            <p>${activeFilter === 'All' && !searchQuery ? 'No orders yet. Orders appear here after customers pay.' : 'No matching orders.'}</p>
           </div></td></tr>`;
         return;
       }
 
-      // Sort newest first
-      const sorted = [...filtered].sort((a,b) => b.id - a.id);
-
+      const sorted = [...orders].sort((a, b) => b.id - a.id);
       tbody.innerHTML = sorted.map(order => {
-        const itemStr = (order.items || [])
-          .map(({ item, qty }) => `${item?.name || '?'} ×${qty}`)
-          .join(', ');
         const shortId = String(order.id).slice(-6);
+        const itemStr = (order.items || []).map(({ item, qty }) => `${item?.name || '?'} ×${qty}`).join(', ');
+        const cust = order.customer || {};
         return `
           <tr>
-            <td><div class="order-id">#${shortId}</div></td>
+            <td>
+              <div class="order-id">#${shortId}</div>
+              ${order.ref ? `<div class="order-ref">${order.ref}</div>` : ''}
+            </td>
+            <td>
+              <div class="customer-name">${cust.name || '—'}</div>
+              ${cust.phone ? `<div class="customer-detail">📞 ${cust.phone}</div>` : ''}
+              ${cust.address ? `<div class="customer-detail">📍 ${cust.address.slice(0,30)}${cust.address.length > 30 ? '…' : ''}</div>` : ''}
+              <button class="view-btn" onclick="openDetail(${order.id})">View details</button>
+            </td>
             <td><div class="order-items">${itemStr || '—'}</div></td>
             <td><div class="order-total">${naira(order.total || 0)}</div></td>
             <td>
-              <button class="status-badge status-${order.status}"
-                onclick="cycleStatus(${order.id})"
-                title="Click to change status">
+              <button class="status-badge status-${order.status}" onclick="cycleStatus(${order.id})" title="Click to change status">
                 ${order.status}
               </button>
             </td>
@@ -608,6 +462,76 @@
           </tr>`;
       }).join('');
     }
+
+    /* ─── ORDER DETAIL DRAWER ─── */
+    function openDetail(id) {
+      const orders = getOrders();
+      const order = orders.find(o => o.id === id);
+      if (!order) return;
+
+      const cust = order.customer || {};
+      const shortId = String(order.id).slice(-6);
+      document.getElementById('detailTitle').textContent = '#' + shortId;
+
+      const itemsHtml = (order.items || []).map(({ item, qty, unitPrice }) => `
+        <div class="detail-item">
+          <div>
+            <div class="detail-item-name">${item?.name || '?'}</div>
+            <div class="detail-item-qty">Qty: ${qty} × ${naira(unitPrice || 0)}</div>
+          </div>
+          <div class="detail-item-price">${naira((unitPrice || 0) * qty)}</div>
+        </div>`).join('');
+
+      const waMsg = encodeURIComponent(
+        `📋 *Order Update — Timeout Restaurant*\n\n` +
+        `Hi ${cust.name || 'Customer'}! Your order #${shortId} is being prepared.\n\n` +
+        `📍 Delivering to: ${cust.address || '—'}\n` +
+        `💰 Total Paid: ${naira(order.total || 0)}\n` +
+        `🧾 Ref: ${order.ref || '—'}\n\n` +
+        `Thank you for ordering from Timeout Restaurant! 🍽️`
+      );
+
+      document.getElementById('detailBody').innerHTML = `
+        <div class="detail-section">
+          <div class="detail-section-label">Customer Info</div>
+          <div class="detail-row"><span class="detail-row-key">Name</span><span class="detail-row-val">${cust.name || '—'}</span></div>
+          <div class="detail-row"><span class="detail-row-key">Phone</span><span class="detail-row-val">${cust.phone || '—'}</span></div>
+          <div class="detail-row"><span class="detail-row-key">Email</span><span class="detail-row-val">${cust.email || '—'}</span></div>
+          <div class="detail-row"><span class="detail-row-key">Address</span><span class="detail-row-val">${cust.address || '—'}</span></div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section-label">Payment</div>
+          <div class="detail-row"><span class="detail-row-key">Reference</span><span class="detail-row-val detail-ref">${order.ref || '—'}</span></div>
+          <div class="detail-row"><span class="detail-row-key">Method</span><span class="detail-row-val">${order.method || 'Card'}</span></div>
+          <div class="detail-row"><span class="detail-row-key">Time</span><span class="detail-row-val">${order.time || '—'}</span></div>
+          <div class="detail-row"><span class="detail-row-key">Status</span><span class="detail-row-val">
+            <button class="status-badge status-${order.status}" onclick="cycleStatus(${order.id})">${order.status}</button>
+          </span></div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section-label">Order Items</div>
+          <div class="detail-items-list">${itemsHtml}</div>
+          <div class="detail-total">
+            <span class="detail-total-label">Total Paid</span>
+            <span class="detail-total-val">${naira(order.total || 0)}</span>
+          </div>
+        </div>
+        <button class="detail-wa-btn" onclick="window.open('https://wa.me/${2349011724825}?text=${waMsg}','_blank')">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Message Customer on WhatsApp
+        </button>`;
+
+      document.getElementById('detailOverlay').classList.add('open');
+      document.getElementById('detailDrawer').classList.add('open');
+    }
+
+    function closeDetail() {
+      document.getElementById('detailOverlay').classList.remove('open');
+      document.getElementById('detailDrawer').classList.remove('open');
+    }
+
+    document.getElementById('detailClose').addEventListener('click', closeDetail);
+    document.getElementById('detailOverlay').addEventListener('click', closeDetail);
 
     /* ─── CYCLE STATUS ─── */
     function cycleStatus(id) {
@@ -618,16 +542,25 @@
       order.status = cycle[order.status] || 'Pending';
       saveOrders(orders);
       renderAll();
+      // refresh detail drawer if open
+      const drawer = document.getElementById('detailDrawer');
+      if (drawer.classList.contains('open')) openDetail(id);
       showToast(`Order #${String(id).slice(-6)} → ${order.status}`);
     }
 
-    /* ─── FILTER BUTTONS ─── */
+    /* ─── FILTERS & SEARCH ─── */
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        renderOrders(btn.dataset.filter);
+        activeFilter = btn.dataset.filter;
+        renderOrders();
       });
+    });
+
+    document.getElementById('searchOrders').addEventListener('input', function () {
+      searchQuery = this.value.trim();
+      renderOrders();
     });
 
     /* ─── CLEAR ALL ─── */
@@ -654,17 +587,12 @@
       const orders = getOrders();
       renderStats(orders);
       renderPopular(orders);
-      renderOrders(activeFilter);
+      renderOrders();
     }
 
-    /* ─── LIVE REFRESH (poll localStorage every 5s) ─── */
     renderAll();
     setInterval(renderAll, 5000);
-
-    /* ─── STORAGE LISTENER (cross-tab updates) ─── */
-    window.addEventListener('storage', e => {
-      if (e.key === 'timeout_orders') renderAll();
-    });
+    window.addEventListener('storage', e => { if (e.key === 'timeout_orders') renderAll(); });
   </script>
 </body>
 </html>
