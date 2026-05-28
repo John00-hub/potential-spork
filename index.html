@@ -1422,7 +1422,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
       Proceed to Payment
     </button>
-    <div class="cart-note">🔒 Secured by Paystack · Cards, Bank Transfer & USSD</div>
+    <div class="cart-note" id="cartNote">🔒 Secured by Paystack · Cards, Bank Transfer & USSD</div>
   </div>
 </div>
 
@@ -2014,6 +2014,11 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     document.getElementById('cartOverlay').classList.add('open');
     document.getElementById('cartDrawer').classList.add('open');
     document.body.style.overflow = 'hidden';
+    const withinHours = isWithinOrderingHours();
+    document.getElementById('checkoutBtn').disabled = !withinHours;
+    document.getElementById('cartNote').innerHTML = withinHours
+      ? '🔒 Secured by Paystack · Cards, Bank Transfer & USSD'
+      : '🕙 We are closed. Orders are accepted daily 9am – 10pm (Abuja time).';
   }
   function closeCart() {
     document.getElementById('cartOverlay').classList.remove('open');
@@ -2022,10 +2027,16 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   }
 
   document.getElementById('cartFab').addEventListener('click', openCart);
-  document.getElementById('cartClose').addEventListener('click', closeCart);
-  document.getElementById('cartOverlay').addEventListener('click', closeCart);
+document.getElementById('cartClose').addEventListener('click', closeCart);
+document.getElementById('cartOverlay').addEventListener('click', closeCart);
 
   /* ─── CHECKOUT ─── */
+  function isWithinOrderingHours() {
+    const now = new Date();
+    const wat = new Date(now.toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
+    const hour = wat.getHours();
+    return hour >= 9 && hour < 22;
+  }
   document.getElementById('checkoutBtn').addEventListener('click', function () {
     closeCart();
     setTimeout(function () { document.getElementById('modalOverlay').classList.add('open'); }, 300);
