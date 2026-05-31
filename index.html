@@ -569,8 +569,7 @@
     .checkout-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(201,168,76,0.5); filter: brightness(1.06); }
     .checkout-btn:active { transform: scale(0.98); }
     .checkout-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-    .cart-note { font-size: 11px; color: var(--muted); text-align: center; letter-spacing: 0.3px; }
-
+    .cart-note { font-size: 13px; color: var(--muted); text-align: center; letter-spacing: 0.3px; padding: 10px; background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.25); border-radius: 10px; }
     /* ─── CUSTOMER INFO MODAL ─── */
     .modal-overlay { position: fixed; inset: 0; z-index: 970; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
     @media (min-width: 640px) { .modal-overlay { align-items: center; justify-content: center; } }
@@ -2017,7 +2016,7 @@ checkBtn.disabled   = count === 0 || !isWithinOrderingHours();
     document.getElementById('checkoutBtn').disabled = !withinHours;
     document.getElementById('cartNote').innerHTML = withinHours
       ? '🔒 Secured by Paystack · Cards, Bank Transfer & USSD'
-      : '🕙 We are closed. Orders are accepted daily 9am – 10pm (Abuja time).';
+       : '🚫 <strong style="font-size:15px;color:#ff6b6b;display:block;text-align:center;line-height:1.6;">We are currently closed.<br/>Orders accepted daily<br/>9am – 10pm (Abuja time)</strong>';
   }
   function closeCart() {
     document.getElementById('cartOverlay').classList.remove('open');
