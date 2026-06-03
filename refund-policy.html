@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Return & Refund Policy — Timeout Restaurant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #C9A84C;
+      --dark: #1a1510;
+      --cream: #FAF6EF;
+      --text: #3a3028;
+      --muted: #8a7f72;
+      --border: #e8e0d0;
+    }
+
+    body {
+      background: var(--cream);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.8;
+    }
+
+    header {
+      background: var(--dark);
+      padding: 28px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    header .logo-text {
+      font-family: 'Playfair Display', serif;
+      color: var(--gold);
+      font-size: 1.5rem;
+      letter-spacing: 0.04em;
+    }
+
+    header .logo-sub {
+      color: #ffffff60;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .divider {
+      width: 1px;
+      height: 36px;
+      background: #ffffff20;
+      margin: 0 8px;
+    }
+
+    .page-label {
+      color: #ffffff80;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    main {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
+
+    .hero {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 40px;
+      margin-bottom: 48px;
+    }
+
+    .tag {
+      display: inline-block;
+      background: var(--gold);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 2px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-weight: 600;
+      line-height: 1.2;
+      color: var(--dark);
+      margin-bottom: 16px;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+    }
+
+    .intro {
+      background: var(--dark);
+      color: #f0ebe0;
+      padding: 28px 32px;
+      border-radius: 4px;
+      margin-bottom: 48px;
+      border-left: 3px solid var(--gold);
+      font-size: 0.95rem;
+      line-height: 1.9;
+    }
+
+    section {
+      margin-bottom: 44px;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--dark);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2 .num {
+      background: var(--gold);
+      color: #fff;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0;
+    }
+
+    ul li {
+      font-size: 0.93rem;
+      padding: 8px 0 8px 20px;
+      position: relative;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    ul li:last-child { border-bottom: none; }
+
+    ul li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    .contact-box {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 28px 32px;
+      margin-top: 48px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .contact-box .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .contact-box .value {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--dark);
+    }
+
+    .contact-box a {
+      background: var(--dark);
+      color: var(--gold);
+      text-decoration: none;
+      padding: 12px 24px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      transition: background 0.2s;
+    }
+
+    .contact-box a:hover { background: #2e261c; }
+
+    footer {
+      background: var(--dark);
+      color: #ffffff40;
+      text-align: center;
+      padding: 24px;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+    }
+
+    footer a { color: var(--gold); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      header { padding: 20px; }
+      main { padding: 40px 20px 60px; }
+      .intro { padding: 20px; }
+      .contact-box { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo-text">Timeout Restaurant</div>
+    <div class="logo-sub">Garki, Abuja</div>
+  </div>
+  <div class="divider"></div>
+  <div class="page-label">Policy Page</div>
+</header>
+
+<main>
+  <div class="hero">
+    <span class="tag">Legal</span>
+    <h1>Return &amp; Refund Policy</h1>
+    <p class="meta">Last updated: June 2026 &nbsp;·&nbsp; Timeout Restaurant, Garki, Abuja</p>
+  </div>
+
+  <div class="intro">
+    At Timeout Restaurant, we are committed to providing you with fresh, high-quality African and Continental meals with every order. Please read this policy carefully to understand how we handle returns, complaints, and refunds.
+  </div>
+
+  <section>
+    <h2><span class="num">1</span> General Policy</h2>
+    <p>All food and beverage orders placed through Timeout Restaurant are considered final upon preparation. Due to the perishable nature of food items, we are unable to accept returns once an order has been prepared and dispatched.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">2</span> Eligible Refund Situations</h2>
+    <p>We will consider a refund or replacement in the following circumstances:</p>
+    <ul>
+      <li>Your order arrived with missing items</li>
+      <li>You received an incorrect item that differs from what was ordered</li>
+      <li>Your order arrived in an unacceptable condition (spoiled, damaged, or contaminated)</li>
+      <li>Your order was not delivered within the stated timeframe with no prior notice</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num">3</span> How to Request a Refund</h2>
+    <p>To be eligible for a refund or replacement, you must:</p>
+    <ul>
+      <li>Contact us within <strong>1 hour</strong> of receiving your order</li>
+      <li>Provide your order details (name, order time, items ordered)</li>
+      <li>Describe the issue clearly — photos are helpful where applicable</li>
+    </ul>
+    <p>Requests made after 1 hour of delivery may not be eligible for a refund.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">4</span> Refund Processing</h2>
+    <p>Once your refund request is reviewed and approved:</p>
+    <ul>
+      <li>Refunds are processed within <strong>3–5 business days</strong></li>
+      <li>Refunds will be returned via the original payment method where applicable</li>
+      <li>We may offer a replacement meal or store credit at our discretion</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num">5</span> Non-Refundable Situations</h2>
+    <ul>
+      <li>Change of mind after an order has been prepared</li>
+      <li>Incorrect delivery address provided by the customer</li>
+      <li>Delays caused by circumstances beyond our control (traffic, weather, etc.)</li>
+      <li>Orders that have been partially consumed</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num">6</span> Delivery Hours</h2>
+    <p>Timeout Restaurant operates and delivers from <strong>9:00 AM – 11:30 PM</strong> daily. Orders placed outside these hours will be processed on the next available delivery window.</p>
+  </section>
+
+  <div class="contact-box">
+    <div>
+      <div class="label">Questions? Reach us directly</div>
+      <div class="value">09061600052</div>
+    </div>
+    <a href="https://wa.me/2349061600052" target="_blank">WhatsApp Us</a>
+  </div>
+</main>
+
+<footer>
+  &copy; 2026 Timeout Restaurant, Garki, Abuja &nbsp;·&nbsp;
+  <a href="https://timeout.com.ng">timeout.com.ng</a>
+</footer>
+
+</body>
+</html>
