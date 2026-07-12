@@ -1867,8 +1867,19 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   /* ─── CART STATE ─── */
   let cart = {};
 
+  /* Categories exempt from the ₦500 take-away pack fee */
+  const TAKEAWAY_EXEMPT_CATS = new Set(['burger', 'chips']);
+  const TAKEAWAY_FEE = 500;
+
+  /** Returns ₦500 if at least one cart item is NOT in an exempt category, else 0 */
+  function takeawayFee() {
+    const hasNonExempt = Object.values(cart).some(e => !TAKEAWAY_EXEMPT_CATS.has(e.item.cat));
+    return hasNonExempt ? TAKEAWAY_FEE : 0;
+  }
+
   function cartTotal() {
-    return Object.values(cart).reduce((s, e) => s + getDiscountedPrice(e.item.price, e.item.cat) * e.qty, 0);
+    const itemsTotal = Object.values(cart).reduce((s, e) => s + getDiscountedPrice(e.item.price, e.item.cat) * e.qty, 0);
+    return itemsTotal + takeawayFee();
   }
   function cartCount() { return Object.values(cart).reduce((s, e) => s + e.qty, 0); }
   function naira(n)    { return '₦' + Number(n).toLocaleString('en-NG'); }
@@ -2010,6 +2021,7 @@ checkBtn.disabled   = count === 0 || !isWithinOrderingHours();
       return;
     }
 
+    const fee = takeawayFee();
     itemsEl.innerHTML = Object.values(cart).map(({ item, qty }) => {
       const unitDiscounted = getDiscountedPrice(item.price, item.cat);
       const lineTotal = unitDiscounted * qty;
@@ -2031,7 +2043,15 @@ checkBtn.disabled   = count === 0 || !isWithinOrderingHours();
           <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
         </div>
       </div>`;
-    }).join('');
+    }).join('') + (fee > 0 ? `
+      <div class="cart-item" style="opacity:0.75;border-top:1px solid rgba(255,255,255,0.07);margin-top:6px;padding-top:10px;">
+        <div style="font-size:18px;width:52px;text-align:center;flex-shrink:0;">🥡</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name" style="font-size:13px;">Take-Away Pack</div>
+          <div class="cart-item-price" style="font-size:12px;color:var(--text-soft);">Packaging fee</div>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:var(--gold);white-space:nowrap;">${naira(fee)}</div>
+      </div>` : '');
   }
 
   function changeQty(id, delta) {
@@ -2093,9 +2113,10 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
     if (!email.includes('@')) { alert('Please enter a valid email address.'); return; }
 
     const total      = cartTotal();
+    const fee        = takeawayFee();
     const orderItems = Object.values(cart).map(({ item, qty }) =>
       item.name + ' x' + qty + ' = ' + naira(getDiscountedPrice(item.price, item.cat) * qty)
-    ).join('\n');
+    ).join('\n') + (fee > 0 ? '\n🥡 Take-Away Pack = ' + naira(fee) : '');
 
     const payBtn = document.getElementById('modalPay');
     payBtn.disabled    = true;
@@ -2127,19 +2148,21 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
           date:          new Date().toISOString(),
           items:         cartItemsArr,
           deliveryFee:   0,
-          serviceCharge: 0
+          serviceCharge: 0,
+          takeawayFee:   fee
         }));
 // Save to localStorage for admin dashboard
 (function() {
   var existing = [];
   try { existing = JSON.parse(localStorage.getItem('timeout_orders') || '[]'); } catch(_) {}
   var newOrder = {
-    id:        Date.now(),
-    ref:       response.reference,
-    method:    'Card',
-    time:      new Date().toLocaleString('en-NG'),
-    status:    'Pending',
-    total:     total,
+    id:          Date.now(),
+    ref:         response.reference,
+    method:      'Card',
+    time:        new Date().toLocaleString('en-NG'),
+    status:      'Pending',
+    total:       total,
+    takeawayFee: fee,
     customer: { name: name, email: email, phone: phone, address: address },
     items:    Object.values(cart).map(function(e) {
       return { item: { name: e.item.name, cat: e.item.cat }, qty: e.qty, unitPrice: getDiscountedPrice(e.item.price, e.item.cat) };
