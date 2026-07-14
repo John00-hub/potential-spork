@@ -1457,6 +1457,10 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   </div>
   <div class="cart-items" id="cartItems"></div>
   <div class="cart-footer">
+    <div class="cart-total-row" id="takeawayRow" style="display:none;font-size:13px;opacity:0.8;margin-bottom:4px;">
+      <span class="cart-total-label">📦 Takeaway Pack</span>
+      <span class="cart-total-amount" id="cartTakeaway" style="font-size:14px;">₦0</span>
+    </div>
     <div class="cart-total-row">
       <span class="cart-total-label">Total Amount</span>
       <span class="cart-total-amount" id="cartTotal">₦0</span>
@@ -1535,7 +1539,6 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   /* ─── CONFIG ─── */
   const PHONE = '2349011724825';
   const PAYSTACK_KEY = 'pk_live_964be344ae93745d0827899bbdf96140d60f899b';
-
   /* ─── IMAGE URL HELPER ─── */
   function imgUrl(raw, eager) {
     try {
@@ -1852,6 +1855,21 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
    */
   const DRINK_CATS = new Set(['drinks', 'beer', 'juice', 'cocktails', 'whisky', 'wine', 'champagne']);
 
+  /* Categories exempt from the ₦500 takeaway pack fee:
+     shawarma/burgers (cat:'burger') and fries (cat:'chips') */
+  const TAKEAWAY_EXEMPT_CATS = new Set(['burger', 'chips']);
+  const TAKEAWAY_PACK_FEE    = 500; /* Naira per eligible item */
+
+  function takeawayPackFee() {
+    /* Count items that are NOT in exempt categories and NOT drinks,
+       then charge ₦500 per qualifying item (not per qty). */
+    return Object.values(cart).filter(function(e) {
+      return !TAKEAWAY_EXEMPT_CATS.has(e.item.cat) && !DRINK_CATS.has(e.item.cat);
+    }).reduce(function(sum, e) {
+      return sum + TAKEAWAY_PACK_FEE * e.qty;
+    }, 0);
+  }
+
   function isPromoActive() {
     const now   = new Date();
     const start = new Date('2026-05-04T07:00:00');
@@ -1867,19 +1885,9 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   /* ─── CART STATE ─── */
   let cart = {};
 
-  /* Categories exempt from the ₦500 take-away pack fee */
-  const TAKEAWAY_EXEMPT_CATS = new Set(['burger', 'chips']);
-  const TAKEAWAY_FEE = 500;
-
-  /** Returns ₦500 if at least one cart item is NOT in an exempt category, else 0 */
-  function takeawayFee() {
-    const hasNonExempt = Object.values(cart).some(e => !TAKEAWAY_EXEMPT_CATS.has(e.item.cat));
-    return hasNonExempt ? TAKEAWAY_FEE : 0;
-  }
-
   function cartTotal() {
     const itemsTotal = Object.values(cart).reduce((s, e) => s + getDiscountedPrice(e.item.price, e.item.cat) * e.qty, 0);
-    return itemsTotal + takeawayFee();
+    return itemsTotal + takeawayPackFee();
   }
   function cartCount() { return Object.values(cart).reduce((s, e) => s + e.qty, 0); }
   function naira(n)    { return '₦' + Number(n).toLocaleString('en-NG'); }
@@ -2010,9 +2018,19 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     textEl.textContent  = count > 0 ? naira(total) : 'View Cart';
     fab.classList.toggle('visible', count > 0);
 
-    const itemsEl  = document.getElementById('cartItems');
-    const totalEl  = document.getElementById('cartTotal');
-    const checkBtn = document.getElementById('checkoutBtn');
+    const itemsEl      = document.getElementById('cartItems');
+    const totalEl      = document.getElementById('cartTotal');
+    const checkBtn     = document.getElementById('checkoutBtn');
+    const takeawayRow  = document.getElementById('takeawayRow');
+    const takeawayEl   = document.getElementById('cartTakeaway');
+
+    const packFee = takeawayPackFee();
+    if (packFee > 0) {
+      takeawayEl.textContent   = naira(packFee);
+      takeawayRow.style.display = '';
+    } else {
+      takeawayRow.style.display = 'none';
+    }
 
     totalEl.textContent = naira(total);
 checkBtn.disabled   = count === 0 || !isWithinOrderingHours();
@@ -2021,7 +2039,6 @@ checkBtn.disabled   = count === 0 || !isWithinOrderingHours();
       return;
     }
 
-    const fee = takeawayFee();
     itemsEl.innerHTML = Object.values(cart).map(({ item, qty }) => {
       const unitDiscounted = getDiscountedPrice(item.price, item.cat);
       const lineTotal = unitDiscounted * qty;
@@ -2043,15 +2060,7 @@ checkBtn.disabled   = count === 0 || !isWithinOrderingHours();
           <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
         </div>
       </div>`;
-    }).join('') + (fee > 0 ? `
-      <div class="cart-item" style="opacity:0.75;border-top:1px solid rgba(255,255,255,0.07);margin-top:6px;padding-top:10px;">
-        <div style="font-size:18px;width:52px;text-align:center;flex-shrink:0;">🥡</div>
-        <div class="cart-item-info">
-          <div class="cart-item-name" style="font-size:13px;">Take-Away Pack</div>
-          <div class="cart-item-price" style="font-size:12px;color:var(--text-soft);">Packaging fee</div>
-        </div>
-        <div style="font-size:13px;font-weight:600;color:var(--gold);white-space:nowrap;">${naira(fee)}</div>
-      </div>` : '');
+    }).join('');
   }
 
   function changeQty(id, delta) {
@@ -2113,10 +2122,10 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
     if (!email.includes('@')) { alert('Please enter a valid email address.'); return; }
 
     const total      = cartTotal();
-    const fee        = takeawayFee();
+    const packFee    = takeawayPackFee();
     const orderItems = Object.values(cart).map(({ item, qty }) =>
       item.name + ' x' + qty + ' = ' + naira(getDiscountedPrice(item.price, item.cat) * qty)
-    ).join('\n') + (fee > 0 ? '\n🥡 Take-Away Pack = ' + naira(fee) : '');
+    ).join('\n') + (packFee > 0 ? '\n📦 Takeaway Pack = ' + naira(packFee) : '');
 
     const payBtn = document.getElementById('modalPay');
     payBtn.disabled    = true;
@@ -2149,20 +2158,19 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
           items:         cartItemsArr,
           deliveryFee:   0,
           serviceCharge: 0,
-          takeawayFee:   fee
+          takeawayFee:   packFee
         }));
 // Save to localStorage for admin dashboard
 (function() {
   var existing = [];
   try { existing = JSON.parse(localStorage.getItem('timeout_orders') || '[]'); } catch(_) {}
   var newOrder = {
-    id:          Date.now(),
-    ref:         response.reference,
-    method:      'Card',
-    time:        new Date().toLocaleString('en-NG'),
-    status:      'Pending',
-    total:       total,
-    takeawayFee: fee,
+    id:        Date.now(),
+    ref:       response.reference,
+    method:    'Card',
+    time:      new Date().toLocaleString('en-NG'),
+    status:    'Pending',
+    total:     total,
     customer: { name: name, email: email, phone: phone, address: address },
     items:    Object.values(cart).map(function(e) {
       return { item: { name: e.item.name, cat: e.item.cat }, qty: e.qty, unitPrice: getDiscountedPrice(e.item.price, e.item.cat) };
@@ -2174,7 +2182,7 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
 
         fbq('track', 'Purchase', { value: total, currency: 'NGN' });
 
-        window.location.href = '/check-out.html';
+        showSuccess(response.reference, name, phone, address, orderItems, total);
       },
       onClose: function () {
         history.replaceState(null, '', '/');
@@ -2183,7 +2191,6 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
       }
     });
 
-    history.pushState(null, '', '/check-out.html');
     handler.openIframe();
   });
 
