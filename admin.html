@@ -811,7 +811,7 @@
 </div>
 
 <!-- ADMIN PANEL -->
-<div id="adminPanel">
+<div id="adminPanel" style="display:none;">
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
@@ -1332,15 +1332,14 @@ function stopFirestoreListener() {
 }
 
 /* ── AUTH ── */
-// Fallback: if Firebase doesn't respond in 4s, show login anyway
+// Fallback: if Firebase doesn't respond in 5s, drop to login
 const loadingFallback = setTimeout(() => {
   hideLoading();
   setView('login');
-}, 4000);
+}, 5000);
 
 onAuthStateChanged(auth, (user) => {
   clearTimeout(loadingFallback);
-  hideLoading();
 
   if (user) {
     const email = user.email || '–';
@@ -1352,6 +1351,9 @@ onAuthStateChanged(auth, (user) => {
     stopFirestoreListener();
     setView('login');
   }
+
+  // Hide loading AFTER the correct view is set, so nothing leaks through
+  hideLoading();
 });
 
 document.getElementById('loginBtn').addEventListener('click', async () => {
