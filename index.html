@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,6 +21,64 @@
   <!-- EmailJS: for automatic order notification emails -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script>emailjs.init('atVlhsVq8lVoP9f3f');</script>
+
+  <!-- ═══════════════════════════════════════════════════════
+       FIREBASE — real-time price sync from Firestore
+       Prices set in admin.html override the hardcoded values
+       below without touching this file.
+  ════════════════════════════════════════════════════════ -->
+  <script type="module">
+    import { initializeApp }      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getFirestore, collection, onSnapshot }
+      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    /* ── your Firebase project config ── */
+    const firebaseConfig = {
+      apiKey:            "AIzaSyAcEpZxA95IzaVpj5YpsdrkBmT3v6sJuMo",
+      authDomain:        "olamide-3fb18.firebaseapp.com",
+      databaseURL:       "https://olamide-3fb18-default-rtdb.firebaseio.com",
+      projectId:         "olamide-3fb18",
+      storageBucket:     "olamide-3fb18.firebasestorage.app",
+      messagingSenderId: "496751820578",
+      appId:             "1:496751820578:web:5e0e5a7e26dedccade2f7b",
+      measurementId:     "G-L01NFW0GV3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    /*
+      Listen to the 'menuPrices' collection in real-time.
+      Each document ID = item id (as a string, e.g. "80").
+      Each document has a single field: { price: <number> }
+
+      When a price changes in Firestore the menu re-renders
+      instantly for every visitor — no page refresh needed.
+    */
+    onSnapshot(collection(db, 'menuPrices'), (snapshot) => {
+      let changed = false;
+
+      snapshot.forEach((doc) => {
+        const itemId    = parseInt(doc.id, 10);
+        const newPrice  = doc.data().price;
+
+        // Find the matching item in the global `items` array (defined below)
+        // and update its price in-place.
+        if (window.__menuItems) {
+          const item = window.__menuItems.find(i => i.id === itemId);
+          if (item && typeof newPrice === 'number' && item.price !== newPrice) {
+            item.price = newPrice;
+            changed = true;
+          }
+        }
+      });
+
+      // Re-render the menu grid if any price changed.
+      if (changed && typeof window.__renderMenu === 'function') {
+        window.__renderMenu();
+      }
+    });
+  </script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1559,7 +1616,9 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   /* ════════════════════════════════════════════════════════════════
      MENU DATA
   ════════════════════════════════════════════════════════════════ */
-  const items = [
+  /* Exposed on window so the Firebase module (type="module") can patch
+     prices in real-time without touching the rest of this script. */
+  const items = window.__menuItems = [
 
     /* ── RICE MEAL ── */
     { id:80, cat:'rice', name:'Jollof Rice',                         price:3000, desc:'Party jollof rice.',                                                           rating:9.4, popular:true,
@@ -1976,6 +2035,8 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     return list;
   }
 
+  /* Also exposed so Firebase price listener can call it after patching prices. */
+  window.__renderMenu = render;
   function render() {
     const grid    = document.getElementById('menuGrid');
     const label   = document.getElementById('sectionLabel');
