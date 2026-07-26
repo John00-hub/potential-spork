@@ -1,598 +1,1039 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Timeout Restaurant — Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timeout Admin — Price Manager</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --gold:        #d4af37;
-      --gold-bright: #e8c84a;
-      --gold-dim:    rgba(212,175,55,0.10);
-      --bg:          #0a0a0a;
-      --surface:     #0f0f0f;
-      --card:        #141414;
-      --card2:       #181818;
-      --border:      rgba(212,175,55,0.13);
-      --border-soft: rgba(255,255,255,0.05);
+      --bg:          #07070600;
+      --surface:     #0f0f0d;
+      --card:        #161614;
+      --card-hover:  #1e1e1b;
+      --gold:        #c9a84c;
+      --gold-bright: #e2c06e;
+      --gold-dim:    rgba(201,168,76,0.10);
+      --gold-glow:   rgba(201,168,76,0.22);
       --text:        #ede8de;
-      --text-soft:   #8a857a;
-      --muted:       #4a4540;
-      --radius:      16px;
+      --text-soft:   #b5af9f;
+      --muted:       #615d52;
+      --border:      rgba(201,168,76,0.14);
+      --border-soft: rgba(255,255,255,0.06);
+      --red:         #e05252;
+      --green:       #4caf7d;
+      --radius:      14px;
+      --ease:        cubic-bezier(0.34, 1.2, 0.64, 1);
+      --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     html { scroll-behavior: smooth; }
+
     body {
-      min-height: 100vh;
-      background: var(--bg);
       font-family: 'Outfit', sans-serif;
+      background: #050504;
       color: var(--text);
+      min-height: 100vh;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
-    body::before {
-      content: '';
-      position: fixed; top: 0; left: 0; right: 0; height: 60vh;
-      background: radial-gradient(ellipse 70% 50% at 30% 0%, rgba(212,175,55,0.05) 0%, transparent 70%);
-      pointer-events: none; z-index: 0;
     }
 
-    /* ─── HEADER ─── */
-    .header {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(10,10,10,0.88);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(24px);
-      padding: 0 32px;
-      display: flex; align-items: center; justify-content: space-between;
-      height: 64px;
-      animation: slideDown 0.5s ease both;
+    /* ─── LOGIN SCREEN ─── */
+    #loginScreen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+      background:
+        radial-gradient(ellipse 600px 400px at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 70%),
+        #050504;
     }
-    @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .header-left { display: flex; align-items: center; gap: 14px; }
-    .header-logo { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--text); }
-    .header-logo span { color: var(--gold); font-style: italic; }
-    .header-badge { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); background: var(--gold-dim); border: 1px solid rgba(212,175,55,0.2); padding: 3px 10px; border-radius: 100px; font-weight: 600; }
-    .header-right { display: flex; align-items: center; gap: 16px; }
-    .live-dot { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--text-soft); }
-    .live-dot::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #4caf84; box-shadow: 0 0 8px #4caf84; animation: livePulse 2s ease infinite; }
-    @keyframes livePulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.7); } }
-    .logout-btn { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-soft); background: none; border: 1px solid var(--border-soft); border-radius: 8px; padding: 7px 14px; cursor: pointer; font-family: 'Outfit', sans-serif; transition: color 0.2s, border-color 0.2s; }
-    .logout-btn:hover { color: var(--gold); border-color: var(--border); }
 
-    /* ─── MAIN ─── */
-    .main { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 36px 24px 80px; }
-    .page-title { margin-bottom: 32px; animation: fadeUp 0.6s 0.1s ease both; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-    .page-title h1 { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
-    .page-title h1 em { color: var(--gold); font-style: italic; }
-    .page-title p { font-size: 13px; color: var(--text-soft); }
-    #clockDisplay { font-size: 12px; color: var(--gold); font-weight: 500; letter-spacing: 1px; margin-top: 4px; }
+    .login-box {
+      width: 100%;
+      max-width: 400px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 44px 36px 40px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04) inset;
+    }
 
-    /* ─── STAT CARDS ─── */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
-    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; position: relative; overflow: hidden; transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1), box-shadow 0.3s ease; animation: fadeUp 0.6s ease both; }
-    .stat-card:nth-child(1){animation-delay:.15s}.stat-card:nth-child(2){animation-delay:.22s}.stat-card:nth-child(3){animation-delay:.29s}.stat-card:nth-child(4){animation-delay:.36s}.stat-card:nth-child(5){animation-delay:.43s}.stat-card:nth-child(6){animation-delay:.50s}
-    .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(to right, transparent, var(--gold), transparent); opacity: 0; transition: opacity 0.3s; }
-    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.4); }
-    .stat-card:hover::before { opacity: 1; }
-    .stat-icon { width: 42px; height: 42px; background: var(--gold-dim); border: 1px solid rgba(212,175,55,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 16px; }
-    .stat-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-soft); font-weight: 500; margin-bottom: 8px; }
-    .stat-value { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--gold-bright); letter-spacing: -1px; line-height: 1; }
-    .stat-sub { font-size: 11px; color: var(--muted); margin-top: 6px; }
+    .login-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--gold-bright);
+      text-align: center;
+      margin-bottom: 6px;
+    }
 
-    /* ─── SECTION HEADER ─── */
-    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .section-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; color: var(--text); }
-    .section-line { height: 1px; flex: 1; margin-left: 16px; background: linear-gradient(to right, var(--border), transparent); }
+    .login-sub {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      letter-spacing: 0.3px;
+      margin-bottom: 36px;
+    }
 
-    /* ─── POPULAR ─── */
-    .popular-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 36px; animation: fadeUp 0.6s 0.4s ease both; }
-    .popular-item { background: var(--card); border: 1px solid var(--border-soft); border-radius: 12px; padding: 16px; transition: border-color 0.25s, transform 0.25s; }
-    .popular-item:hover { border-color: var(--border); transform: translateY(-2px); }
-    .popular-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
-    .popular-count { font-size: 11px; color: var(--text-soft); }
-    .popular-bar-wrap { height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; margin-top: 10px; overflow: hidden; }
-    .popular-bar { height: 100%; background: linear-gradient(to right, var(--gold), var(--gold-bright)); border-radius: 2px; transition: width 1.2s cubic-bezier(0.22,1,0.36,1); }
+    .field { margin-bottom: 18px; }
 
-    /* ─── TABLE ─── */
-    .orders-section { animation: fadeUp 0.6s 0.5s ease both; }
-    .table-controls { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-    .filter-btn { font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-soft); background: var(--card); border: 1px solid var(--border-soft); border-radius: 8px; padding: 7px 14px; cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.2s; }
-    .filter-btn.active, .filter-btn:hover { color: var(--gold); border-color: var(--border); background: var(--gold-dim); }
-    .search-orders { background: var(--card); border: 1px solid var(--border-soft); border-radius: 8px; padding: 7px 14px; color: var(--text); font-family: 'Outfit', sans-serif; font-size: 12px; outline: none; width: 200px; transition: border-color 0.2s; }
-    .search-orders:focus { border-color: var(--border); }
-    .search-orders::placeholder { color: var(--muted); }
-    .clear-btn { margin-left: auto; font-size: 11px; color: #e05555; background: rgba(224,85,85,0.08); border: 1px solid rgba(224,85,85,0.2); border-radius: 8px; padding: 7px 14px; cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.2s; }
-    .clear-btn:hover { background: rgba(224,85,85,0.15); }
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
 
-    .table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-    table { width: 100%; border-collapse: collapse; }
-    thead tr { background: rgba(212,175,55,0.04); border-bottom: 1px solid var(--border); }
-    th { padding: 14px 18px; text-align: left; font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-soft); font-weight: 600; }
-    tbody tr { border-bottom: 1px solid var(--border-soft); transition: background 0.2s; }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: rgba(255,255,255,0.02); }
-    td { padding: 14px 18px; font-size: 13px; color: var(--text); vertical-align: top; }
-    .order-id { font-family: 'Playfair Display', serif; font-size: 12px; color: var(--gold); font-weight: 600; }
-    .order-ref { font-size: 10px; color: var(--muted); margin-top: 3px; font-family: monospace; letter-spacing: 0.3px; }
-    .customer-name { font-weight: 500; color: var(--text); }
-    .customer-detail { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
-    .order-items { font-size: 12px; color: var(--text-soft); max-width: 220px; line-height: 1.6; }
-    .order-total { font-weight: 600; color: var(--gold-bright); font-size: 14px; white-space: nowrap; }
-    .order-time { font-size: 11px; color: var(--muted); white-space: nowrap; }
-    .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 100px; font-size: 11px; font-weight: 600; cursor: pointer; transition: transform 0.2s; white-space: nowrap; border: none; font-family: 'Outfit', sans-serif; }
-    .status-badge:hover { transform: scale(1.05); }
-    .status-badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
-    .status-Pending  { background: rgba(232,166,48,0.12);  color: #e8a630; border: 1px solid rgba(232,166,48,0.25); }
-    .status-Pending::before  { background: #e8a630; box-shadow: 0 0 6px #e8a630; }
-    .status-Paid     { background: rgba(76,175,132,0.12);  color: #4caf84; border: 1px solid rgba(76,175,132,0.25); }
-    .status-Paid::before     { background: #4caf84; box-shadow: 0 0 6px #4caf84; }
-    .status-Completed{ background: rgba(91,138,240,0.12);  color: #5b8af0; border: 1px solid rgba(91,138,240,0.25); }
-    .status-Completed::before{ background: #5b8af0; box-shadow: 0 0 6px #5b8af0; }
+    .field input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-soft);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.22s, box-shadow 0.22s;
+    }
 
-    /* ─── ORDER DETAIL DRAWER ─── */
-    .detail-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-    .detail-overlay.open { opacity: 1; pointer-events: auto; }
-    .detail-drawer { position: fixed; right: 0; top: 0; bottom: 0; width: 420px; max-width: 100vw; background: #111; border-left: 1px solid var(--border); z-index: 210; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.22,1,0.36,1); overflow-y: auto; display: flex; flex-direction: column; }
-    .detail-drawer.open { transform: translateX(0); }
-    .detail-header { padding: 24px; border-bottom: 1px solid var(--border-soft); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: #111; z-index: 1; }
-    .detail-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--gold); }
-    .detail-close { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.07); border: none; color: var(--muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .detail-close:hover { color: var(--text); background: rgba(255,255,255,0.13); }
-    .detail-body { padding: 24px; flex: 1; }
-    .detail-section { margin-bottom: 24px; }
-    .detail-section-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 12px; }
-    .detail-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; gap: 12px; }
-    .detail-row-key { font-size: 12px; color: var(--text-soft); flex-shrink: 0; }
-    .detail-row-val { font-size: 13px; color: var(--text); font-weight: 500; text-align: right; word-break: break-all; }
-    .detail-ref { font-family: monospace; font-size: 12px; color: var(--gold); }
-    .detail-items-list { display: flex; flex-direction: column; gap: 10px; }
-    .detail-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--card2); border-radius: 10px; }
-    .detail-item-name { font-size: 13px; color: var(--text); }
-    .detail-item-qty { font-size: 11px; color: var(--text-soft); margin-top: 3px; }
-    .detail-item-price { font-size: 14px; color: var(--gold-bright); font-weight: 600; }
-    .detail-total { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--gold-dim); border: 1px solid var(--border); border-radius: 10px; margin-top: 12px; }
-    .detail-total-label { font-size: 12px; color: var(--text-soft); }
-    .detail-total-val { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--gold-bright); font-weight: 700; }
-    .detail-wa-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 9px; background: linear-gradient(135deg, #25d366, #128c4e); color: #fff; border: none; border-radius: 12px; padding: 14px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 20px; transition: all 0.25s; }
-    .detail-wa-btn:hover { filter: brightness(1.08); transform: translateY(-2px); }
+    .field input:focus {
+      border-color: rgba(201,168,76,0.45);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.09);
+    }
 
-    /* ─── VIEW BUTTON ─── */
-    .view-btn { font-size: 11px; color: var(--text-soft); background: none; border: 1px solid var(--border-soft); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.2s; margin-top: 4px; white-space: nowrap; }
-    .view-btn:hover { color: var(--gold); border-color: var(--border); }
+    .login-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 14px;
+      background: linear-gradient(135deg, #d9b456 0%, #c9a84c 50%, #a67c1b 100%);
+      color: #0a0900;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 28px rgba(201,168,76,0.40), 0 2px 0 rgba(255,255,255,0.12) inset;
+      transition: transform 0.2s var(--ease), box-shadow 0.2s, filter 0.18s;
+    }
 
-    /* ─── EMPTY ─── */
-    .empty-state { text-align: center; padding: 64px 24px; color: var(--text-soft); }
-    .empty-state .icon { font-size: 40px; margin-bottom: 14px; opacity: 0.4; }
-    .empty-state p { font-size: 14px; }
+    .login-btn:hover { transform: translateY(-2px); filter: brightness(1.06); box-shadow: 0 10px 36px rgba(201,168,76,0.50); }
+    .login-btn:active { transform: scale(0.98); }
+    .login-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    /* ─── TOAST ─── */
-    .toast { position: fixed; bottom: 28px; right: 28px; z-index: 999; background: var(--card2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 20px; font-size: 13px; color: var(--text); box-shadow: 0 16px 48px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; transform: translateY(80px); opacity: 0; transition: transform 0.4s cubic-bezier(0.34,1.2,0.64,1), opacity 0.3s; pointer-events: none; }
-    .toast.show { transform: translateY(0); opacity: 1; }
+    #loginError {
+      margin-top: 14px;
+      background: rgba(224,82,82,0.10);
+      border: 1px solid rgba(224,82,82,0.28);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #f08080;
+      display: none;
+      text-align: center;
+    }
 
-    @media (max-width: 640px) {
-      .header { padding: 0 16px; }
-      .main { padding: 24px 16px 60px; }
-      th, td { padding: 10px 10px; }
-      .page-title h1 { font-size: 24px; }
-      th:nth-child(3), td:nth-child(3) { display: none; } /* hide items col on mobile */
-      .detail-drawer { width: 100vw; }
+    /* ─── ADMIN PANEL ─── */
+    #adminPanel { display: none; }
+
+    /* Top bar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      background: rgba(5,5,4,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-soft);
+      gap: 16px;
+    }
+
+    .topbar-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--gold-bright);
+      white-space: nowrap;
+    }
+
+    .topbar-user {
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .logout-btn {
+      flex-shrink: 0;
+      background: rgba(224,82,82,0.12);
+      border: 1px solid rgba(224,82,82,0.25);
+      color: #f08080;
+      padding: 7px 16px;
+      border-radius: 100px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .logout-btn:hover { background: rgba(224,82,82,0.22); color: #ff9090; }
+
+    /* Main area */
+    .admin-main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    /* Stats bar */
+    .stats-row {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .stat-chip {
+      flex: 1;
+      min-width: 130px;
+      background: var(--card);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+    }
+
+    .stat-chip-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--gold-bright);
+    }
+
+    .stat-chip-label {
+      font-size: 11px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Section header */
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* Search & filter */
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar input[type="search"] {
+      flex: 1;
+      min-width: 180px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-soft);
+      border-radius: 100px;
+      padding: 10px 18px;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .toolbar input[type="search"]:focus { border-color: rgba(201,168,76,0.4); }
+    .toolbar input[type="search"]::placeholder { color: var(--muted); }
+
+    .toolbar select {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-soft);
+      border-radius: 100px;
+      padding: 10px 16px;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+      -webkit-appearance: none;
+    }
+    .toolbar select option { background: #161614; }
+
+    /* Item rows */
+    .items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--card);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      transition: border-color 0.25s, background 0.25s;
+    }
+
+    .item-row:hover { border-color: var(--border); background: var(--card-hover); }
+    .item-row.dirty { border-color: rgba(201,168,76,0.35); }
+    .item-row.saved  { border-color: rgba(76,175,125,0.45); }
+    .item-row.error  { border-color: rgba(224,82,82,0.45); }
+
+    .item-cat-badge {
+      flex-shrink: 0;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 100px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(201,168,76,0.2);
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    .item-name {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      min-width: 0;
+    }
+
+    .item-name small {
+      display: block;
+      font-size: 11.5px;
+      color: var(--muted);
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    /* Price input */
+    .price-wrap {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .price-prefix {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .price-input {
+      width: 100px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: var(--gold-bright);
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: right;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .price-input:focus {
+      border-color: rgba(201,168,76,0.5);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.08);
+    }
+
+    /* Save button per row */
+    .save-row-btn {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 8px;
+      color: var(--gold-bright);
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.18s var(--ease), box-shadow 0.2s;
+      white-space: nowrap;
+    }
+    .save-row-btn:hover { background: rgba(201,168,76,0.20); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(201,168,76,0.18); }
+    .save-row-btn:active { transform: scale(0.97); }
+    .save-row-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    .row-status {
+      flex-shrink: 0;
+      font-size: 18px;
+      line-height: 1;
+      min-width: 20px;
+      text-align: center;
+      transition: opacity 0.3s;
+    }
+
+    /* Save all */
+    .save-all-wrap {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      display: none;
+    }
+
+    .save-all-btn {
+      padding: 15px 40px;
+      background: linear-gradient(135deg, #d9b456 0%, #c9a84c 50%, #a67c1b 100%);
+      color: #0a0900;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      box-shadow: 0 8px 36px rgba(201,168,76,0.50), 0 2px 0 rgba(255,255,255,0.12) inset;
+      transition: transform 0.22s var(--ease), filter 0.18s;
+      white-space: nowrap;
+    }
+    .save-all-btn:hover { transform: translateY(-3px); filter: brightness(1.08); }
+    .save-all-btn:active { transform: scale(0.97); }
+    .save-all-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(20,20,18,0.96);
+      border: 1px solid rgba(201,168,76,0.25);
+      color: var(--text);
+      padding: 12px 24px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 500;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s, transform 0.3s var(--ease-out);
+      z-index: 9999;
+      white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.15);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Loading overlay */
+    #loadingOverlay {
+      position: fixed; inset: 0;
+      background: #050504;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 9000;
+      transition: opacity 0.4s;
+    }
+    #loadingOverlay.hidden { opacity: 0; pointer-events: none; }
+    .load-logo { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; color: var(--gold-bright); }
+    .load-sub  { font-size: 13px; color: var(--muted); }
+
+    /* Mobile tweaks */
+    @media (max-width: 600px) {
+      .login-box { padding: 32px 22px 28px; }
+      .item-row { flex-wrap: wrap; }
+      .item-name { order: -1; width: 100%; }
+      .price-input { width: 85px; }
     }
   </style>
-  
 </head>
 <body>
 
-  <header class="header">
-    <div class="header-left">
-      <div class="header-logo"><em>Timeout</em> Restaurant</div>
-      <div class="header-badge">Admin</div>
-    </div>
-    <div class="header-right">
-      <div class="live-dot">Live</div>
-      <button class="logout-btn" id="logoutBtn">Sign Out</button>
-    </div>
-  </header>
+<!-- ─── LOADING ─── -->
+<div id="loadingOverlay">
+  <div class="load-logo">Timeout</div>
+  <div class="spinner"></div>
+  <div class="load-sub">Loading admin panel…</div>
+</div>
 
-  <main class="main">
-    <div class="page-title">
-      <h1>Good evening, <em>Admin</em> 👋</h1>
-      <p>Here's what's happening at Timeout Restaurant</p>
-      <div id="clockDisplay"></div>
-    </div>
+<!-- ─── LOGIN SCREEN ─── -->
+<div id="loginScreen" style="display:none;">
+  <div class="login-box">
+    <div class="login-logo">Timeout</div>
+    <div class="login-sub">Admin Price Manager</div>
 
-    <!-- STAT CARDS -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon">📦</div>
-        <div class="stat-label">Total Orders</div>
-        <div class="stat-value" id="statTotal">0</div>
-        <div class="stat-sub">All time</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">💰</div>
-        <div class="stat-label">Total Revenue</div>
-        <div class="stat-value" id="statRevenue">₦0</div>
-        <div class="stat-sub">Paid + Completed</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">🕐</div>
-        <div class="stat-label">Today's Orders</div>
-        <div class="stat-value" id="statToday">0</div>
-        <div class="stat-sub" id="statTodayDate">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">⏳</div>
-        <div class="stat-label">Pending</div>
-        <div class="stat-value" id="statPending">0</div>
-        <div class="stat-sub">Awaiting action</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">👥</div>
-        <div class="stat-label">Unique Customers</div>
-        <div class="stat-value" id="statCustomers">0</div>
-        <div class="stat-sub">By phone number</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">🛒</div>
-        <div class="stat-label">Avg Order Value</div>
-        <div class="stat-value" id="statAvg">₦0</div>
-        <div class="stat-sub">All orders</div>
-      </div>
+    <div class="field">
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" placeholder="admin@timeout.com.ng" autocomplete="email" />
+    </div>
+    <div class="field">
+      <label for="loginPassword">Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
     </div>
 
-    <!-- POPULAR ITEMS -->
-    <div class="section-header" style="animation: fadeUp 0.6s 0.42s ease both;">
-      <div class="section-title">Popular Items</div>
-      <div class="section-line"></div>
-    </div>
-    <div class="popular-grid" id="popularGrid">
-      <div class="popular-item"><div class="popular-name" style="color:var(--text-soft)">No orders yet</div></div>
-    </div>
+    <button class="login-btn" id="loginBtn">Sign In</button>
+    <div id="loginError"></div>
+  </div>
+</div>
 
-    <!-- ORDERS TABLE -->
-    <div class="orders-section">
-      <div class="section-header">
-        <div class="section-title">All Orders</div>
-        <div class="section-line"></div>
-      </div>
-      <div class="table-controls">
-        <button class="filter-btn active" data-filter="All">All</button>
-        <button class="filter-btn" data-filter="Pending">Pending</button>
-        <button class="filter-btn" data-filter="Paid">Paid</button>
-        <button class="filter-btn" data-filter="Completed">Completed</button>
-        <input class="search-orders" type="search" id="searchOrders" placeholder="Search name, phone, ref…"/>
-        <button class="clear-btn" id="clearOrdersBtn">🗑 Clear All</button>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Order</th>
-              <th>Customer</th>
-              <th>Items</th>
-              <th>Total</th>
-              <th>Status</th>
-              <th>Time</th>
-            </tr>
-          </thead>
-          <tbody id="ordersBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </main>
+<!-- ─── ADMIN PANEL ─── -->
+<div id="adminPanel">
 
-  <!-- ORDER DETAIL DRAWER -->
-  <div class="detail-overlay" id="detailOverlay"></div>
-  <div class="detail-drawer" id="detailDrawer">
-    <div class="detail-header">
-      <div class="detail-title" id="detailTitle">#000000</div>
-      <button class="detail-close" id="detailClose">✕</button>
-    </div>
-    <div class="detail-body" id="detailBody"></div>
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-brand">Timeout Admin</div>
+    <div class="topbar-user" id="topbarUser">–</div>
+    <button class="logout-btn" id="logoutBtn">Sign Out</button>
   </div>
 
-  <div class="toast" id="toast">
-    <span>✅</span>
-    <span id="toastMsg">Status updated</span>
+  <div class="admin-main">
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-chip">
+        <div class="stat-chip-val" id="statTotal">–</div>
+        <div class="stat-chip-label">Total Items</div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-chip-val" id="statModified">0</div>
+        <div class="stat-chip-label">Prices in Firestore</div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-chip-val" id="statPending">0</div>
+        <div class="stat-chip-label">Unsaved Changes</div>
+      </div>
+    </div>
+
+    <!-- Section header -->
+    <div class="section-head">
+      <div class="section-title">Menu Prices</div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <input type="search" id="adminSearch" placeholder="Search item name…" />
+      <select id="catFilter">
+        <option value="all">All Categories</option>
+        <option value="chips">Chips & Fries</option>
+        <option value="pepper-soup">Pepper Soup</option>
+        <option value="soup">Nigerian Soup</option>
+        <option value="salad">Salad & Sandwiches</option>
+        <option value="protein">Protein</option>
+        <option value="swallow">Swallow</option>
+        <option value="pasta">Pasta</option>
+        <option value="rice">Rice Meal</option>
+        <option value="beans">Beans Speciale</option>
+        <option value="burger">Burgers & Shawarma</option>
+        <option value="chops">Special Chops</option>
+        <option value="drinks">Drinks/Juices</option>
+        <option value="beer">Beer</option>
+        <option value="juice">Fresh Juice</option>
+        <option value="cocktails">Cocktails</option>
+        <option value="whisky">Whisky</option>
+        <option value="wine">Red/White Wines</option>
+        <option value="champagne">Champagne</option>
+      </select>
+    </div>
+
+    <!-- Item list (filled by JS) -->
+    <div class="items-list" id="itemsList"></div>
+
+  </div><!-- /admin-main -->
+
+  <!-- Sticky Save All button (shown when there are unsaved changes) -->
+  <div class="save-all-wrap" id="saveAllWrap">
+    <button class="save-all-btn" id="saveAllBtn">💾 Save All Changes</button>
   </div>
 
-  <script>
-    /* ─── AUTH ─── */
-    if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
-      window.location.href = 'admin-login.html';
-    }
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.removeItem('isAdminLoggedIn');
-      window.location.href = 'admin-login.html';
-    });
+</div><!-- /adminPanel -->
 
-    /* ─── CLOCK ─── */
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('clockDisplay').textContent =
-        now.toLocaleDateString('en-NG', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) +
-        ' · ' + now.toLocaleTimeString('en-NG', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-    }
-    updateClock(); setInterval(updateClock, 1000);
+<!-- Toast notification -->
+<div id="toast"></div>
 
-    /* ─── GREETING ─── */
-    const hr = new Date().getHours();
-    const greet = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
-    document.querySelector('.page-title h1').innerHTML = `${greet}, <em>Admin</em> 👋`;
+<!-- ═══════════════════════════════════════════════════════════════
+     FIREBASE + ADMIN LOGIC
+════════════════════════════════════════════════════════════════ -->
+<script type="module">
+import { initializeApp }
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  onSnapshot
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-    /* ─── HELPERS ─── */
-    const naira = n => '₦' + Number(n).toLocaleString('en-NG');
+/* ── Firebase config ── */
+const firebaseConfig = {
+  apiKey:            "AIzaSyAcEpZxA95IzaVpj5YpsdrkBmT3v6sJuMo",
+  authDomain:        "olamide-3fb18.firebaseapp.com",
+  databaseURL:       "https://olamide-3fb18-default-rtdb.firebaseio.com",
+  projectId:         "olamide-3fb18",
+  storageBucket:     "olamide-3fb18.firebasestorage.app",
+  messagingSenderId: "496751820578",
+  appId:             "1:496751820578:web:5e0e5a7e26dedccade2f7b",
+  measurementId:     "G-L01NFW0GV3"
+};
 
-    function getOrders() {
-      try { return JSON.parse(localStorage.getItem('timeout_orders') || '[]'); } catch { return []; }
-    }
-    function saveOrders(orders) {
-      localStorage.setItem('timeout_orders', JSON.stringify(orders));
-    }
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
 
-    function animateCounter(el, target, prefix = '') {
-      if (typeof target !== 'number') { el.textContent = prefix + target; return; }
-      let start = 0; const dur = 900; const t0 = performance.now();
-      function step(now) {
-        const p = Math.min((now - t0) / dur, 1);
-        const ease = 1 - Math.pow(1 - p, 3);
-        el.textContent = prefix + Math.round(start + (target - start) * ease).toLocaleString('en-NG');
-        if (p < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    }
+/* ══════════════════════════════════════════════════
+   MENU DATA  (same items array as index.html)
+   Only the price field here is used as the baseline.
+   Firestore values override these when loaded.
+══════════════════════════════════════════════════ */
+const CAT_LABELS = {
+  chips: 'Chips & Fries', 'pepper-soup': 'Pepper Soup', soup: 'Nigerian Soup',
+  salad: 'Salad', protein: 'Protein', swallow: 'Swallow', pasta: 'Pasta',
+  rice: 'Rice Meal', beans: 'Beans Speciale', burger: 'Burgers & Shawarma',
+  chops: 'Special Chops', chinese: 'Chinese Special', drinks: 'Drinks/Juices',
+  beer: 'Beer', juice: 'Fresh Juice', cocktails: 'Cocktails',
+  whisky: 'Whisky', wine: 'Red/White Wines', champagne: 'Champagne',
+};
 
-    /* ─── STATS ─── */
-    function renderStats(orders) {
-      const todayStr = new Date().toDateString();
-      const todayOrders = orders.filter(o => {
-        try { return new Date(o.time).toDateString() === todayStr; } catch { return false; }
-      });
+const MENU_ITEMS = [
+  {id:80,  cat:'rice',        name:'Jollof Rice',                                 price:3000},
+  {id:87,  cat:'rice',        name:'Jollof Rice + Chicken',                       price:5400},
+  {id:81,  cat:'rice',        name:'Fried Rice',                                  price:3500},
+  {id:120, cat:'rice',        name:'Chinese Fried Rice',                          price:5000},
+  {id:82,  cat:'rice',        name:'Basmati White Rice',                          price:5000},
+  {id:83,  cat:'rice',        name:'Coconut Basmati Rice',                        price:5000},
+  {id:121, cat:'rice',        name:'Seafood Sauce with Basmati Rice',             price:9200},
+  {id:85,  cat:'rice',        name:'White Rice',                                  price:3000},
+  {id:30,  cat:'soup',        name:'Ogbono',                                      price:3000},
+  {id:31,  cat:'soup',        name:'Egusi',                                       price:3000},
+  {id:32,  cat:'soup',        name:'Okro',                                        price:3000},
+  {id:33,  cat:'soup',        name:'Afang',                                       price:3500},
+  {id:35,  cat:'soup',        name:'Vegetable',                                   price:3000},
+  {id:36,  cat:'soup',        name:'Fisherman Soup',                              price:12500},
+  {id:37,  cat:'soup',        name:'Seafood Okro',                                price:12500},
+  {id:60,  cat:'swallow',     name:'Semo',                                        price:1000},
+  {id:61,  cat:'swallow',     name:'Eba',                                         price:1000},
+  {id:62,  cat:'swallow',     name:'Oatmeal',                                     price:1500},
+  {id:63,  cat:'swallow',     name:'Plantain Flour',                              price:1500},
+  {id:64,  cat:'swallow',     name:'Poundo Yam',                                  price:1500},
+  {id:50,  cat:'protein',     name:'Beef',                                        price:1500},
+  {id:51,  cat:'protein',     name:'Goat Meat',                                   price:1500},
+  {id:52,  cat:'protein',     name:'Chicken (1/8)',                               price:2600},
+  {id:53,  cat:'protein',     name:'Chicken (1/4)',                               price:5000},
+  {id:54,  cat:'protein',     name:'Catfish',                                     price:5000},
+  {id:55,  cat:'protein',     name:'Croaker',                                     price:6000},
+  {id:56,  cat:'protein',     name:'Snail',                                       price:7500},
+  {id:1,   cat:'chips',       name:'Yam Chips (Boiled/Fried)',                    price:3000},
+  {id:2,   cat:'chips',       name:'Sweet Potatoes (Large Size)',                 price:2500},
+  {id:3,   cat:'chips',       name:'Sweet Potatoes (Regular Size)',               price:1300},
+  {id:4,   cat:'chips',       name:'French Fries (Large Size)',                   price:2500},
+  {id:5,   cat:'chips',       name:'French Fries (Regular Size)',                 price:1300},
+  {id:6,   cat:'chips',       name:'Plantain (Boiled/Fried)',                     price:2000},
+  {id:7,   cat:'chips',       name:"Chef Precious Chips & Chicken",               price:6500},
+  {id:8,   cat:'chips',       name:'Yam Porridge',                                price:3000},
+  {id:9,   cat:'chips',       name:'Plain Omelette',                              price:3000},
+  {id:10,  cat:'chips',       name:'Sardine Omelette',                            price:4400},
+  {id:20,  cat:'pepper-soup', name:'Chicken Pepper Soup',                         price:5000},
+  {id:21,  cat:'pepper-soup', name:'Goat Meat Pepper Soup',                       price:5000},
+  {id:22,  cat:'pepper-soup', name:'Catfish Pepper Soup',                         price:6000},
+  {id:23,  cat:'pepper-soup', name:'Croaker Fish Pepper Soup',                    price:6000},
+  {id:24,  cat:'pepper-soup', name:'Dry Fish Pepper Soup',                        price:6500},
+  {id:40,  cat:'salad',       name:'Chicken Caesar Salad',                        price:9000},
+  {id:41,  cat:'salad',       name:'Timeout Salad',                               price:8500},
+  {id:43,  cat:'salad',       name:'Chicken Club Sandwich',                       price:4800},
+  {id:45,  cat:'salad',       name:'Salad (Coleslaw)',                            price:1500},
+  {id:46,  cat:'salad',       name:'Vegetable Salad',                             price:4500},
+  {id:70,  cat:'pasta',       name:'Indomie (Special) Egg',                       price:3500},
+  {id:71,  cat:'pasta',       name:'Indomie with 1/8 Chicken',                    price:5000},
+  {id:72,  cat:'pasta',       name:'Spaghetti Napolitano',                        price:3500},
+  {id:73,  cat:'pasta',       name:'Spaghetti Napolitano with Fish',              price:9000},
+  {id:90,  cat:'beans',       name:'Vegetable Beans',                             price:4000},
+  {id:91,  cat:'beans',       name:'Akidi (Black Beans) with Yam/Plantain/Sweet Potato', price:5200},
+  {id:100, cat:'burger',      name:'Chicken/Beef Burger without French Fries',    price:2800},
+  {id:101, cat:'burger',      name:'Chicken/Beef Burger with Fries (Regular)',    price:4100},
+  {id:102, cat:'burger',      name:'Chicken/Beef Burger with Fries (Large)',      price:5300},
+  {id:103, cat:'burger',      name:'Regular Shawarma (Beef/Chicken/Goat)',        price:3600},
+  {id:104, cat:'burger',      name:'Jumbo Shawarma (Beef/Chicken/Goat)',          price:4500},
+  {id:105, cat:'burger',      name:'Extra Sausage',                               price:800 },
+  {id:106, cat:'burger',      name:'Extra Burger Patty',                          price:1600},
+  {id:111, cat:'chops',       name:'Pepper Goatmeat',                             price:5200},
+  {id:112, cat:'chops',       name:'Pepper Beef',                                 price:5200},
+  {id:113, cat:'chops',       name:'Pepper Chicken',                              price:5600},
+  {id:114, cat:'chops',       name:'Goat Head (Isi Ewu)',                         price:10000},
+  {id:116, cat:'chops',       name:'Pepper Catfish',                              price:6000},
+  {id:130, cat:'drinks',      name:'Water',                                       price:500 },
+  {id:131, cat:'drinks',      name:'Minerals',                                    price:600 },
+  {id:132, cat:'drinks',      name:'Malt',                                        price:1200},
+  {id:133, cat:'drinks',      name:'Five Alive',                                  price:2500},
+  {id:134, cat:'drinks',      name:'Cranberry (Big Pack)',                        price:4500},
+  {id:135, cat:'drinks',      name:'Origin Bitters',                              price:2500},
+  {id:136, cat:'drinks',      name:'Double Black',                                price:2500},
+  {id:140, cat:'beer',        name:'Heineken',                                    price:2000},
+  {id:143, cat:'beer',        name:'M/Stout',                                     price:1600},
+  {id:144, cat:'beer',        name:'M/Extra Smooth',                              price:1500},
+  {id:145, cat:'beer',        name:'Star',                                        price:1700},
+  {id:146, cat:'beer',        name:'Hero',                                        price:1500},
+  {id:147, cat:'beer',        name:'Trophy',                                      price:1500},
+  {id:148, cat:'beer',        name:'Tiger',                                       price:1500},
+  {id:149, cat:'beer',        name:'Star Radler',                                 price:1500},
+  {id:150, cat:'beer',        name:'Gulder',                                      price:2000},
+  {id:151, cat:'beer',        name:'Legend',                                      price:1500},
+  {id:160, cat:'juice',       name:'Orange Juice (35cl)',                         price:2800},
+  {id:161, cat:'juice',       name:'Watermelon Juice (35cl)',                     price:2600},
+  {id:162, cat:'juice',       name:'Watermelon & Orange (35cl)',                  price:3000},
+  {id:163, cat:'juice',       name:'Mix of Orange & Pineapple (35cl)',            price:3000},
+  {id:164, cat:'juice',       name:'Mix of Apple & Cucumber (35cl)',              price:3500},
+  {id:165, cat:'juice',       name:'Mix of Carrot, Pineapple & Apple (35cl)',     price:3500},
+  {id:166, cat:'juice',       name:'Mix of Apple, Pineapple, Cucumber (35cl)',    price:3600},
+  {id:167, cat:'juice',       name:'Any Other Mixture of Choice (35cl)',          price:3600},
+  {id:170, cat:'cocktails',   name:'Sex on the Beach',                            price:6000},
+  {id:171, cat:'cocktails',   name:'Pinacolada',                                  price:6000},
+  {id:172, cat:'cocktails',   name:'Timeout Special',                             price:6000},
+  {id:180, cat:'whisky',      name:'Glenfiddich 15',                              price:75000},
+  {id:181, cat:'whisky',      name:'Glenfiddich 18',                              price:175000},
+  {id:182, cat:'whisky',      name:'Glenfiddich 21',                              price:380000},
+  {id:183, cat:'whisky',      name:'Red Label',                                   price:30000},
+  {id:184, cat:'whisky',      name:'Black Label',                                 price:48000},
+  {id:185, cat:'whisky',      name:"Jack Daniel's",                               price:40000},
+  {id:186, cat:'whisky',      name:'Jameson Green',                               price:30000},
+  {id:187, cat:'whisky',      name:'Jameson Black Barrel',                        price:50000},
+  {id:188, cat:'whisky',      name:'Observatory 20',                              price:57000},
+  {id:190, cat:'wine',        name:'Escudo Rojo',                                 price:38000},
+  {id:191, cat:'wine',        name:'Carlo Rossi',                                 price:15000},
+  {id:192, cat:'wine',        name:'Carlo Rossi (Sweet)',                         price:20000},
+  {id:193, cat:'wine',        name:'Four Cousins',                                price:13000},
+  {id:200, cat:'champagne',   name:'Moët Rosé',                                   price:290000},
+  {id:201, cat:'champagne',   name:'Moët Brut',                                   price:220000},
+  {id:202, cat:'champagne',   name:'Veuve Clicquot Brut',                         price:260000},
+  {id:203, cat:'champagne',   name:'Veuve Clicquot Rosé',                         price:300000},
+  {id:204, cat:'champagne',   name:'André Rosé',                                  price:32000},
+  {id:205, cat:'champagne',   name:'André Brut',                                  price:25000},
+];
 
-      const revenue = orders
-        .filter(o => o.status === 'Paid' || o.status === 'Completed')
-        .reduce((s, o) => s + (o.total || 0), 0);
+/* ══════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════ */
+// firestorePrices: Map<itemId (number), price (number)> — loaded from Firestore
+const firestorePrices = new Map();
+// pendingChanges: Map<itemId, newPrice> — user edits not yet saved
+const pendingChanges  = new Map();
 
-      const pending = orders.filter(o => o.status === 'Pending').length;
+let adminSearchQ = '';
+let adminCatQ    = 'all';
 
-      // Unique customers by phone
-      const phones = new Set(orders.map(o => o.customer?.phone).filter(Boolean));
-      const avg = orders.length ? Math.round(orders.reduce((s, o) => s + (o.total || 0), 0) / orders.length) : 0;
+/* ══════════════════════════════════════════════════
+   UI HELPERS
+══════════════════════════════════════════════════ */
+function showToast(msg, duration = 2600) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), duration);
+}
 
-      animateCounter(document.getElementById('statTotal'), orders.length);
-      animateCounter(document.getElementById('statRevenue'), revenue, '₦');
-      animateCounter(document.getElementById('statToday'), todayOrders.length);
-      animateCounter(document.getElementById('statPending'), pending);
-      animateCounter(document.getElementById('statCustomers'), phones.size);
-      animateCounter(document.getElementById('statAvg'), avg, '₦');
-      document.getElementById('statTodayDate').textContent =
-        new Date().toLocaleDateString('en-NG', { month:'short', day:'numeric' });
-    }
+function hideLoading() {
+  const el = document.getElementById('loadingOverlay');
+  el.classList.add('hidden');
+  setTimeout(() => el.style.display = 'none', 500);
+}
 
-    /* ─── POPULAR ─── */
-    function renderPopular(orders) {
-      const counts = {};
-      orders.forEach(o => {
-        (o.items || []).forEach(({ item, qty }) => {
-          if (!item?.name) return;
-          counts[item.name] = (counts[item.name] || 0) + qty;
-        });
-      });
-      const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, 6);
-      const max = sorted[0]?.[1] || 1;
-      const grid = document.getElementById('popularGrid');
-      if (!sorted.length) {
-        grid.innerHTML = '<div class="popular-item"><div class="popular-name" style="color:var(--text-soft)">No orders yet</div></div>';
-        return;
-      }
-      grid.innerHTML = sorted.map(([name, count]) => `
-        <div class="popular-item">
-          <div class="popular-name">${name}</div>
-          <div class="popular-count">🛒 ${count} order${count !== 1 ? 's' : ''}</div>
-          <div class="popular-bar-wrap">
-            <div class="popular-bar" style="width:${Math.round((count/max)*100)}%"></div>
-          </div>
-        </div>`).join('');
-    }
+function setView(view) {
+  document.getElementById('loginScreen').style.display  = view === 'login'  ? 'flex'  : 'none';
+  document.getElementById('adminPanel').style.display   = view === 'admin'  ? 'block' : 'none';
+}
 
-    /* ─── ORDERS TABLE ─── */
-    let activeFilter = 'All';
-    let searchQuery  = '';
+function updateStats() {
+  document.getElementById('statTotal').textContent    = MENU_ITEMS.length;
+  document.getElementById('statModified').textContent = firestorePrices.size;
+  document.getElementById('statPending').textContent  = pendingChanges.size;
 
-    function renderOrders() {
-      let orders = getOrders();
+  const wrap = document.getElementById('saveAllWrap');
+  wrap.style.display = pendingChanges.size > 0 ? 'block' : 'none';
+}
 
-      // Filter by status
-      if (activeFilter !== 'All') orders = orders.filter(o => o.status === activeFilter);
+/* ══════════════════════════════════════════════════
+   RENDER ITEM LIST
+══════════════════════════════════════════════════ */
+function renderList() {
+  const list = document.getElementById('itemsList');
 
-      // Filter by search
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        orders = orders.filter(o =>
-          o.customer?.name?.toLowerCase().includes(q) ||
-          o.customer?.phone?.toLowerCase().includes(q) ||
-          o.customer?.email?.toLowerCase().includes(q) ||
-          o.ref?.toLowerCase().includes(q) ||
-          String(o.id).includes(q) ||
-          (o.items || []).some(e => e.item?.name?.toLowerCase().includes(q))
-        );
-      }
+  const filtered = MENU_ITEMS.filter(item => {
+    if (adminCatQ !== 'all' && item.cat !== adminCatQ) return false;
+    if (adminSearchQ && !item.name.toLowerCase().includes(adminSearchQ)) return false;
+    return true;
+  });
 
-      const tbody = document.getElementById('ordersBody');
-      if (!orders.length) {
-        tbody.innerHTML = `<tr><td colspan="6">
-          <div class="empty-state">
-            <div class="icon">🍽️</div>
-            <p>${activeFilter === 'All' && !searchQuery ? 'No orders yet. Orders appear here after customers pay.' : 'No matching orders.'}</p>
-          </div></td></tr>`;
-        return;
-      }
+  if (!filtered.length) {
+    list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-size:14px;">No items match your search.</div>';
+    return;
+  }
 
-      const sorted = [...orders].sort((a, b) => b.id - a.id);
-      tbody.innerHTML = sorted.map(order => {
-        const shortId = String(order.id).slice(-6);
-        const itemStr = (order.items || []).map(({ item, qty }) => `${item?.name || '?'} ×${qty}`).join(', ');
-        const cust = order.customer || {};
-        return `
-          <tr>
-            <td>
-              <div class="order-id">#${shortId}</div>
-              ${order.ref ? `<div class="order-ref">${order.ref}</div>` : ''}
-            </td>
-            <td>
-              <div class="customer-name">${cust.name || '—'}</div>
-              ${cust.phone ? `<div class="customer-detail">📞 ${cust.phone}</div>` : ''}
-              ${cust.address ? `<div class="customer-detail">📍 ${cust.address.slice(0,30)}${cust.address.length > 30 ? '…' : ''}</div>` : ''}
-              <button class="view-btn" onclick="openDetail(${order.id})">View details</button>
-            </td>
-            <td><div class="order-items">${itemStr || '—'}</div></td>
-            <td><div class="order-total">${naira(order.total || 0)}</div></td>
-            <td>
-              <button class="status-badge status-${order.status}" onclick="cycleStatus(${order.id})" title="Click to change status">
-                ${order.status}
-              </button>
-            </td>
-            <td><div class="order-time">${order.time || '—'}</div></td>
-          </tr>`;
-      }).join('');
-    }
+  list.innerHTML = filtered.map(item => {
+    // Effective current price: pending edit → Firestore → original hardcoded
+    const effectivePrice = pendingChanges.has(item.id)
+      ? pendingChanges.get(item.id)
+      : (firestorePrices.has(item.id) ? firestorePrices.get(item.id) : item.price);
 
-    /* ─── ORDER DETAIL DRAWER ─── */
-    function openDetail(id) {
-      const orders = getOrders();
-      const order = orders.find(o => o.id === id);
-      if (!order) return;
+    const isDirty    = pendingChanges.has(item.id);
+    const isModified = firestorePrices.has(item.id);
 
-      const cust = order.customer || {};
-      const shortId = String(order.id).slice(-6);
-      document.getElementById('detailTitle').textContent = '#' + shortId;
+    const rowClass = isDirty ? 'item-row dirty' : 'item-row';
+    const catLabel = CAT_LABELS[item.cat] || item.cat;
 
-      const itemsHtml = (order.items || []).map(({ item, qty, unitPrice }) => `
-        <div class="detail-item">
-          <div>
-            <div class="detail-item-name">${item?.name || '?'}</div>
-            <div class="detail-item-qty">Qty: ${qty} × ${naira(unitPrice || 0)}</div>
-          </div>
-          <div class="detail-item-price">${naira((unitPrice || 0) * qty)}</div>
-        </div>`).join('');
-
-      const waMsg = encodeURIComponent(
-        `📋 *Order Update — Timeout Restaurant*\n\n` +
-        `Hi ${cust.name || 'Customer'}! Your order #${shortId} is being prepared.\n\n` +
-        `📍 Delivering to: ${cust.address || '—'}\n` +
-        `💰 Total Paid: ${naira(order.total || 0)}\n` +
-        `🧾 Ref: ${order.ref || '—'}\n\n` +
-        `Thank you for ordering from Timeout Restaurant! 🍽️`
-      );
-
-      document.getElementById('detailBody').innerHTML = `
-        <div class="detail-section">
-          <div class="detail-section-label">Customer Info</div>
-          <div class="detail-row"><span class="detail-row-key">Name</span><span class="detail-row-val">${cust.name || '—'}</span></div>
-          <div class="detail-row"><span class="detail-row-key">Phone</span><span class="detail-row-val">${cust.phone || '—'}</span></div>
-          <div class="detail-row"><span class="detail-row-key">Email</span><span class="detail-row-val">${cust.email || '—'}</span></div>
-          <div class="detail-row"><span class="detail-row-key">Address</span><span class="detail-row-val">${cust.address || '—'}</span></div>
+    return `
+      <div class="${rowClass}" id="row-${item.id}" data-id="${item.id}">
+        <span class="item-cat-badge">${catLabel}</span>
+        <div class="item-name">
+          ${item.name}
+          ${isModified && !isDirty ? '<small>✓ In Firestore</small>' : ''}
         </div>
-        <div class="detail-section">
-          <div class="detail-section-label">Payment</div>
-          <div class="detail-row"><span class="detail-row-key">Reference</span><span class="detail-row-val detail-ref">${order.ref || '—'}</span></div>
-          <div class="detail-row"><span class="detail-row-key">Method</span><span class="detail-row-val">${order.method || 'Card'}</span></div>
-          <div class="detail-row"><span class="detail-row-key">Time</span><span class="detail-row-val">${order.time || '—'}</span></div>
-          <div class="detail-row"><span class="detail-row-key">Status</span><span class="detail-row-val">
-            <button class="status-badge status-${order.status}" onclick="cycleStatus(${order.id})">${order.status}</button>
-          </span></div>
+        <div class="price-wrap">
+          <span class="price-prefix">₦</span>
+          <input
+            class="price-input"
+            type="number"
+            min="0"
+            step="50"
+            value="${effectivePrice}"
+            data-original="${item.price}"
+            data-id="${item.id}"
+            aria-label="Price for ${item.name}"
+          />
         </div>
-        <div class="detail-section">
-          <div class="detail-section-label">Order Items</div>
-          <div class="detail-items-list">${itemsHtml}</div>
-          <div class="detail-total">
-            <span class="detail-total-label">Total Paid</span>
-            <span class="detail-total-val">${naira(order.total || 0)}</span>
-          </div>
-        </div>
-        <button class="detail-wa-btn" onclick="window.open('https://wa.me/${2349011724825}?text=${waMsg}','_blank')">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          Message Customer on WhatsApp
-        </button>`;
+        <button class="save-row-btn" data-id="${item.id}">Save</button>
+        <span class="row-status" id="status-${item.id}"></span>
+      </div>`;
+  }).join('');
 
-      document.getElementById('detailOverlay').classList.add('open');
-      document.getElementById('detailDrawer').classList.add('open');
-    }
-
-    function closeDetail() {
-      document.getElementById('detailOverlay').classList.remove('open');
-      document.getElementById('detailDrawer').classList.remove('open');
-    }
-
-    document.getElementById('detailClose').addEventListener('click', closeDetail);
-    document.getElementById('detailOverlay').addEventListener('click', closeDetail);
-
-    /* ─── CYCLE STATUS ─── */
-    function cycleStatus(id) {
-      const cycle = { Pending: 'Paid', Paid: 'Completed', Completed: 'Pending' };
-      const orders = getOrders();
-      const order = orders.find(o => o.id === id);
-      if (!order) return;
-      order.status = cycle[order.status] || 'Pending';
-      saveOrders(orders);
-      renderAll();
-      // refresh detail drawer if open
-      const drawer = document.getElementById('detailDrawer');
-      if (drawer.classList.contains('open')) openDetail(id);
-      showToast(`Order #${String(id).slice(-6)} → ${order.status}`);
-    }
-
-    /* ─── FILTERS & SEARCH ─── */
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeFilter = btn.dataset.filter;
-        renderOrders();
-      });
+  // Attach price-input listeners
+  list.querySelectorAll('.price-input').forEach(input => {
+    input.addEventListener('input', () => {
+      const id  = parseInt(input.dataset.id, 10);
+      const val = parseInt(input.value, 10);
+      const row = document.getElementById(`row-${id}`);
+      if (!isNaN(val) && val >= 0) {
+        pendingChanges.set(id, val);
+        row.className = 'item-row dirty';
+      } else {
+        pendingChanges.delete(id);
+        row.className = 'item-row';
+      }
+      updateStats();
     });
+  });
 
-    document.getElementById('searchOrders').addEventListener('input', function () {
-      searchQuery = this.value.trim();
-      renderOrders();
-    });
+  // Attach save-button listeners
+  list.querySelectorAll('.save-row-btn').forEach(btn => {
+    btn.addEventListener('click', () => saveItem(parseInt(btn.dataset.id, 10), btn));
+  });
+}
 
-    /* ─── CLEAR ALL ─── */
-    document.getElementById('clearOrdersBtn').addEventListener('click', () => {
-      if (confirm('Clear ALL orders? This cannot be undone.')) {
-        saveOrders([]);
-        renderAll();
-        showToast('All orders cleared');
+/* ══════════════════════════════════════════════════
+   SAVE HELPERS
+══════════════════════════════════════════════════ */
+async function saveItem(itemId, btn) {
+  const input = document.querySelector(`.price-input[data-id="${itemId}"]`);
+  const newPrice = parseInt(input ? input.value : pendingChanges.get(itemId), 10);
+
+  if (isNaN(newPrice) || newPrice < 0) {
+    showToast('⚠️ Enter a valid price first');
+    return;
+  }
+
+  const statusEl = document.getElementById(`status-${itemId}`);
+  const row      = document.getElementById(`row-${itemId}`);
+
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  if (statusEl) statusEl.textContent = '⏳';
+
+  try {
+    // Document ID = item id as string. Field = { price: number }
+    await setDoc(doc(db, 'menuPrices', String(itemId)), { price: newPrice });
+
+    firestorePrices.set(itemId, newPrice);
+    pendingChanges.delete(itemId);
+
+    if (row)      { row.className = 'item-row saved'; setTimeout(() => { if (row) row.className = 'item-row'; }, 2000); }
+    if (statusEl) { statusEl.textContent = '✅'; setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 2500); }
+    showToast('✅ Price saved — live on site now');
+  } catch (err) {
+    console.error(err);
+    if (row)      { row.className = 'item-row error'; setTimeout(() => { if (row) row.className = 'item-row dirty'; }, 2000); }
+    if (statusEl) { statusEl.textContent = '❌'; setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 2500); }
+    showToast('❌ Save failed: ' + err.message, 4000);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Save'; }
+    updateStats();
+  }
+}
+
+async function saveAllPending() {
+  if (pendingChanges.size === 0) return;
+  const btn = document.getElementById('saveAllBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Saving…';
+
+  const promises = [];
+  pendingChanges.forEach((price, id) => {
+    promises.push(
+      setDoc(doc(db, 'menuPrices', String(id)), { price })
+        .then(() => { firestorePrices.set(id, price); pendingChanges.delete(id); })
+    );
+  });
+
+  try {
+    await Promise.all(promises);
+    showToast(`✅ ${promises.length} price${promises.length > 1 ? 's' : ''} saved — live now`);
+    renderList();
+  } catch (err) {
+    showToast('❌ Some saves failed. Try again.', 4000);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '💾 Save All Changes';
+    updateStats();
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   FIRESTORE LISTENER
+   Loads existing prices on mount and keeps them
+   in sync if another admin session makes changes.
+══════════════════════════════════════════════════ */
+let firestoreUnsub = null;
+
+function startFirestoreListener() {
+  if (firestoreUnsub) return;
+  firestoreUnsub = onSnapshot(collection(db, 'menuPrices'), (snapshot) => {
+    snapshot.forEach((docSnap) => {
+      const id    = parseInt(docSnap.id, 10);
+      const price = docSnap.data().price;
+      if (typeof price === 'number') {
+        firestorePrices.set(id, price);
       }
     });
+    renderList();
+    updateStats();
+  }, (err) => {
+    console.error('Firestore listener error:', err);
+    showToast('⚠️ Could not load prices from Firestore', 5000);
+  });
+}
 
-    /* ─── TOAST ─── */
-    let toastTimer;
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      document.getElementById('toastMsg').textContent = msg;
-      t.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
-    }
+function stopFirestoreListener() {
+  if (firestoreUnsub) { firestoreUnsub(); firestoreUnsub = null; }
+  firestorePrices.clear();
+  pendingChanges.clear();
+}
 
-    /* ─── RENDER ALL ─── */
-    function renderAll() {
-      const orders = getOrders();
-      renderStats(orders);
-      renderPopular(orders);
-      renderOrders();
-    }
+/* ══════════════════════════════════════════════════
+   AUTH
+══════════════════════════════════════════════════ */
+onAuthStateChanged(auth, (user) => {
+  hideLoading();
 
-    renderAll();
-    setInterval(renderAll, 5000);
-    window.addEventListener('storage', e => { if (e.key === 'timeout_orders') renderAll(); });
-  </script>
+  if (user) {
+    document.getElementById('topbarUser').textContent = user.email;
+    setView('admin');
+    startFirestoreListener();
+  } else {
+    stopFirestoreListener();
+    setView('login');
+  }
+});
+
+/* Login form */
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl    = document.getElementById('loginError');
+  const btn      = document.getElementById('loginBtn');
+
+  errEl.style.display = 'none';
+  if (!email || !password) { errEl.textContent = 'Enter your email and password.'; errEl.style.display = 'block'; return; }
+
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (err) {
+    errEl.textContent = err.code === 'auth/invalid-credential'
+      ? 'Wrong email or password. Try again.'
+      : err.message;
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Sign In';
+  }
+});
+
+// Allow Enter key on password field
+document.getElementById('loginPassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('loginBtn').click();
+});
+
+/* Logout */
+document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
+
+/* ══════════════════════════════════════════════════
+   TOOLBAR — search + filter
+══════════════════════════════════════════════════ */
+document.getElementById('adminSearch').addEventListener('input', e => {
+  adminSearchQ = e.target.value.trim().toLowerCase();
+  renderList();
+});
+
+document.getElementById('catFilter').addEventListener('change', e => {
+  adminCatQ = e.target.value;
+  renderList();
+});
+
+/* Save All button */
+document.getElementById('saveAllBtn').addEventListener('click', saveAllPending);
+
+</script>
 </body>
 </html>
