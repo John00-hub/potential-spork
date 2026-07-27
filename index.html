@@ -71,6 +71,24 @@
             changed = true;
           }
         }
+
+        // If item 87 (Jollof Rice + Chicken) price changed, update promo section live
+        if (itemId === 87 && typeof newPrice === 'number') {
+          const disc    = Math.round(newPrice * 0.8);
+          const savings = newPrice - disc;
+          const priceMain  = document.getElementById('promoPriceMain');
+          const priceWas   = document.getElementById('promoPriceWas');
+          const priceLabel = document.getElementById('promoPriceLabel');
+          const ctaPrice   = document.getElementById('promoCTAPrice');
+          if (priceMain)  priceMain.textContent  = '\u20a6' + disc.toLocaleString();
+          if (priceWas)   { priceWas.textContent = '\u20a6' + newPrice.toLocaleString(); priceWas.style.display = 'inline'; }
+          if (priceLabel) priceLabel.textContent = '20% Off \u2014 Save \u20a6' + savings.toLocaleString();
+          if (ctaPrice)   ctaPrice.innerHTML = '<s style="color:#c8b89a;font-weight:600;font-size:0.85em;">\u20a6' + newPrice.toLocaleString() + '</s>&nbsp;\u20a6' + disc.toLocaleString();
+          if (window.__menuItems) {
+            const promoItem = window.__menuItems.find(i => i.id === 999);
+            if (promoItem) promoItem.price = disc;
+          }
+        }
       });
 
       // Re-render the menu grid if any price changed.
@@ -1038,8 +1056,8 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
         <div class="promo-price-block">
           <span class="promo-price-label" id="promoPriceLabel">Special Price</span>
           <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;line-height:1;">
-            <span class="promo-price" id="promoPriceMain">₦5,400</span>
-            <span id="promoPriceWas" style="display:none;text-decoration:line-through;text-decoration-thickness:1.5px;color:#c8b89a;font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;line-height:1;">₦5,400</span>
+            <span class="promo-price" id="promoPriceMain">…</span>
+            <span id="promoPriceWas" style="display:none;text-decoration:line-through;text-decoration-thickness:1.5px;color:#c8b89a;font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;line-height:1;">…</span>
           </div>
         </div>
         <div class="promo-divider" aria-hidden="true"></div>
@@ -1051,7 +1069,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 
       <button class="promo-cta" id="promoCta" aria-label="Add promo deal to cart">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        Order Now — <span id="promoCTAPrice">₦5,400</span>
+        Order Now — <span id="promoCTAPrice">…</span>
       </button>
 
       <p class="promo-footnote">⚡ Tap once to add to cart &amp; checkout instantly</p>
