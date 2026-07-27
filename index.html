@@ -29,7 +29,7 @@
   ════════════════════════════════════════════════════════ -->
   <script type="module">
     import { initializeApp }      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getFirestore, collection, onSnapshot }
+    import { getFirestore, collection, onSnapshot, doc, getDoc }
       from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
     /* ── your Firebase project config ── */
@@ -2381,19 +2381,39 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
       document.body.classList.remove('promo-active');
     });
 
-    /* Apply -20% to hero promo deal card (Jollof Rice + Chicken is a food item) */
-    var ORIG = 5400;
-    var DISC = Math.round(ORIG * 0.8); /* 4320 */
+    /* Apply -20% to hero promo deal card — reads live price from Firestore (item ID 87) */
+    var DEFAULT_ORIG = 5400; // fallback if Firestore unreachable
 
-    var priceMain  = document.getElementById('promoPriceMain');
-    var priceWas   = document.getElementById('promoPriceWas');
-    var priceLabel = document.getElementById('promoPriceLabel');
-    var ctaPrice   = document.getElementById('promoCTAPrice');
+    function applyPromoPrice(ORIG) {
+      var DISC = Math.round(ORIG * 0.8);
+      var savings = ORIG - DISC;
 
-    if (priceMain)  priceMain.textContent  = '₦' + DISC.toLocaleString();
-    if (priceWas)   { priceWas.textContent = '₦' + ORIG.toLocaleString(); priceWas.style.display = 'inline'; }
-    if (priceLabel) priceLabel.textContent = '20% Off — Save ₦1,080';
-    if (ctaPrice)   ctaPrice.innerHTML = '<s style="color:#c8b89a;font-weight:600;font-size:0.85em;">₦5,400</s>&nbsp;₦4,320';
+      var priceMain  = document.getElementById('promoPriceMain');
+      var priceWas   = document.getElementById('promoPriceWas');
+      var priceLabel = document.getElementById('promoPriceLabel');
+      var ctaPrice   = document.getElementById('promoCTAPrice');
+
+      if (priceMain)  priceMain.textContent  = '₦' + DISC.toLocaleString();
+      if (priceWas)   { priceWas.textContent = '₦' + ORIG.toLocaleString(); priceWas.style.display = 'inline'; }
+      if (priceLabel) priceLabel.textContent = '20% Off — Save ₦' + savings.toLocaleString();
+      if (ctaPrice)   ctaPrice.innerHTML = '<s style="color:#c8b89a;font-weight:600;font-size:0.85em;">₦' + ORIG.toLocaleString() + '</s>&nbsp;₦' + DISC.toLocaleString();
+
+      // Also update the promo item price in MENU_ITEMS so cart uses correct price
+      var promoItem = MENU_ITEMS.find(function(i){ return i.id === 87; });
+      if (promoItem) promoItem.price = ORIG;
+      var promoCartItem = MENU_ITEMS.find(function(i){ return i.id === 999; });
+      if (promoCartItem) promoCartItem.price = DISC;
+    }
+
+    // Try to get live price from Firestore, fallback to default
+    getDoc(doc(db, 'menuPrices', '87'))
+      .then(function(snap) {
+        var livePrice = snap.exists() ? snap.data().price : DEFAULT_ORIG;
+        applyPromoPrice(livePrice);
+      })
+      .catch(function() {
+        applyPromoPrice(DEFAULT_ORIG);
+      });
   })();
 /* ─── CUSTOMER REVIEWS DATA ─── */
 const reviews = [
