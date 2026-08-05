@@ -630,12 +630,21 @@ const sbHeaders = () => ({
 async function sbSignIn(email, password) {
   const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
     method:  'POST',
-    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY },
-    body:    JSON.stringify({ email, password }),
+    headers: {
+      'Content-Type':  'application/json',
+      'apikey':        SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+    },
+    body: JSON.stringify({ email, password }),
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error_description || data.msg || 'Login failed');
-  return data; // { access_token, user, ... }
+  console.log('Auth response:', res.status, JSON.stringify(data));
+  if (!res.ok) throw new Error(data.error_description || data.error || data.msg || `Login failed (${res.status})`);
+  // handle both old {access_token, user} and new {session:{access_token}, user} shapes
+  const token = data.access_token || (data.session && data.session.access_token);
+  const user  = data.user || (data.session && data.session.user);
+  if (!token) throw new Error('No access token returned');
+  return { access_token: token, user };
 }
 
 async function sbSignOut(accessToken) {
