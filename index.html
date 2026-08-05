@@ -23,61 +23,44 @@
   <script>emailjs.init('atVlhsVq8lVoP9f3f');</script>
 
   <!-- ═══════════════════════════════════════════════════════
-       FIREBASE — real-time price sync from Firestore
+       SUPABASE — price sync
        Prices set in admin.html override the hardcoded values
        below without touching this file.
   ════════════════════════════════════════════════════════ -->
-  <script type="module">
-    import { initializeApp }      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getFirestore, collection, onSnapshot, doc, getDoc }
-      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+  <script>
+    const SB_URL = 'https://nflqeygxiavqbajmykua.supabase.co';
+    const SB_KEY = 'sb_publishable_1prPj3tooVKNvPiZxT1_YA_Xm7sAvc6';
 
-    /* ── your Firebase project config ── */
-    const firebaseConfig = {
-      apiKey:            "AIzaSyAcEpZxA95IzaVpj5YpsdrkBmT3v6sJuMo",
-      authDomain:        "olamide-3fb18.firebaseapp.com",
-      databaseURL:       "https://olamide-3fb18-default-rtdb.firebaseio.com",
-      projectId:         "olamide-3fb18",
-      storageBucket:     "olamide-3fb18.firebasestorage.app",
-      messagingSenderId: "496751820578",
-      appId:             "1:496751820578:web:5e0e5a7e26dedccade2f7b",
-      measurementId:     "G-L01NFW0GV3"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db  = getFirestore(app);
-
-    /*
-      Listen to the 'menuPrices' collection in real-time.
-      Each document ID = item id (as a string, e.g. "80").
-      Each document has a single field: { price: <number> }
-
-      When a price changes in Firestore the menu re-renders
-      instantly for every visitor — no page refresh needed.
-    */
-    onSnapshot(collection(db, 'menuPrices'), (snapshot) => {
-      let changed = false;
-
-      snapshot.forEach((doc) => {
-        const itemId    = parseInt(doc.id, 10);
-        const newPrice  = doc.data().price;
-
-        // Find the matching item in the global `items` array (defined below)
-        // and update its price in-place.
-        if (window.__menuItems) {
-          const item = window.__menuItems.find(i => i.id === itemId);
-          if (item && typeof newPrice === 'number' && item.price !== newPrice) {
-            item.price = newPrice;
-            changed = true;
+    async function loadSupabasePrices() {
+      try {
+        const res = await fetch(SB_URL + '/rest/v1/menu_prices?select=item_id,price', {
+          headers: {
+            'apikey':        SB_KEY,
+            'Authorization': 'Bearer ' + SB_KEY,
           }
+        });
+        if (!res.ok) return;
+        const rows = await res.json();
+        window.__sbPrices = rows;
+        let changed = false;
+        rows.forEach(function(row) {
+          if (window.__menuItems) {
+            var item = window.__menuItems.find(function(i){ return i.id === row.item_id; });
+            if (item && typeof row.price === 'number' && item.price !== row.price) {
+              item.price = row.price;
+              changed = true;
+            }
+          }
+        });
+        if (changed && typeof window.__renderMenu === 'function') {
+          window.__renderMenu();
         }
-      });
-
-      // Re-render the menu grid if any price changed.
-      if (changed && typeof window.__renderMenu === 'function') {
-        window.__renderMenu();
+      } catch(e) {
+        console.warn('Supabase price load failed:', e);
       }
-    });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadSupabasePrices);
   </script>
 
   <style>
@@ -1616,7 +1599,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   /* ════════════════════════════════════════════════════════════════
      MENU DATA
   ════════════════════════════════════════════════════════════════ */
-  /* Exposed on window so the Firebase module (type="module") can patch
+  /* Exposed on window so Supabase price loader can patch
      prices in real-time without touching the rest of this script. */
   const items = window.__menuItems = [
 
@@ -2002,7 +1985,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     return list;
   }
 
-  /* Also exposed so Firebase price listener can call it after patching prices. */
+  /* Also exposed so Supabase price loader can call it after patching prices. */
   window.__renderMenu = render;
   function render() {
     const grid    = document.getElementById('menuGrid');
@@ -2348,8 +2331,8 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
       document.body.classList.remove('promo-active');
     });
 
-    /* Apply -20% to hero promo deal card — reads live price from Firestore (item ID 87) */
-    var DEFAULT_ORIG = 5400; // fallback if Firestore unreachable
+    /* Apply -20% to hero promo deal card — reads live price from Supabase (item ID 87) */
+    var DEFAULT_ORIG = 5400; // fallback if Supabase unreachable
 
     function applyPromoPrice(ORIG) {
       var DISC = Math.round(ORIG * 0.8);
@@ -2372,15 +2355,22 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
       if (promoCartItem) promoCartItem.price = DISC;
     }
 
-    // Try to get live price from Firestore, fallback to default
-    getDoc(doc(db, 'menuPrices', '87'))
-      .then(function(snap) {
-        var livePrice = snap.exists() ? snap.data().price : DEFAULT_ORIG;
-        applyPromoPrice(livePrice);
+    // Get live price from Supabase, fallback to default
+    var sbRow = window.__sbPrices && window.__sbPrices.find(function(r){ return r.item_id === 87; });
+    if (sbRow && typeof sbRow.price === 'number') {
+      applyPromoPrice(sbRow.price);
+    } else {
+      // prices may not be loaded yet — fetch directly
+      fetch(SB_URL + '/rest/v1/menu_prices?select=price&item_id=eq.87', {
+        headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
       })
-      .catch(function() {
-        applyPromoPrice(DEFAULT_ORIG);
-      });
+      .then(function(r){ return r.json(); })
+      .then(function(rows){
+        var price = rows.length ? rows[0].price : DEFAULT_ORIG;
+        applyPromoPrice(price);
+      })
+      .catch(function(){ applyPromoPrice(DEFAULT_ORIG); });
+    }
   })();
 /* ─── CUSTOMER REVIEWS DATA ─── */
 const reviews = [
