@@ -1604,7 +1604,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   const items = window.__menuItems = [
 
     /* ── RICE MEAL ── */
-    { id:80, cat:'rice', name:'Jollof Rice',                         price:3000, desc:'Party jollof rice.',                                                           rating:9.4, popular:true,
+    { id:80, cat:'rice', name:'Jollof Rice',                         price:100, desc:'Party jollof rice.',                                                           rating:9.4, popular:true,
       img:'images/jollof-rice.webp' },
     { id:87, cat:'rice', name:'Jollof Rice + Chicken',               price:5400, desc:'Perfectly seasoned party jollof rice served with chicken.',                    rating:9.2, popular:true,
       img:'images/jollof-chicken.webp' },
@@ -2148,6 +2148,12 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
     payBtn.disabled    = true;
     payBtn.textContent = 'Opening payment…';
 
+    // Save order details before Paystack opens (in case page reloads on live mobile payments)
+    sessionStorage.setItem('pendingOrderData', JSON.stringify({
+      name: name, email: email, phone: phone, address: address,
+      orderItems: orderItems, total: total, packFee: packFee
+    }));
+
     const handler = PaystackPop.setup({
       key:      PAYSTACK_KEY,
       email:    email,
@@ -2163,6 +2169,16 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
         ]
       },
       callback: function (response) {
+        // Read saved order data (survives page reload on live mobile payments)
+        var _saved     = JSON.parse(sessionStorage.getItem('pendingOrderData') || '{}');
+        var name       = _saved.name       || name       || '';
+        var email      = _saved.email      || email      || '';
+        var phone      = _saved.phone      || phone      || '';
+        var address    = _saved.address    || address    || '';
+        var orderItems = _saved.orderItems || orderItems || '';
+        var total      = _saved.total      || total      || 0;
+        var packFee    = _saved.packFee    || packFee    || 0;
+
         var cartItemsArr = Object.values(cart).map(function(e) {
           return { name: e.item.name, note: null, qty: e.qty, unitPrice: getDiscountedPrice(e.item.price, e.item.cat) };
         });
@@ -2218,8 +2234,16 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
             'Payment Ref':   response.reference,
             'Payment Method':'Card (Paystack)'
           })
+        }).then(function(res) {
+          return res.json();
+        }).then(function(data) {
+          if (data && data.success) {
+            alert('✅ Email sent successfully to Anthony!\n\nWeb3Forms said: ' + (data.message || 'OK'));
+          } else {
+            alert('⚠️ Web3Forms did NOT send the email.\n\nReason: ' + JSON.stringify(data));
+          }
         }).catch(function(err) {
-          console.warn('Web3Forms notification failed:', err);
+          alert('❌ Web3Forms request failed completely.\n\nError: ' + err.message);
         });
         // ─────────────────────────────────────────────────────────
 
