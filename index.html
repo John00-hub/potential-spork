@@ -2087,9 +2087,13 @@ checkBtn.disabled   = count === 0 || !isWithinOrderingHours();
     document.body.style.overflow = 'hidden';
     const withinHours = isWithinOrderingHours();
     document.getElementById('checkoutBtn').disabled = !withinHours;
+    const watNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
+    const onTempPause = isWithinTempPause(watNow);
     document.getElementById('cartNote').innerHTML = withinHours
       ? '🔒 Secured by Paystack · Cards, Bank Transfer & USSD'
-       : '🚫 <strong style="font-size:15px;color:#ff6b6b;display:block;text-align:center;line-height:1.6;">We are currently closed.<br/>Orders accepted daily<br/>9am – 10pm (Abuja time)</strong>';
+      : onTempPause
+        ? '🚫 <strong style="font-size:15px;color:#ff6b6b;display:block;text-align:center;line-height:1.6;">Online ordering is paused for kitchen repairs.<br/>We resume at 5pm today.</strong>'
+        : '🚫 <strong style="font-size:15px;color:#ff6b6b;display:block;text-align:center;line-height:1.6;">We are currently closed.<br/>Orders accepted daily<br/>9am – 10pm (Abuja time)</strong>';
   }
   function closeCart() {
     document.getElementById('cartOverlay').classList.remove('open');
@@ -2102,9 +2106,19 @@ document.getElementById('cartClose').addEventListener('click', closeCart);
 document.getElementById('cartOverlay').addEventListener('click', closeCart);
 
   /* ─── CHECKOUT ─── */
+  // Temporary pause: kitchen repairs, Aug 15 2026, 11:00–17:00 (Africa/Lagos)
+  const TEMP_PAUSE_WINDOWS = [
+    { start: '2026-08-15T11:00:00', end: '2026-08-15T17:00:00' }
+  ];
+
+  function isWithinTempPause(wat) {
+    return TEMP_PAUSE_WINDOWS.some(w => wat >= new Date(w.start) && wat < new Date(w.end));
+  }
+
   function isWithinOrderingHours() {
   const now = new Date();
   const wat = new Date(now.toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
+  if (isWithinTempPause(wat)) return false;
   const hour = wat.getHours();
   const day = wat.getDay(); // 0 = Sunday
   if (day === 0) {
