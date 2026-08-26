@@ -732,70 +732,103 @@
     .hero-cta:active { transform: scale(0.97); }
     .hero-cta-arrow { font-size: 17px; transition: transform 0.22s var(--ease); }
     .hero-cta:hover .hero-cta-arrow { transform: translateY(3px); }
+    /* ─── FOOTER REDESIGN ─── */
     .footer {
-  background: #111;
-  padding: 30px 20px;
-  text-align: center;
-  color: #fff;
-}
-
-.footer-logo {
-  font-size: 24px;
-  font-weight: bold;
-  color: gold;
-}
-
-.footer-sub {
-  font-size: 12px;
-  color: #aaa;
-  margin-bottom: 15px;
-}
-
-.footer-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin: 20px 0;
-}
-
-/* 3D BUTTON STYLE */
-.btn-3d {
-  display: inline-block;
-  padding: 14px;
-  border-radius: 12px;
-  font-weight: bold;
-  text-decoration: none;
-  color: white;
-  text-align: center;
-  transform: translateY(0);
-  transition: 0.2s ease;
-  box-shadow: 0 6px 0 rgba(0,0,0,0.3);
-}
-
-/* press effect */
-.btn-3d:active {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 rgba(0,0,0,0.3);
-}
-
-/* colors */
-.btn-3d.order {
-  background: #c9a84c;
-}
-
-.btn-3d.visit {
-  background: #1e90ff;
-}
-
-.btn-3d.contact {
-  background: #25d366;
-}
-
-.footer-info {
-  font-size: 12px;
-  color: #888;
-  margin-top: 15px;
-}
+      background: rgba(5,5,4,0.97);
+      border-top: 1px solid var(--border);
+      padding: 48px 24px 28px;
+      text-align: center;
+      position: relative;
+    }
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 80px; height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .footer-sub {
+      font-size: 11.5px;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+      font-weight: 300;
+      margin-bottom: 28px;
+    }
+    .footer-links-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 24px;
+    }
+    .footer-link {
+      font-size: 12.5px;
+      font-weight: 400;
+      color: var(--text-soft);
+      text-decoration: none;
+      padding: 4px 14px;
+      border-right: 1px solid var(--border);
+      transition: color 0.2s;
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+    .footer-link:last-child { border-right: none; }
+    .footer-link:hover { color: var(--gold); }
+    .footer-contact-row {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 4px 16px;
+      letter-spacing: 0.2px;
+    }
+    .footer-contact-row a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-contact-row a:hover { color: var(--text-soft); }
+    .footer-divider {
+      width: 40px;
+      height: 1px;
+      background: var(--border);
+      margin: 0 auto 20px;
+    }
+    .footer-bottom {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 4px 16px;
+    }
+    .footer-copy {
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+    .footer-powered {
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--muted);
+      text-decoration: none;
+      opacity: 0.7;
+      transition: opacity 0.2s, color 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .footer-powered:hover { opacity: 1; color: #25d366; }
+    .footer-powered strong { color: #25d366; }
 /* ─── CUSTOMER REVIEWS (Bottom) ─── */
 .reviews-section {
   background: linear-gradient(to bottom, rgba(0,0,0,0.85), var(--bg));
@@ -933,10 +966,27 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     <p class="hero-sub">Freshly made. Delivered fast.<br/>Order straight from the menu.</p>
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin:24px auto 0;width:100%;">
   <img src="images/logo.png" alt="Timeout Logo" style="height:110px;width:auto;object-fit:contain;display:block;filter:drop-shadow(0 0 14px rgba(201,168,76,0.45));">
-  <p style="margin:0;font-size:13.5px;font-weight:600;color:var(--text-soft);text-align:center;line-height:1.9;letter-spacing:0.2px;">
-    📍 1245 Sapele Street, Garki 2, Abuja<br>
-    📞 +234 901 172 4825
-  </p>
+  <div style="margin:0;text-align:center;line-height:1;">
+    <p style="
+      margin:0 0 6px;
+      font-size:17px;
+      font-weight:900;
+      letter-spacing:0.6px;
+      background: linear-gradient(135deg, #e2c06e 0%, #c9a84c 60%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      filter: drop-shadow(0 0 8px rgba(201,168,76,0.55));
+    ">📍 1245 Sapele Street, Garki 2, <span style="font-size:20px;letter-spacing:1px;">ABUJA</span></p>
+    <p style="
+      margin:0;
+      font-size:13.5px;
+      font-weight:700;
+      color:var(--text-soft);
+      letter-spacing:0.3px;
+    ">📞 +234 901 172 4825</p>
+  </div>
 </div>
     <div class="hero-stats">
       <div class="stat-item">
@@ -1466,23 +1516,31 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 <footer class="footer">
 
   <div class="footer-logo">Timeout</div>
-  <div class="footer-sub">Restaurant ● Grill ● Bar · Abuja</div>
+  <div class="footer-sub">Restaurant &bull; Grill &bull; Bar &mdash; Abuja</div>
 
-  <div class="footer-buttons">
-      <a href="https://wa.me/2349011724825?text=Hi%2C%20I%20want%20to%20place%20an%20order%20from%20Timeout%20Restaurant" target="_blank" class="btn-3d order"
-        onclick="gtag('event', 'whatsapp_click', {'event_category': 'engagement', 'event_label': 'footer_button'});">💬 Order on WhatsApp</a>
+  <nav class="footer-links-row" aria-label="Footer navigation">
+    <a href="https://wa.me/2349011724825?text=Hi%2C%20I%20want%20to%20place%20an%20order%20from%20Timeout%20Restaurant"
+       target="_blank" class="footer-link"
+       onclick="gtag('event', 'whatsapp_click', {'event_category': 'engagement', 'event_label': 'footer_link'});"></a>
+    <a href="visit-us.html" class="footer-link">Directions</a>
+    <a href="contact.html" class="footer-link">Contact</a>
+    <a href="/privacy-policy.html" class="footer-link">Privacy Policy</a>
+    <a href="/terms-and-conditions.html" class="footer-link">Terms &amp; Conditions</a>
+    <a href="refund-policy.html" class="footer-link">Refund Policy</a>
+  </nav>
 
-    <a href="visit-us.html" class="btn-3d visit">📍 Directions</a>
-      <a href="contact.html" class="btn-3d contact">📞 Contact</a>
-
-    <a href="/privacy-policy.html"class="btn-3d Privacy">Privacy Policy </a>
-<a href="/terms-and-conditions.html" class="btn-3d Terms" >Terms & Conditions</a>
-
-    <a href="refund-policy.html" class="btn-3d policy">Return & Refund Policy</a>
-
+  <div class="footer-contact-row">
+    <span>📍 1245 Sapele Street, Garki 2, Abuja</span>
+    <a href="tel:+2349011724825">+234 901 172 4825</a>
   </div>
 
-  <p class="footer-info">Garki, Abuja | +2349011724825</p>
+  <div class="footer-divider"></div>
+
+  <div class="footer-bottom">
+    <span class="footer-copy">&copy; 2025 Timeout Restaurant. All rights reserved.</span>
+    <a href="https://wa.me/2348063559368?text=Hi%20Midex%20Edits%2C%20I%20would%20like%20to%20enquire%20about%20your%20services."
+       target="_blank" rel="noopener noreferrer" class="footer-powered">Powered by <strong>Midex Edits</strong></a>
+  </div>
 
 </footer>
 <!-- FLOATING CART BUTTON -->
@@ -1612,7 +1670,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       img:'images/fried-rice.webp' },
     { id:120, cat:'rice', name:'Chinese Fried Rice',                 price:5000, desc:'Basmati rice sautéed with shrimps and tasty Chinese seasons.',                rating:9.0,
       img:'images/chinese-fried-rice.webp' },
-    { id:82, cat:'rice', name:'Basmati White Rice',                  price:5000, desc:'Premium basmati white rice.',                                                  rating:8.9,
+    { id:82, cat:'rice', name:'Basmati White Rice and Stew',                  price:5000, desc:'Premium basmati white rice.',                                                  rating:8.9,
       img:'images/basmati-white-rice.webp' },
     { id:83, cat:'rice', name:'Coconut Basmati Rice',                price:5000, desc:'Fragrant coconut basmati rice.',                                               rating:9.0,
       img:'images/coconut-basmati-rice.webp' },
@@ -1626,11 +1684,11 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       img:'images/ogbono.webp' },
     { id:31, cat:'soup', name:'Egusi',                               price:3000, desc:'Rich melon seed soup.',                                                        rating:9.3, popular:true,
       img:'images/egusi.webp' },
-    { id:32, cat:'soup', name:'Okro',                                price:3000, desc:'Fresh okro soup.',                                                             rating:8.8,
+    { id:32, cat:'soup', name:'Okro',                                price:3500, desc:'Fresh okro soup.',                                                             rating:8.8,
       img:'images/okro.webp' },
     { id:33, cat:'soup', name:'Afang',                               price:3500, desc:'Traditional Afang soup.',                                                      rating:9.1,
       img:'images/afang.webp' },
-    { id:35, cat:'soup', name:'Vegetable Soup',                           price:3000, desc:'Fresh vegetable soup.',                                                        rating:8.8,
+    { id:35, cat:'soup', name:'Vegetable Soup',                           price:3500, desc:'Fresh vegetable soup.',                                                        rating:8.8,
       img:'images/vegetable.webp' },
     { id:36, cat:'soup', name:'Fisherman Soup',                      price:16000, desc:'Special fisherman soup.',                                                     rating:9.5,
       img:'images/fisherman-soup.webp' },
@@ -1684,7 +1742,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       img:'images/yam-porridge.webp' },
     { id:9,  cat:'chips', name:'Plain Omelette',                     price:3000, desc:'Fluffy plain omelette.',                                                        rating:8.5,
       img:'images/plain-omelette.webp' },
-    { id:10, cat:'chips', name:'Sardine Omelette',                   price:4400, desc:'Omelette with sardine filling.',                                                rating:8.7,
+    { id:10, cat:'chips', name:'Sardine Omelette',                   price:5000, desc:'Omelette with sardine filling.',                                                rating:8.7,
       img:'images/sardine-omelette.webp' },
 
     /* ── NIGERIA PEPPER SOUP ── */
@@ -1724,7 +1782,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     /* ── BEANS SPECIALE ── */
     { id:90, cat:'beans', name:'Vegetable Beans',                    price:4000, desc:'Delicious honey beans garnished with fresh vegetables.',                       rating:8.9,
       img:'images/vegetable-beans.webp' },
-    { id:91, cat:'beans', name:'Akidi (Black Beans) with Yam/Plantain/Sweet Potato', price:5200, desc:'Black beans served with choice of yam, plantain or sweet potato.',          rating:9.1,
+    { id:91, cat:'beans', name:'Akidi (Black Beans) with Yam/Plantain/Sweet Potato', price:5500, desc:'Black beans served with choice of yam, plantain or sweet potato.',          rating:9.1,
       img:'images/akidi-black-beans.webp' },
 
     /* ── BURGERS & SHAWARMA ── */
@@ -1744,11 +1802,11 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       img:'images/extra-burger-patty.webp' },
 
     /* ── SPECIAL CHOPS ── */
-    { id:111, cat:'chops', name:'Pepper Goatmeat',                   price:5200, desc:'Spicy pepper goat meat.',                                                     rating:9.2,
+    { id:111, cat:'chops', name:'Pepper Goatmeat',                   price:5500, desc:'Spicy pepper goat meat.',                                                     rating:9.2,
       img:'images/pepper-goat-meat.webp' },
-    { id:112, cat:'chops', name:'Pepper Beef',                       price:5200, desc:'Spicy pepper beef.',                                                          rating:9.1,
+    { id:112, cat:'chops', name:'Pepper Beef',                       price:5500, desc:'Spicy pepper beef.',                                                          rating:9.1,
       img:'images/pepper-beef.webp' },
-    { id:113, cat:'chops', name:'Pepper Chicken',                    price:5600, desc:'Spicy pepper chicken.',                                                       rating:9.3,
+    { id:113, cat:'chops', name:'Pepper Chicken',                    price:5500, desc:'Spicy pepper chicken.',                                                       rating:9.3,
       img:'images/pepper-chicken.webp' },
     { id:114, cat:'chops', name:'Goat Head (Isi Ewu)',                price:10000, desc:'Traditional Isi Ewu — goat head pepper soup.',                              rating:9.5,
       img:'images/goat-head-isi-ewu.webp' },
@@ -1779,13 +1837,13 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       img:'images/m-extra-smooth.webp' },
 
     /* ── FRESH JUICE ── */
-    { id:160, cat:'juice', name:'Orange Juice (35cl)',               price:2800, desc:'Freshly squeezed orange juice.',                                               rating:9.1,
+    { id:160, cat:'juice', name:'Orange Juice (35cl)',               price:3000, desc:'Freshly squeezed orange juice.',                                               rating:9.1,
       img:'images/orange-juice.webp' },
     { id:161, cat:'juice', name:'Watermelon Juice (35cl)',           price:2600, desc:'Fresh watermelon juice.',                                                      rating:9.0,
       img:'images/watermelon-juice.webp' },
     { id:162, cat:'juice', name:'Watermelon & Orange (35cl)',        price:3000, desc:'Blend of watermelon and orange.',                                              rating:9.1,
       img:'images/watermelon-and-orange-juice.webp' },
-    { id:163, cat:'juice', name:'Mix of Orange & Pineapple (35cl)',  price:3000, desc:'Orange and pineapple blend.',                                                  rating:8.9,
+    { id:163, cat:'juice', name:'Mix of Orange & Pineapple (35cl)',  price:3500, desc:'Orange and pineapple blend.',                                                  rating:8.9,
       img:'images/mix-orange-and-pineapple.webp' },
     { id:164, cat:'juice', name:'Mix of Apple & Cucumber (35cl)',    price:3500, desc:'Apple and cucumber blend.',                                                    rating:8.9,
       img:'images/mix-apple-and-cucumber.webp' },
