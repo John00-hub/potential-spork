@@ -179,11 +179,25 @@
     }
 
     .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+
+    .topbar-brand img {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 0 8px rgba(201,168,76,0.4));
+    }
+
+    .topbar-brand span {
       font-family: 'Cormorant Garamond', serif;
       font-size: 22px;
       font-weight: 700;
       color: var(--gold-bright);
-      white-space: nowrap;
     }
 
     .topbar-user {
@@ -651,7 +665,9 @@
       transition: opacity 0.4s;
     }
     #loadingOverlay.hidden { opacity: 0; pointer-events: none; }
-    .load-logo { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; color: var(--gold-bright); }
+    .load-logo { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .load-logo img { height: 90px; width: auto; object-fit: contain; filter: drop-shadow(0 0 16px rgba(201,168,76,0.5)); }
+    .load-logo span { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 600; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
     .load-sub  { font-size: 13px; color: var(--muted); }
 
     /* ─── MOBILE ─── */
@@ -669,7 +685,10 @@
 
 <!-- LOADING -->
 <div id="loadingOverlay">
-  <div class="load-logo">Timeout</div>
+  <div class="load-logo">
+    <img src="images/logo.png" alt="">
+    <span>Admin Panel</span>
+  </div>
   <div class="spinner"></div>
   <div class="load-sub">Loading admin panel…</div>
 </div>
@@ -677,7 +696,9 @@
 <!-- LOGIN -->
 <div id="loginScreen" style="display:none;">
   <div class="login-box">
-    <div class="login-logo">Timeout</div>
+    <div class="login-logo">
+      <img src="images/logo.png" alt="" style="height:80px;width:auto;object-fit:contain;display:block;margin:0 auto 8px;filter:drop-shadow(0 0 12px rgba(201,168,76,0.45));">
+    </div>
     <div class="login-sub">Admin Panel · Powered by Firebase</div>
 
     <div class="field">
@@ -699,7 +720,10 @@
 
   <!-- Topbar -->
   <div class="topbar">
-    <div class="topbar-brand">Timeout Admin</div>
+    <div class="topbar-brand">
+      <img src="images/logo.png" alt="">
+      <span>Admin</span>
+    </div>
     <div class="topbar-user" id="topbarUser">–</div>
     <button class="logout-btn" id="logoutBtn">Sign Out</button>
   </div>
