@@ -22,9 +22,8 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Firebase SDK -->
+  <!-- Firebase SDK — Database only, NO Auth needed -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
   <style>
@@ -742,15 +741,11 @@
     <div class="login-logo">
       <img src="images/logo.png" alt="" style="height:80px;width:auto;object-fit:contain;display:block;margin:0 auto 8px;filter:drop-shadow(0 0 12px rgba(201,168,76,0.45));">
     </div>
-    <div class="login-sub">Admin Panel · Powered by Firebase</div>
+    <div class="login-sub">Admin Panel · Timeout Restaurant</div>
 
     <div class="field">
-      <label for="loginEmail">Email</label>
-      <input type="email" id="loginEmail" placeholder="admin@timeout.com.ng" autocomplete="email" />
-    </div>
-    <div class="field">
-      <label for="loginPassword">Password</label>
-      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+      <label for="loginPassword">Admin Password</label>
+      <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password" />
     </div>
 
     <button class="login-btn" id="loginBtn">Sign In</button>
@@ -932,8 +927,14 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db   = firebase.database();
+const db = firebase.database();
+
+/* ─────────────────────────────────────────────────
+   LOCAL AUTH — no Firebase Auth, no Google servers
+   Change ADMIN_PASS below to whatever you want.
+   Session persists until browser is closed.
+───────────────────────────────────────────────── */
+const ADMIN_PASS = 'Timeout@2026';  // ← change this to your preferred password
 
 /* ─── Realtime refs ─── */
 const pricesRef     = db.ref('menu_prices');
@@ -1391,141 +1392,84 @@ function listenPrices() {
 }
 
 /* ─────────────────────────────────────────────────
-   AUTH
+   LOGOUT
 ───────────────────────────────────────────────── */
-auth.onAuthStateChanged(user => {
-  hideLoading();
-  if (user) {
-    document.getElementById('topbarUser').textContent = user.email;
-    setView('admin');
-    listenPrices();
-    listenSiteState();
-  } else {
-    setView('login');
-  }
-});
 
 /* ─────────────────────────────────────────────────
-   OFFLINE DETECTION
+   OFFLINE BANNER
 ───────────────────────────────────────────────── */
 function updateOnlineStatus() {
   const banner = document.getElementById('offlineBanner');
-  if (!navigator.onLine) {
-    banner.classList.add('show');
-  } else {
-    banner.classList.remove('show');
-  }
+  navigator.onLine ? banner.classList.remove('show') : banner.classList.add('show');
 }
 window.addEventListener('online',  updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
 updateOnlineStatus();
 
 /* ─────────────────────────────────────────────────
-   SMART LOGIN — with auto-retry on network failure
+   LOCAL LOGIN — instant, no network needed
 ───────────────────────────────────────────────── */
-let loginRetryCount = 0;
-const MAX_RETRIES   = 3;
+function isLoggedIn() {
+  return sessionStorage.getItem('admin_auth') === 'yes';
+}
 
-async function attemptLogin(email, password, isRetry = false) {
+function doLocalLogin(password) {
   const errEl = document.getElementById('loginError');
   const btn   = document.getElementById('loginBtn');
 
-  if (!isRetry) loginRetryCount = 0;
-
-  // Check connectivity first
-  if (!navigator.onLine) {
-    errEl.innerHTML = '📡 <strong>No internet connection.</strong><br/>Please turn on your data or connect to WiFi, then tap retry.';
+  errEl.style.display = 'none';
+  if (!password) {
+    errEl.textContent = 'Please enter your password.';
     errEl.style.display = 'block';
-    showRetryButton(email, password);
-    btn.disabled = false; btn.textContent = 'Sign In';
     return;
   }
 
-  btn.disabled = true;
-  btn.textContent = isRetry ? `Retrying… (${loginRetryCount}/${MAX_RETRIES})` : 'Signing in…';
-  errEl.style.display = 'none';
-
-  try {
-    await auth.signInWithEmailAndPassword(email, password);
-    loginRetryCount = 0; // success — reset
-  } catch (err) {
-    console.error('Login error:', err.code, err.message);
-
-    // Network failure — auto retry up to MAX_RETRIES
-    if (err.code === 'auth/network-request-failed') {
-      loginRetryCount++;
-      if (loginRetryCount <= MAX_RETRIES) {
-        const delay = loginRetryCount * 2000; // 2s, 4s, 6s
-        btn.textContent = `Network error — retrying in ${delay/1000}s…`;
-        setTimeout(() => attemptLogin(email, password, true), delay);
-        return;
-      } else {
-        // All retries exhausted
-        errEl.innerHTML = `
-          📡 <strong>Connection failed after ${MAX_RETRIES} attempts.</strong><br/>
-          Your network may be unstable. Please check your internet and try again.
-        `;
-        errEl.style.display = 'block';
-        showRetryButton(email, password);
-      }
-    } else if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-      errEl.textContent = '❌ Wrong email or password. Try again.';
-      errEl.style.display = 'block';
-    } else if (err.code === 'auth/too-many-requests') {
-      errEl.textContent = '⚠️ Too many attempts. Please wait a few minutes and try again.';
-      errEl.style.display = 'block';
-    } else {
-      errEl.textContent = '⚠️ ' + err.message;
-      errEl.style.display = 'block';
-    }
-
-    btn.disabled = false;
-    btn.textContent = 'Sign In';
+  if (password === ADMIN_PASS) {
+    sessionStorage.setItem('admin_auth', 'yes');
+    showAdminPanel();
+  } else {
+    errEl.textContent = '❌ Wrong password. Try again.';
+    errEl.style.display = 'block';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginPassword').focus();
   }
 }
 
-function showRetryButton(email, password) {
-  const errEl = document.getElementById('loginError');
-  // Remove old retry btn if exists
-  const old = errEl.querySelector('.retry-btn');
-  if (old) old.remove();
-
-  const retryBtn = document.createElement('button');
-  retryBtn.className   = 'retry-btn';
-  retryBtn.textContent = '🔄 Tap to Retry';
-  retryBtn.onclick = () => {
-    loginRetryCount = 0;
-    attemptLogin(email, password, false);
-  };
-  errEl.appendChild(retryBtn);
+function showAdminPanel() {
+  hideLoading();
+  document.getElementById('topbarUser').textContent = 'Admin';
+  setView('admin');
+  listenPrices();
+  listenSiteState();
 }
+
+/* Init on page load */
+window.addEventListener('DOMContentLoaded', () => {
+  hideLoading();
+  if (isLoggedIn()) {
+    showAdminPanel();
+  } else {
+    setView('login');
+  }
+});
 
 document.getElementById('loginBtn').addEventListener('click', () => {
-  const email    = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
-  const errEl    = document.getElementById('loginError');
-
-  errEl.style.display = 'none';
-  if (!email || !password) {
-    errEl.textContent = 'Please enter your email and password.';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  attemptLogin(email, password);
+  doLocalLogin(password);
 });
 
 document.getElementById('loginPassword').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('loginBtn').click();
 });
 
-/* Logout */
-document.getElementById('logoutBtn').addEventListener('click', async () => {
-  await auth.signOut();
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  sessionStorage.removeItem('admin_auth');
   pricesRef.off();
   siteStateRef.off();
   firebasePrices.clear();
   pendingChanges.clear();
+  setView('login');
+  document.getElementById('loginPassword').value = '';
 });
 
 /* ─────────────────────────────────────────────────
