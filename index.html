@@ -6,11 +6,12 @@
   <meta name="description" content="Timeout Restaurant — freshly made Nigerian and continental meals delivered fast. Order online from our premium menu: rice, soups, grills, chops, drinks and more." />
   <title>Timeout Restaurant Premium Food Menu</title>
 
-  <!-- Preconnect: max 4 critical origins only -->
+  <!-- Preconnect: critical origins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://images.unsplash.com">
   <link rel="preconnect" href="https://js.paystack.co">
+  <link rel="preconnect" href="https://www.gstatic.com">
 
   <!-- Fonts: display=swap prevents render-blocking FOIT -->
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -23,44 +24,58 @@
   <script>emailjs.init('atVlhsVq8lVoP9f3f');</script>
 
   <!-- ═══════════════════════════════════════════════════════
-       SUPABASE — price sync
-       Prices set in admin.html override the hardcoded values
-       below without touching this file.
+       FIREBASE — real-time price sync + site pause/resume
+       Prices & pause state set in admin.html apply instantly
+       to every customer without a page refresh.
   ════════════════════════════════════════════════════════ -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
   <script>
-    const SB_URL = 'https://nflqeygxiavqbajmykua.supabase.co';
-    const SB_KEY = 'sb_publishable_1prPj3tooVKNvPiZxT1_YA_Xm7sAvc6';
+    /* Same config as admin.html */
+    const firebaseConfig = {
+      apiKey:            "AIzaSyD-REPLACE-WITH-YOUR-KEY",
+      authDomain:        "your-project-id.firebaseapp.com",
+      databaseURL:       "https://your-project-id-default-rtdb.firebaseio.com",
+      projectId:         "your-project-id",
+      storageBucket:     "your-project-id.appspot.com",
+      messagingSenderId: "000000000000",
+      appId:             "1:000000000000:web:0000000000000000"
+    };
 
-    async function loadSupabasePrices() {
-      try {
-        const res = await fetch(SB_URL + '/rest/v1/menu_prices?select=item_id,price', {
-          headers: {
-            'apikey':        SB_KEY,
-            'Authorization': 'Bearer ' + SB_KEY,
-          }
-        });
-        if (!res.ok) return;
-        const rows = await res.json();
-        window.__sbPrices = rows;
-        let changed = false;
-        rows.forEach(function(row) {
-          if (window.__menuItems) {
-            var item = window.__menuItems.find(function(i){ return i.id === row.item_id; });
-            if (item && typeof row.price === 'number' && item.price !== row.price) {
-              item.price = row.price;
-              changed = true;
-            }
-          }
-        });
-        if (changed && typeof window.__renderMenu === 'function') {
-          window.__renderMenu();
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const __db = firebase.database();
+
+    /* ── Real-time price listener ── */
+    __db.ref('menu_prices').on('value', function(snap) {
+      var data = snap.val() || {};
+      var changed = false;
+      Object.entries(data).forEach(function([idStr, price]) {
+        if (typeof price !== 'number') return;
+        var id = parseInt(idStr, 10);
+        if (window.__menuItems) {
+          var item = window.__menuItems.find(function(i){ return i.id === id; });
+          if (item && item.price !== price) { item.price = price; changed = true; }
         }
-      } catch(e) {
-        console.warn('Supabase price load failed:', e);
-      }
-    }
+        /* keep __sbPrices compat for promo section */
+        window.__sbPrices = window.__sbPrices || [];
+        var existing = window.__sbPrices.find(function(r){ return r.item_id === id; });
+        if (existing) existing.price = price;
+        else window.__sbPrices.push({ item_id: id, price: price });
+      });
+      if (changed && typeof window.__renderMenu === 'function') window.__renderMenu();
+    });
 
-    document.addEventListener('DOMContentLoaded', loadSupabasePrices);
+    /* ── Real-time site pause listener ── */
+    window.__sitePaused   = false;
+    window.__pauseMessage = '';
+
+    __db.ref('site_state').on('value', function(snap) {
+      var data = snap.val() || {};
+      window.__sitePaused   = data.paused === true;
+      window.__pauseMessage = data.message || '';
+      /* Update checkout button if cart is open */
+      if (typeof window.__updateCartUI === 'function') window.__updateCartUI();
+    });
   </script>
 
   <style>
@@ -2074,6 +2089,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     setTimeout(() => { fab.style.transform = ''; }, 200);
   }
 
+  window.__updateCartUI = updateCartUI;
   function updateCartUI() {
     const count   = cartCount();
     const total   = cartTotal();
@@ -2145,13 +2161,19 @@ checkBtn.disabled   = count === 0 || !isWithinOrderingHours();
     document.body.style.overflow = 'hidden';
     const withinHours = isWithinOrderingHours();
     document.getElementById('checkoutBtn').disabled = !withinHours;
-    const watNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
-    const onTempPause = isWithinTempPause(watNow);
-    document.getElementById('cartNote').innerHTML = withinHours
-      ? '🔒 Secured by Paystack · Cards, Bank Transfer & USSD'
-      : onTempPause
-        ? '🚫 <strong style="font-size:15px;color:#ff6b6b;display:block;text-align:center;line-height:1.6;">Online ordering is paused for kitchen repairs.<br/>We resume at 5pm today.</strong>'
-        : '🚫 <strong style="font-size:15px;color:#ff6b6b;display:block;text-align:center;line-height:1.6;">We are currently closed.<br/>Orders accepted daily<br/>9am – 10pm (Abuja time)</strong>';
+
+    let cartNoteHTML;
+    if (withinHours) {
+      cartNoteHTML = '🔒 Secured by Paystack · Cards, Bank Transfer & USSD';
+    } else if (window.__sitePaused) {
+      const msg = window.__pauseMessage
+        ? window.__pauseMessage
+        : 'Online ordering is currently paused. Please check back soon.';
+      cartNoteHTML = '🚫 <strong style="font-size:15px;color:#ff6b6b;display:block;text-align:center;line-height:1.6;">' + msg + '</strong>';
+    } else {
+      cartNoteHTML = '🚫 <strong style="font-size:15px;color:#ff6b6b;display:block;text-align:center;line-height:1.6;">We are currently closed.<br/>Orders accepted daily<br/>9am – 10pm (Abuja time)</strong>';
+    }
+    document.getElementById('cartNote').innerHTML = cartNoteHTML;
   }
   function closeCart() {
     document.getElementById('cartOverlay').classList.remove('open');
@@ -2164,26 +2186,17 @@ document.getElementById('cartClose').addEventListener('click', closeCart);
 document.getElementById('cartOverlay').addEventListener('click', closeCart);
 
   /* ─── CHECKOUT ─── */
-  // Temporary pause: kitchen repairs, Aug 15 2026, 11:00–17:00 (Africa/Lagos)
-  const TEMP_PAUSE_WINDOWS = [
-    { start: '2026-08-15T11:00:00', end: '2026-08-15T17:00:00' }
-  ];
-
-  function isWithinTempPause(wat) {
-    return TEMP_PAUSE_WINDOWS.some(w => wat >= new Date(w.start) && wat < new Date(w.end));
-  }
-
   function isWithinOrderingHours() {
-  const now = new Date();
-  const wat = new Date(now.toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
-  if (isWithinTempPause(wat)) return false;
-  const hour = wat.getHours();
-  const day = wat.getDay(); // 0 = Sunday
-  if (day === 0) {
-    return hour >= 12 && hour < 22;
+    /* 1. Admin has manually paused via Firebase → always closed */
+    if (window.__sitePaused === true) return false;
+    /* 2. Normal opening hours check (Africa/Lagos time) */
+    const now  = new Date();
+    const wat  = new Date(now.toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
+    const hour = wat.getHours();
+    const day  = wat.getDay(); // 0 = Sunday
+    if (day === 0) return hour >= 12 && hour < 22;
+    return hour >= 9 && hour < 22;
   }
-  return hour >= 9 && hour < 22;
-}
   document.getElementById('checkoutBtn').addEventListener('click', function () {
     closeCart();
     setTimeout(function () { document.getElementById('modalOverlay').classList.add('open'); }, 300);
@@ -2467,21 +2480,17 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
       if (promoCartItem) promoCartItem.price = DISC;
     }
 
-    // Get live price from Supabase, fallback to default
+    /* Get live price from Firebase (already synced via real-time listener above),
+       fallback to default if not yet loaded */
     var sbRow = window.__sbPrices && window.__sbPrices.find(function(r){ return r.item_id === 87; });
     if (sbRow && typeof sbRow.price === 'number') {
       applyPromoPrice(sbRow.price);
     } else {
-      // prices may not be loaded yet — fetch directly
-      fetch(SB_URL + '/rest/v1/menu_prices?select=price&item_id=eq.87', {
-        headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
-      })
-      .then(function(r){ return r.json(); })
-      .then(function(rows){
-        var price = rows.length ? rows[0].price : DEFAULT_ORIG;
-        applyPromoPrice(price);
-      })
-      .catch(function(){ applyPromoPrice(DEFAULT_ORIG); });
+      /* Prices may not be loaded yet — wait briefly then try again */
+      setTimeout(function() {
+        var row2 = window.__sbPrices && window.__sbPrices.find(function(r){ return r.item_id === 87; });
+        applyPromoPrice(row2 && typeof row2.price === 'number' ? row2.price : DEFAULT_ORIG);
+      }, 1500);
     }
   })();
 /* ─── CUSTOMER REVIEWS DATA ─── */
