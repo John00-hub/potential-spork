@@ -14,22 +14,24 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="manifest" href="manifest.json" />
 
-  <!-- App Icons (iPhone) -->
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png" />
   <link rel="apple-touch-icon" sizes="152x152" href="icon-152.png" />
   <link rel="apple-touch-icon" sizes="120x120" href="icon-120.png" />
 
-  <!-- Splash screen safe area for iPhone notch -->
-  <style>
-    body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
-  </style>
+  <style>body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }</style>
 
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:          #07070600;
+      --bg:          #050504;
       --surface:     #0f0f0d;
       --card:        #161614;
       --card-hover:  #1e1e1b;
@@ -59,16 +61,14 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ─── LOGIN SCREEN ─── */
+    /* ─── LOGIN ─── */
     #loginScreen {
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
       padding: 24px;
-      background:
-        radial-gradient(ellipse 600px 400px at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 70%),
-        #050504;
+      background: radial-gradient(ellipse 600px 400px at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 70%), #050504;
     }
 
     .login-box {
@@ -87,7 +87,7 @@
       font-weight: 700;
       color: var(--gold-bright);
       text-align: center;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .login-sub {
@@ -95,7 +95,7 @@
       color: var(--muted);
       text-align: center;
       letter-spacing: 0.3px;
-      margin-bottom: 36px;
+      margin-bottom: 32px;
     }
 
     .field { margin-bottom: 18px; }
@@ -145,7 +145,7 @@
       transition: transform 0.2s var(--ease), box-shadow 0.2s, filter 0.18s;
     }
 
-    .login-btn:hover { transform: translateY(-2px); filter: brightness(1.06); box-shadow: 0 10px 36px rgba(201,168,76,0.50); }
+    .login-btn:hover { transform: translateY(-2px); filter: brightness(1.06); }
     .login-btn:active { transform: scale(0.98); }
     .login-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
@@ -164,7 +164,6 @@
     /* ─── ADMIN PANEL ─── */
     #adminPanel { display: none; }
 
-    /* Top bar */
     .topbar {
       position: sticky;
       top: 0;
@@ -173,7 +172,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 14px 24px;
-      background: rgba(5,5,4,0.85);
+      background: rgba(5,5,4,0.92);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border-soft);
       gap: 16px;
@@ -210,14 +209,182 @@
     }
     .logout-btn:hover { background: rgba(224,82,82,0.22); color: #ff9090; }
 
-    /* Main area */
     .admin-main {
       max-width: 900px;
       margin: 0 auto;
-      padding: 32px 20px 80px;
+      padding: 32px 20px 100px;
     }
 
-    /* Stats bar */
+    /* ─── SITE CONTROL CARD ─── */
+    .site-control-card {
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 28px;
+      border: 2px solid var(--border-soft);
+      background: var(--card);
+      transition: border-color 0.4s, background 0.4s;
+    }
+
+    .site-control-card.is-live {
+      border-color: rgba(76,175,125,0.5);
+      background: rgba(76,175,125,0.04);
+    }
+
+    .site-control-card.is-paused {
+      border-color: rgba(224,82,82,0.5);
+      background: rgba(224,82,82,0.05);
+    }
+
+    .sc-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .sc-icon {
+      font-size: 36px;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .sc-info { flex: 1; min-width: 200px; }
+
+    .sc-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .sc-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 10px;
+      transition: all 0.3s;
+    }
+
+    .sc-badge.live {
+      background: rgba(76,175,125,0.15);
+      border: 1px solid rgba(76,175,125,0.4);
+      color: #5dca8e;
+    }
+
+    .sc-badge.paused {
+      background: rgba(224,82,82,0.15);
+      border: 1px solid rgba(224,82,82,0.4);
+      color: #f08080;
+    }
+
+    .blink-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .blink-dot.live { background: #4caf7d; animation: blink 1.8s ease infinite; }
+    .blink-dot.paused { background: #e05252; }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.3; transform: scale(0.65); }
+    }
+
+    .sc-desc {
+      font-size: 13.5px;
+      color: var(--text-soft);
+      line-height: 1.6;
+    }
+
+    /* Message input area */
+    .sc-message-wrap {
+      margin-top: 16px;
+      display: none;
+    }
+
+    .sc-message-wrap.show { display: block; }
+
+    .sc-message-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .sc-message-input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-soft);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.22s, box-shadow 0.22s;
+      resize: none;
+    }
+
+    .sc-message-input:focus {
+      border-color: rgba(201,168,76,0.45);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.09);
+    }
+
+    .sc-message-input::placeholder { color: var(--muted); }
+
+    /* Buttons */
+    .sc-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .sc-btn {
+      flex: 1;
+      min-width: 140px;
+      padding: 13px 24px;
+      border-radius: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s var(--ease), filter 0.18s, box-shadow 0.2s;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .sc-btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+    .sc-btn:active { transform: scale(0.97); }
+    .sc-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; filter: none; }
+
+    .sc-btn-pause {
+      background: linear-gradient(135deg, #e05252, #c03a3a);
+      color: #fff;
+      box-shadow: 0 6px 24px rgba(224,82,82,0.35);
+    }
+
+    .sc-btn-resume {
+      background: linear-gradient(135deg, #4caf7d, #2e8a56);
+      color: #fff;
+      box-shadow: 0 6px 24px rgba(76,175,125,0.35);
+    }
+
+    /* ─── STATS ─── */
     .stats-row {
       display: flex;
       gap: 14px;
@@ -249,7 +416,7 @@
       margin-top: 4px;
     }
 
-    /* Section header */
+    /* ─── SECTION HEADER ─── */
     .section-head {
       display: flex;
       align-items: center;
@@ -266,7 +433,7 @@
       color: var(--text);
     }
 
-    /* Search & filter */
+    /* ─── TOOLBAR ─── */
     .toolbar {
       display: flex;
       gap: 10px;
@@ -304,12 +471,8 @@
     }
     .toolbar select option { background: #161614; }
 
-    /* Item rows */
-    .items-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    /* ─── ITEM ROWS ─── */
+    .items-list { display: flex; flex-direction: column; gap: 10px; }
 
     .item-row {
       display: flex;
@@ -323,7 +486,7 @@
     }
 
     .item-row:hover { border-color: var(--border); background: var(--card-hover); }
-    .item-row.dirty { border-color: rgba(201,168,76,0.35); }
+    .item-row.dirty { border-color: rgba(201,168,76,0.4); }
     .item-row.saved  { border-color: rgba(76,175,125,0.45); }
     .item-row.error  { border-color: rgba(224,82,82,0.45); }
 
@@ -357,7 +520,6 @@
       margin-top: 2px;
     }
 
-    /* Price input */
     .price-wrap {
       flex-shrink: 0;
       display: flex;
@@ -365,11 +527,7 @@
       gap: 6px;
     }
 
-    .price-prefix {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--muted);
-    }
+    .price-prefix { font-size: 14px; font-weight: 600; color: var(--muted); }
 
     .price-input {
       width: 100px;
@@ -390,7 +548,6 @@
       box-shadow: 0 0 0 3px rgba(201,168,76,0.08);
     }
 
-    /* Save button per row */
     .save-row-btn {
       flex-shrink: 0;
       padding: 8px 16px;
@@ -416,10 +573,9 @@
       line-height: 1;
       min-width: 20px;
       text-align: center;
-      transition: opacity 0.3s;
     }
 
-    /* Save all */
+    /* ─── SAVE ALL ─── */
     .save-all-wrap {
       position: fixed;
       bottom: 24px;
@@ -447,7 +603,7 @@
     .save-all-btn:active { transform: scale(0.97); }
     .save-all-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    /* Toast */
+    /* ─── TOAST ─── */
     #toast {
       position: fixed;
       bottom: 80px;
@@ -467,10 +623,11 @@
       transition: opacity 0.3s, transform 0.3s var(--ease-out);
       z-index: 9999;
       white-space: nowrap;
+      max-width: 90vw;
     }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* Spinner */
+    /* ─── SPINNER / LOADER ─── */
     .spinner {
       display: inline-block;
       width: 16px; height: 16px;
@@ -482,7 +639,6 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Loading overlay */
     #loadingOverlay {
       position: fixed; inset: 0;
       background: #050504;
@@ -498,29 +654,31 @@
     .load-logo { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; color: var(--gold-bright); }
     .load-sub  { font-size: 13px; color: var(--muted); }
 
-    /* Mobile tweaks */
+    /* ─── MOBILE ─── */
     @media (max-width: 600px) {
       .login-box { padding: 32px 22px 28px; }
       .item-row { flex-wrap: wrap; }
       .item-name { order: -1; width: 100%; }
       .price-input { width: 85px; }
+      .sc-btns { flex-direction: column; }
+      .sc-btn { min-width: unset; }
     }
   </style>
 </head>
 <body>
 
-<!-- ─── LOADING ─── -->
+<!-- LOADING -->
 <div id="loadingOverlay">
   <div class="load-logo">Timeout</div>
   <div class="spinner"></div>
   <div class="load-sub">Loading admin panel…</div>
 </div>
 
-<!-- ─── LOGIN SCREEN ─── -->
+<!-- LOGIN -->
 <div id="loginScreen" style="display:none;">
   <div class="login-box">
     <div class="login-logo">Timeout</div>
-    <div class="login-sub">Admin Price Manager</div>
+    <div class="login-sub">Admin Panel · Powered by Firebase</div>
 
     <div class="field">
       <label for="loginEmail">Email</label>
@@ -536,7 +694,7 @@
   </div>
 </div>
 
-<!-- ─── ADMIN PANEL ─── -->
+<!-- ADMIN PANEL -->
 <div id="adminPanel">
 
   <!-- Topbar -->
@@ -548,6 +706,83 @@
 
   <div class="admin-main">
 
+    <!-- ═══════════════════════════════════
+         SITE CONTROL — PAUSE / RESUME
+    ════════════════════════════════════ -->
+    <div class="site-control-card" id="siteControlCard">
+      <div class="sc-top">
+        <div class="sc-icon" id="scIcon">🌐</div>
+        <div class="sc-info">
+          <div class="sc-title">Website Control</div>
+          <div class="sc-badge live" id="scBadge">
+            <span class="blink-dot live" id="scDot"></span>
+            <span id="scBadgeText">LIVE — Accepting Orders</span>
+          </div>
+          <div class="sc-desc" id="scDesc">
+            Customers can browse the menu and place orders normally.
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom message input (shown when about to pause) -->
+      <div class="sc-message-wrap" id="scMsgWrap">
+        <label class="sc-message-label">Message shown to customers (optional)</label>
+        <input
+          class="sc-message-input"
+          type="text"
+          id="scMessageInput"
+          maxlength="120"
+          placeholder="e.g. We are closed for maintenance. Back at 5pm."
+        />
+      </div>
+
+      <!-- Buttons -->
+      <div class="sc-btns">
+        <button class="sc-btn sc-btn-pause" id="pauseBtn">⏸ Pause Ordering</button>
+        <button class="sc-btn sc-btn-resume" id="resumeBtn" style="display:none;">▶ Resume Ordering</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         MIGRATE PRICES CARD
+    ════════════════════════════════════ -->
+    <div id="migratePricesCard" style="
+      background: rgba(201,168,76,0.06);
+      border: 1.5px dashed rgba(201,168,76,0.45);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    ">
+      <div style="font-size:32px;line-height:1;flex-shrink:0;">📦</div>
+      <div style="flex:1;min-width:200px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px;">
+          Migrate Prices to Firebase
+        </div>
+        <div style="font-size:13px;color:var(--text-soft);line-height:1.6;" id="migrateDesc">
+          Firebase is currently empty. Click the button to push all your menu prices from the hardcoded list into Firebase instantly. Do this once and you're all set!
+        </div>
+      </div>
+      <button id="migrateBtn" style="
+        flex-shrink:0;
+        padding:13px 28px;
+        background:linear-gradient(135deg,#d9b456,#a67c1b);
+        color:#0a0900;
+        font-family:'Outfit',sans-serif;
+        font-size:14px;
+        font-weight:700;
+        border:none;
+        border-radius:10px;
+        cursor:pointer;
+        box-shadow:0 6px 24px rgba(201,168,76,0.4);
+        transition:transform 0.2s,filter 0.18s;
+        white-space:nowrap;
+      ">🚀 Push All Prices to Firebase</button>
+    </div>
+
     <!-- Stats -->
     <div class="stats-row">
       <div class="stat-chip">
@@ -555,8 +790,8 @@
         <div class="stat-chip-label">Total Items</div>
       </div>
       <div class="stat-chip">
-        <div class="stat-chip-val" id="statModified">0</div>
-        <div class="stat-chip-label">Prices in Supabase</div>
+        <div class="stat-chip-val" id="statSaved">0</div>
+        <div class="stat-chip-label">Prices in Firebase</div>
       </div>
       <div class="stat-chip">
         <div class="stat-chip-val" id="statPending">0</div>
@@ -595,118 +830,51 @@
       </select>
     </div>
 
-    <!-- Item list (filled by JS) -->
+    <!-- Items list -->
     <div class="items-list" id="itemsList"></div>
 
   </div><!-- /admin-main -->
 
-  <!-- Sticky Save All button (shown when there are unsaved changes) -->
+  <!-- Sticky Save All -->
   <div class="save-all-wrap" id="saveAllWrap">
     <button class="save-all-btn" id="saveAllBtn">💾 Save All Changes</button>
   </div>
 
 </div><!-- /adminPanel -->
 
-<!-- Toast notification -->
 <div id="toast"></div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     SUPABASE + ADMIN LOGIC
-════════════════════════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════
+     FIREBASE + ADMIN LOGIC
+════════════════════════════════════════════════════ -->
 <script>
+/* ─────────────────────────────────────────────────
+   FIREBASE CONFIG
+   Replace with your own Firebase project config
+   from: Firebase Console → Project Settings → General → Your apps
+───────────────────────────────────────────────── */
+const firebaseConfig = {
+  apiKey:            "AIzaSyAcEpZxA95IzaVpj5YpsdrkBmT3v6sJuMo",
+  authDomain:        "olamide-3fb18.firebaseapp.com",
+  databaseURL:       "https://olamide-3fb18-default-rtdb.firebaseio.com",
+  projectId:         "olamide-3fb18",
+  storageBucket:     "olamide-3fb18.firebasestorage.app",
+  messagingSenderId: "496751820578",
+  appId:             "1:496751820578:web:5e0e5a7e26dedccade2f7b",
+  measurementId:     "G-L01NFW0GV3"
+};
 
-/* ── Supabase config — paste your values from the Supabase dashboard ── */
-const SUPABASE_URL = 'https://nflqeygxiavqbajmykua.supabase.co';   // e.g. https://xxxx.supabase.co
-const SUPABASE_KEY = 'sb_publishable_1prPj3tooVKNvPiZxT1_YA_Xm7sAvc6';      // Project Settings → API → anon public
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.database();
 
-/* ── Supabase helpers (no SDK needed — pure fetch) ── */
-const sbHeaders = () => ({
-  'Content-Type':  'application/json',
-  'apikey':        SUPABASE_KEY,
-  'Authorization': `Bearer ${SUPABASE_KEY}`,
-});
+/* ─── Realtime refs ─── */
+const pricesRef     = db.ref('menu_prices');
+const siteStateRef  = db.ref('site_state');
 
-/* Auth helpers */
-async function sbSignIn(email, password) {
-  const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
-    method:  'POST',
-    headers: {
-      'Content-Type':  'application/json',
-      'apikey':        SUPABASE_KEY,
-      'Authorization': `Bearer ${SUPABASE_KEY}`,
-    },
-    body: JSON.stringify({ email, password }),
-  });
-  const data = await res.json();
-  console.log('Auth response:', res.status, JSON.stringify(data));
-  if (!res.ok) throw new Error(data.error_description || data.error || data.msg || `Login failed (${res.status})`);
-  // handle both old {access_token, user} and new {session:{access_token}, user} shapes
-  const token = data.access_token || (data.session && data.session.access_token);
-  const user  = data.user || (data.session && data.session.user);
-  if (!token) throw new Error('No access token returned');
-  return { access_token: token, user };
-}
-
-async function sbSignOut(accessToken) {
-  await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
-    method:  'POST',
-    headers: { ...sbHeaders(), 'Authorization': `Bearer ${accessToken}` },
-  });
-}
-
-/* Database helpers */
-async function sbGetPrices(accessToken) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/menu_prices?select=item_id,price`, {
-    headers: {
-      'Content-Type':  'application/json',
-      'apikey':        SUPABASE_KEY,
-      'Authorization': `Bearer ${accessToken}`,
-    },
-  });
-  const data = await res.json();
-  console.log('Get prices response:', res.status, JSON.stringify(data));
-  if (!res.ok) throw new Error(JSON.stringify(data));
-  return data;
-}
-
-async function sbUpsertPrice(itemId, price, accessToken) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/menu_prices`, {
-    method:  'POST',
-    headers: {
-      'Content-Type':  'application/json',
-      'apikey':        SUPABASE_KEY,
-      'Authorization': `Bearer ${accessToken}`,
-      'Prefer':        'resolution=merge-duplicates',
-    },
-    body: JSON.stringify({ item_id: itemId, price }),
-  });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.message || JSON.stringify(err));
-  }
-}
-
-
-
-/* ── Session state ── */
-let currentSession = null; // holds { access_token, user }
-
-function saveSession(session) {
-  currentSession = session;
-  sessionStorage.setItem('sb_session', JSON.stringify(session));
-}
-
-function loadSession() {
-  const raw = sessionStorage.getItem('sb_session');
-  if (raw) { currentSession = JSON.parse(raw); }
-  return currentSession;
-}
-
-/* ══════════════════════════════════════════════════
-   MENU DATA  (same items array as index.html)
-   Only the price field here is used as the baseline.
-   Firestore values override these when loaded.
-══════════════════════════════════════════════════ */
+/* ─────────────────────────────────────────────────
+   MENU ITEMS DATA
+───────────────────────────────────────────────── */
 const CAT_LABELS = {
   chips: 'Chips & Fries', 'pepper-soup': 'Pepper Soup', soup: 'Nigerian Soup',
   salad: 'Salad', protein: 'Protein', swallow: 'Swallow', pasta: 'Pasta',
@@ -717,135 +885,133 @@ const CAT_LABELS = {
 };
 
 const MENU_ITEMS = [
-  {id:80,  cat:'rice',        name:'Jollof Rice',                                 price:3000},
-  {id:87,  cat:'rice',        name:'Jollof Rice + Chicken',                       price:5400},
-  {id:81,  cat:'rice',        name:'Fried Rice',                                  price:3500},
-  {id:120, cat:'rice',        name:'Chinese Fried Rice',                          price:5000},
-  {id:82,  cat:'rice',        name:'Basmati White Rice',                          price:5000},
-  {id:83,  cat:'rice',        name:'Coconut Basmati Rice',                        price:5000},
-  {id:121, cat:'rice',        name:'Seafood Sauce with Basmati Rice',             price:9200},
-  {id:85,  cat:'rice',        name:'White Rice',                                  price:3000},
-  {id:30,  cat:'soup',        name:'Ogbono',                                      price:3000},
-  {id:31,  cat:'soup',        name:'Egusi',                                       price:3000},
-  {id:32,  cat:'soup',        name:'Okro',                                        price:3000},
-  {id:33,  cat:'soup',        name:'Afang',                                       price:3500},
-  {id:35,  cat:'soup',        name:'Vegetable',                                   price:3000},
-  {id:36,  cat:'soup',        name:'Fisherman Soup',                              price:12500},
-  {id:37,  cat:'soup',        name:'Seafood Okro',                                price:12500},
-  {id:60,  cat:'swallow',     name:'Semo',                                        price:1000},
-  {id:61,  cat:'swallow',     name:'Eba',                                         price:1000},
-  {id:62,  cat:'swallow',     name:'Oatmeal',                                     price:1500},
-  {id:63,  cat:'swallow',     name:'Plantain Flour',                              price:1500},
-  {id:64,  cat:'swallow',     name:'Poundo Yam',                                  price:1500},
-  {id:50,  cat:'protein',     name:'Beef',                                        price:1500},
-  {id:51,  cat:'protein',     name:'Goat Meat',                                   price:1500},
-  {id:52,  cat:'protein',     name:'Chicken (1/8)',                               price:2600},
-  {id:53,  cat:'protein',     name:'Chicken (1/4)',                               price:5000},
-  {id:54,  cat:'protein',     name:'Catfish',                                     price:5000},
-  {id:55,  cat:'protein',     name:'Croaker',                                     price:6000},
-  {id:56,  cat:'protein',     name:'Snail',                                       price:7500},
-  {id:1,   cat:'chips',       name:'Yam Chips (Boiled/Fried)',                    price:3000},
-  {id:2,   cat:'chips',       name:'Sweet Potatoes (Large Size)',                 price:2500},
-  {id:3,   cat:'chips',       name:'Sweet Potatoes (Regular Size)',               price:1300},
-  {id:4,   cat:'chips',       name:'French Fries (Large Size)',                   price:2500},
-  {id:5,   cat:'chips',       name:'French Fries (Regular Size)',                 price:1300},
-  {id:6,   cat:'chips',       name:'Plantain (Boiled/Fried)',                     price:2000},
-  {id:7,   cat:'chips',       name:"Chef Precious Chips & Chicken",               price:6500},
-  {id:8,   cat:'chips',       name:'Yam Porridge',                                price:3000},
-  {id:9,   cat:'chips',       name:'Plain Omelette',                              price:3000},
-  {id:10,  cat:'chips',       name:'Sardine Omelette',                            price:4400},
-  {id:20,  cat:'pepper-soup', name:'Chicken Pepper Soup',                         price:5000},
-  {id:21,  cat:'pepper-soup', name:'Goat Meat Pepper Soup',                       price:5000},
-  {id:22,  cat:'pepper-soup', name:'Catfish Pepper Soup',                         price:6000},
-  {id:23,  cat:'pepper-soup', name:'Croaker Fish Pepper Soup',                    price:6000},
-  {id:24,  cat:'pepper-soup', name:'Dry Fish Pepper Soup',                        price:6500},
-  {id:40,  cat:'salad',       name:'Chicken Caesar Salad',                        price:9000},
-  {id:41,  cat:'salad',       name:'Timeout Salad',                               price:8500},
-  {id:43,  cat:'salad',       name:'Chicken Club Sandwich',                       price:4800},
-  {id:45,  cat:'salad',       name:'Salad (Coleslaw)',                            price:1500},
-  {id:46,  cat:'salad',       name:'Vegetable Salad',                             price:4500},
-  {id:70,  cat:'pasta',       name:'Indomie (Special) Egg',                       price:3500},
-  {id:71,  cat:'pasta',       name:'Indomie with 1/8 Chicken',                    price:5000},
-  {id:72,  cat:'pasta',       name:'Spaghetti Napolitano',                        price:3500},
-  {id:73,  cat:'pasta',       name:'Spaghetti Napolitano with Fish',              price:9000},
-  {id:90,  cat:'beans',       name:'Vegetable Beans',                             price:4000},
+  {id:80,  cat:'rice',        name:'Jollof Rice',                                        price:3000},
+  {id:87,  cat:'rice',        name:'Jollof Rice + Chicken',                              price:5400},
+  {id:81,  cat:'rice',        name:'Fried Rice',                                         price:3500},
+  {id:120, cat:'rice',        name:'Chinese Fried Rice',                                 price:5000},
+  {id:82,  cat:'rice',        name:'Basmati White Rice',                                 price:5000},
+  {id:83,  cat:'rice',        name:'Coconut Basmati Rice',                               price:5000},
+  {id:121, cat:'rice',        name:'Seafood Sauce with Basmati Rice',                    price:9200},
+  {id:85,  cat:'rice',        name:'White Rice',                                         price:3000},
+  {id:30,  cat:'soup',        name:'Ogbono',                                             price:3000},
+  {id:31,  cat:'soup',        name:'Egusi',                                              price:3000},
+  {id:32,  cat:'soup',        name:'Okro',                                               price:3000},
+  {id:33,  cat:'soup',        name:'Afang',                                              price:3500},
+  {id:35,  cat:'soup',        name:'Vegetable',                                          price:3000},
+  {id:36,  cat:'soup',        name:'Fisherman Soup',                                     price:12500},
+  {id:37,  cat:'soup',        name:'Seafood Okro',                                       price:12500},
+  {id:60,  cat:'swallow',     name:'Semo',                                               price:1000},
+  {id:61,  cat:'swallow',     name:'Eba',                                                price:1000},
+  {id:62,  cat:'swallow',     name:'Oatmeal',                                            price:1500},
+  {id:63,  cat:'swallow',     name:'Plantain Flour',                                     price:1500},
+  {id:64,  cat:'swallow',     name:'Poundo Yam',                                         price:1500},
+  {id:50,  cat:'protein',     name:'Beef',                                               price:1500},
+  {id:51,  cat:'protein',     name:'Goat Meat',                                          price:1500},
+  {id:52,  cat:'protein',     name:'Chicken (1/8)',                                      price:2600},
+  {id:53,  cat:'protein',     name:'Chicken (1/4)',                                      price:5000},
+  {id:54,  cat:'protein',     name:'Catfish',                                            price:5000},
+  {id:55,  cat:'protein',     name:'Croaker',                                            price:6000},
+  {id:56,  cat:'protein',     name:'Snail',                                              price:7500},
+  {id:1,   cat:'chips',       name:'Yam Chips (Boiled/Fried)',                           price:3000},
+  {id:2,   cat:'chips',       name:'Sweet Potatoes (Large Size)',                        price:2500},
+  {id:3,   cat:'chips',       name:'Sweet Potatoes (Regular Size)',                      price:1300},
+  {id:4,   cat:'chips',       name:'French Fries (Large Size)',                          price:2500},
+  {id:5,   cat:'chips',       name:'French Fries (Regular Size)',                        price:1300},
+  {id:6,   cat:'chips',       name:'Plantain (Boiled/Fried)',                            price:2000},
+  {id:7,   cat:'chips',       name:'Chef Precious Chips & Chicken',                      price:6500},
+  {id:8,   cat:'chips',       name:'Yam Porridge',                                       price:3000},
+  {id:9,   cat:'chips',       name:'Plain Omelette',                                     price:3000},
+  {id:10,  cat:'chips',       name:'Sardine Omelette',                                   price:4400},
+  {id:20,  cat:'pepper-soup', name:'Chicken Pepper Soup',                                price:5000},
+  {id:21,  cat:'pepper-soup', name:'Goat Meat Pepper Soup',                              price:5000},
+  {id:22,  cat:'pepper-soup', name:'Catfish Pepper Soup',                                price:6000},
+  {id:23,  cat:'pepper-soup', name:'Croaker Fish Pepper Soup',                           price:6000},
+  {id:24,  cat:'pepper-soup', name:'Dry Fish Pepper Soup',                               price:6500},
+  {id:40,  cat:'salad',       name:'Chicken Caesar Salad',                               price:9000},
+  {id:41,  cat:'salad',       name:'Timeout Salad',                                      price:8500},
+  {id:43,  cat:'salad',       name:'Chicken Club Sandwich',                              price:4800},
+  {id:45,  cat:'salad',       name:'Salad (Coleslaw)',                                   price:1500},
+  {id:46,  cat:'salad',       name:'Vegetable Salad',                                    price:4500},
+  {id:70,  cat:'pasta',       name:'Indomie (Special) Egg',                              price:3500},
+  {id:71,  cat:'pasta',       name:'Indomie with 1/8 Chicken',                           price:5000},
+  {id:72,  cat:'pasta',       name:'Spaghetti Napolitano',                               price:3500},
+  {id:73,  cat:'pasta',       name:'Spaghetti Napolitano with Fish',                     price:9000},
+  {id:90,  cat:'beans',       name:'Vegetable Beans',                                    price:4000},
   {id:91,  cat:'beans',       name:'Akidi (Black Beans) with Yam/Plantain/Sweet Potato', price:5200},
-  {id:100, cat:'burger',      name:'Chicken/Beef Burger without French Fries',    price:2800},
-  {id:101, cat:'burger',      name:'Chicken/Beef Burger with Fries (Regular)',    price:4100},
-  {id:102, cat:'burger',      name:'Chicken/Beef Burger with Fries (Large)',      price:5300},
-  {id:103, cat:'burger',      name:'Regular Shawarma (Beef/Chicken/Goat)',        price:3600},
-  {id:104, cat:'burger',      name:'Jumbo Shawarma (Beef/Chicken/Goat)',          price:4500},
-  {id:105, cat:'burger',      name:'Extra Sausage',                               price:800 },
-  {id:106, cat:'burger',      name:'Extra Burger Patty',                          price:1600},
-  {id:111, cat:'chops',       name:'Pepper Goatmeat',                             price:5200},
-  {id:112, cat:'chops',       name:'Pepper Beef',                                 price:5200},
-  {id:113, cat:'chops',       name:'Pepper Chicken',                              price:5600},
-  {id:114, cat:'chops',       name:'Goat Head (Isi Ewu)',                         price:10000},
-  {id:116, cat:'chops',       name:'Pepper Catfish',                              price:6000},
-  {id:130, cat:'drinks',      name:'Water',                                       price:500 },
-  {id:131, cat:'drinks',      name:'Minerals',                                    price:600 },
-  {id:132, cat:'drinks',      name:'Malt',                                        price:1200},
-  {id:133, cat:'drinks',      name:'Five Alive',                                  price:2500},
-  {id:134, cat:'drinks',      name:'Cranberry (Big Pack)',                        price:4500},
-  {id:135, cat:'drinks',      name:'Origin Bitters',                              price:2500},
-  {id:136, cat:'drinks',      name:'Double Black',                                price:2500},
-  {id:140, cat:'beer',        name:'Heineken',                                    price:2000},
-  {id:143, cat:'beer',        name:'M/Stout',                                     price:1600},
-  {id:144, cat:'beer',        name:'M/Extra Smooth',                              price:1500},
-  {id:145, cat:'beer',        name:'Star',                                        price:1700},
-  {id:146, cat:'beer',        name:'Hero',                                        price:1500},
-  {id:147, cat:'beer',        name:'Trophy',                                      price:1500},
-  {id:148, cat:'beer',        name:'Tiger',                                       price:1500},
-  {id:149, cat:'beer',        name:'Star Radler',                                 price:1500},
-  {id:150, cat:'beer',        name:'Gulder',                                      price:2000},
-  {id:151, cat:'beer',        name:'Legend',                                      price:1500},
-  {id:160, cat:'juice',       name:'Orange Juice (35cl)',                         price:2800},
-  {id:161, cat:'juice',       name:'Watermelon Juice (35cl)',                     price:2600},
-  {id:162, cat:'juice',       name:'Watermelon & Orange (35cl)',                  price:3000},
-  {id:163, cat:'juice',       name:'Mix of Orange & Pineapple (35cl)',            price:3000},
-  {id:164, cat:'juice',       name:'Mix of Apple & Cucumber (35cl)',              price:3500},
-  {id:165, cat:'juice',       name:'Mix of Carrot, Pineapple & Apple (35cl)',     price:3500},
-  {id:166, cat:'juice',       name:'Mix of Apple, Pineapple, Cucumber (35cl)',    price:3600},
-  {id:167, cat:'juice',       name:'Any Other Mixture of Choice (35cl)',          price:3600},
-  {id:170, cat:'cocktails',   name:'Sex on the Beach',                            price:6000},
-  {id:171, cat:'cocktails',   name:'Pinacolada',                                  price:6000},
-  {id:172, cat:'cocktails',   name:'Timeout Special',                             price:6000},
-  {id:180, cat:'whisky',      name:'Glenfiddich 15',                              price:75000},
-  {id:181, cat:'whisky',      name:'Glenfiddich 18',                              price:175000},
-  {id:182, cat:'whisky',      name:'Glenfiddich 21',                              price:380000},
-  {id:183, cat:'whisky',      name:'Red Label',                                   price:30000},
-  {id:184, cat:'whisky',      name:'Black Label',                                 price:48000},
-  {id:185, cat:'whisky',      name:"Jack Daniel's",                               price:40000},
-  {id:186, cat:'whisky',      name:'Jameson Green',                               price:30000},
-  {id:187, cat:'whisky',      name:'Jameson Black Barrel',                        price:50000},
-  {id:188, cat:'whisky',      name:'Observatory 20',                              price:57000},
-  {id:190, cat:'wine',        name:'Escudo Rojo',                                 price:38000},
-  {id:191, cat:'wine',        name:'Carlo Rossi',                                 price:15000},
-  {id:192, cat:'wine',        name:'Carlo Rossi (Sweet)',                         price:20000},
-  {id:193, cat:'wine',        name:'Four Cousins',                                price:13000},
-  {id:200, cat:'champagne',   name:'Moët Rosé',                                   price:290000},
-  {id:201, cat:'champagne',   name:'Moët Brut',                                   price:220000},
-  {id:202, cat:'champagne',   name:'Veuve Clicquot Brut',                         price:260000},
-  {id:203, cat:'champagne',   name:'Veuve Clicquot Rosé',                         price:300000},
-  {id:204, cat:'champagne',   name:'André Rosé',                                  price:32000},
-  {id:205, cat:'champagne',   name:'André Brut',                                  price:25000},
+  {id:100, cat:'burger',      name:'Chicken/Beef Burger without French Fries',           price:2800},
+  {id:101, cat:'burger',      name:'Chicken/Beef Burger with Fries (Regular)',           price:4100},
+  {id:102, cat:'burger',      name:'Chicken/Beef Burger with Fries (Large)',             price:5300},
+  {id:103, cat:'burger',      name:'Regular Shawarma (Beef/Chicken/Goat)',               price:3600},
+  {id:104, cat:'burger',      name:'Jumbo Shawarma (Beef/Chicken/Goat)',                 price:4500},
+  {id:105, cat:'burger',      name:'Extra Sausage',                                      price:800 },
+  {id:106, cat:'burger',      name:'Extra Burger Patty',                                 price:1600},
+  {id:111, cat:'chops',       name:'Pepper Goatmeat',                                    price:5200},
+  {id:112, cat:'chops',       name:'Pepper Beef',                                        price:5200},
+  {id:113, cat:'chops',       name:'Pepper Chicken',                                     price:5600},
+  {id:114, cat:'chops',       name:'Goat Head (Isi Ewu)',                                price:10000},
+  {id:116, cat:'chops',       name:'Pepper Catfish',                                     price:6000},
+  {id:130, cat:'drinks',      name:'Water',                                               price:500 },
+  {id:131, cat:'drinks',      name:'Minerals',                                            price:600 },
+  {id:132, cat:'drinks',      name:'Malt',                                                price:1200},
+  {id:133, cat:'drinks',      name:'Five Alive',                                          price:2500},
+  {id:134, cat:'drinks',      name:'Cranberry (Big Pack)',                                price:4500},
+  {id:135, cat:'drinks',      name:'Origin Bitters',                                      price:2500},
+  {id:136, cat:'drinks',      name:'Double Black',                                        price:2500},
+  {id:140, cat:'beer',        name:'Heineken',                                            price:2000},
+  {id:143, cat:'beer',        name:'M/Stout',                                             price:1600},
+  {id:144, cat:'beer',        name:'M/Extra Smooth',                                      price:1500},
+  {id:145, cat:'beer',        name:'Star',                                                price:1700},
+  {id:146, cat:'beer',        name:'Hero',                                                price:1500},
+  {id:147, cat:'beer',        name:'Trophy',                                              price:1500},
+  {id:148, cat:'beer',        name:'Tiger',                                               price:1500},
+  {id:149, cat:'beer',        name:'Star Radler',                                         price:1500},
+  {id:150, cat:'beer',        name:'Gulder',                                              price:2000},
+  {id:151, cat:'beer',        name:'Legend',                                              price:1500},
+  {id:160, cat:'juice',       name:'Orange Juice (35cl)',                                 price:2800},
+  {id:161, cat:'juice',       name:'Watermelon Juice (35cl)',                             price:2600},
+  {id:162, cat:'juice',       name:'Watermelon & Orange (35cl)',                          price:3000},
+  {id:163, cat:'juice',       name:'Mix of Orange & Pineapple (35cl)',                    price:3000},
+  {id:164, cat:'juice',       name:'Mix of Apple & Cucumber (35cl)',                      price:3500},
+  {id:165, cat:'juice',       name:'Mix of Carrot, Pineapple & Apple (35cl)',             price:3500},
+  {id:166, cat:'juice',       name:'Mix of Apple, Pineapple, Cucumber (35cl)',            price:3600},
+  {id:167, cat:'juice',       name:'Any Other Mixture of Choice (35cl)',                  price:3600},
+  {id:170, cat:'cocktails',   name:'Sex on the Beach',                                    price:6000},
+  {id:171, cat:'cocktails',   name:'Pinacolada',                                          price:6000},
+  {id:172, cat:'cocktails',   name:'Timeout Special',                                     price:6000},
+  {id:180, cat:'whisky',      name:'Glenfiddich 15',                                      price:75000},
+  {id:181, cat:'whisky',      name:'Glenfiddich 18',                                      price:175000},
+  {id:182, cat:'whisky',      name:'Glenfiddich 21',                                      price:380000},
+  {id:183, cat:'whisky',      name:'Red Label',                                           price:30000},
+  {id:184, cat:'whisky',      name:'Black Label',                                         price:48000},
+  {id:185, cat:'whisky',      name:"Jack Daniel's",                                       price:40000},
+  {id:186, cat:'whisky',      name:'Jameson Green',                                       price:30000},
+  {id:187, cat:'whisky',      name:'Jameson Black Barrel',                                price:50000},
+  {id:188, cat:'whisky',      name:'Observatory 20',                                      price:57000},
+  {id:190, cat:'wine',        name:'Escudo Rojo',                                         price:38000},
+  {id:191, cat:'wine',        name:'Carlo Rossi',                                         price:15000},
+  {id:192, cat:'wine',        name:'Carlo Rossi (Sweet)',                                 price:20000},
+  {id:193, cat:'wine',        name:'Four Cousins',                                        price:13000},
+  {id:200, cat:'champagne',   name:'Moët Rosé',                                          price:290000},
+  {id:201, cat:'champagne',   name:'Moët Brut',                                          price:220000},
+  {id:202, cat:'champagne',   name:'Veuve Clicquot Brut',                                price:260000},
+  {id:203, cat:'champagne',   name:'Veuve Clicquot Rosé',                                price:300000},
+  {id:204, cat:'champagne',   name:'André Rosé',                                         price:32000},
+  {id:205, cat:'champagne',   name:'André Brut',                                          price:25000},
 ];
 
-/* ══════════════════════════════════════════════════
+/* ─────────────────────────────────────────────────
    STATE
-══════════════════════════════════════════════════ */
-// supabasePrices: Map<itemId (number), price (number)> — loaded from Supabase
-const supabasePrices = new Map();
-// pendingChanges: Map<itemId, newPrice> — user edits not yet saved
-const pendingChanges  = new Map();
+───────────────────────────────────────────────── */
+const firebasePrices = new Map();   // item_id → price (from Firebase)
+const pendingChanges  = new Map();  // item_id → new price (unsaved)
+let   siteIsPaused    = false;
+let   adminSearchQ    = '';
+let   adminCatQ       = 'all';
 
-let adminSearchQ = '';
-let adminCatQ    = 'all';
-
-/* ══════════════════════════════════════════════════
+/* ─────────────────────────────────────────────────
    UI HELPERS
-══════════════════════════════════════════════════ */
-function showToast(msg, duration = 2600) {
+───────────────────────────────────────────────── */
+function showToast(msg, duration = 2800) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
@@ -860,22 +1026,156 @@ function hideLoading() {
 }
 
 function setView(view) {
-  document.getElementById('loginScreen').style.display  = view === 'login'  ? 'flex'  : 'none';
-  document.getElementById('adminPanel').style.display   = view === 'admin'  ? 'block' : 'none';
+  document.getElementById('loginScreen').style.display = view === 'login' ? 'flex' : 'none';
+  document.getElementById('adminPanel').style.display  = view === 'admin' ? 'block' : 'none';
 }
 
 function updateStats() {
-  document.getElementById('statTotal').textContent    = MENU_ITEMS.length;
-  document.getElementById('statModified').textContent = supabasePrices.size;
-  document.getElementById('statPending').textContent  = pendingChanges.size;
-
-  const wrap = document.getElementById('saveAllWrap');
-  wrap.style.display = pendingChanges.size > 0 ? 'block' : 'none';
+  document.getElementById('statTotal').textContent   = MENU_ITEMS.length;
+  document.getElementById('statSaved').textContent   = firebasePrices.size;
+  document.getElementById('statPending').textContent = pendingChanges.size;
+  document.getElementById('saveAllWrap').style.display = pendingChanges.size > 0 ? 'block' : 'none';
 }
 
-/* ══════════════════════════════════════════════════
+/* ─────────────────────────────────────────────────
+   SITE CONTROL UI
+───────────────────────────────────────────────── */
+function applySiteState(isPaused, message) {
+  siteIsPaused = isPaused;
+
+  const card    = document.getElementById('siteControlCard');
+  const badge   = document.getElementById('scBadge');
+  const dot     = document.getElementById('scDot');
+  const badgeTxt= document.getElementById('scBadgeText');
+  const desc    = document.getElementById('scDesc');
+  const icon    = document.getElementById('scIcon');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const resumeBtn = document.getElementById('resumeBtn');
+  const msgWrap  = document.getElementById('scMsgWrap');
+  const msgInput = document.getElementById('scMessageInput');
+
+  if (isPaused) {
+    card.className    = 'site-control-card is-paused';
+    icon.textContent  = '🔴';
+    badge.className   = 'sc-badge paused';
+    dot.className     = 'blink-dot paused';
+    badgeTxt.textContent = 'PAUSED — Ordering Disabled';
+    desc.textContent  = message
+      ? `Customers see: "${message}"`
+      : 'Customers cannot place orders right now. Click Resume to go live again.';
+    pauseBtn.style.display  = 'none';
+    resumeBtn.style.display = '';
+    msgWrap.classList.remove('show');
+    msgInput.value = message || '';
+  } else {
+    card.className    = 'site-control-card is-live';
+    icon.textContent  = '🟢';
+    badge.className   = 'sc-badge live';
+    dot.className     = 'blink-dot live';
+    badgeTxt.textContent = 'LIVE — Accepting Orders';
+    desc.textContent  = 'Customers can browse the menu and place orders normally.';
+    pauseBtn.style.display  = '';
+    resumeBtn.style.display = 'none';
+    msgWrap.classList.add('show'); // show message box so admin can type before pausing
+    if (!isPaused) msgInput.value = '';
+  }
+}
+
+/* Pause button */
+document.getElementById('pauseBtn').addEventListener('click', async () => {
+  const msg = document.getElementById('scMessageInput').value.trim();
+  const btn = document.getElementById('pauseBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Pausing…';
+  try {
+    await siteStateRef.set({ paused: true, message: msg, updated_at: Date.now() });
+    showToast('⏸ Website paused — customers cannot order now');
+  } catch (err) {
+    showToast('❌ Failed: ' + err.message, 4000);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '⏸ Pause Ordering';
+  }
+});
+
+/* Resume button */
+document.getElementById('resumeBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('resumeBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Resuming…';
+  try {
+    await siteStateRef.set({ paused: false, message: '', updated_at: Date.now() });
+    showToast('▶ Website is LIVE again — orders enabled!');
+  } catch (err) {
+    showToast('❌ Failed: ' + err.message, 4000);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '▶ Resume Ordering';
+  }
+});
+
+/* Listen to site_state in real-time */
+function listenSiteState() {
+  siteStateRef.on('value', snap => {
+    const data = snap.val() || { paused: false, message: '' };
+    applySiteState(data.paused === true, data.message || '');
+  });
+}
+
+/* ─────────────────────────────────────────────────
+   MIGRATE ALL PRICES → FIREBASE (one-time setup)
+───────────────────────────────────────────────── */
+document.getElementById('migrateBtn').addEventListener('click', async () => {
+  const btn  = document.getElementById('migrateBtn');
+  const desc = document.getElementById('migrateDesc');
+
+  if (!confirm(`Push all ${MENU_ITEMS.length} menu prices to Firebase now?\n\nThis will overwrite any prices already in Firebase.`)) return;
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Migrating…';
+  desc.textContent = 'Writing all prices to Firebase Realtime Database…';
+
+  try {
+    // Build one big update object: { "80": 3000, "87": 5400, ... }
+    const updates = {};
+    MENU_ITEMS.forEach(item => { updates[String(item.id)] = item.price; });
+
+    await pricesRef.set(updates);
+
+    // Update local map
+    MENU_ITEMS.forEach(item => firebasePrices.set(item.id, item.price));
+
+    btn.textContent = '✅ Done!';
+    btn.style.background = 'linear-gradient(135deg,#4caf7d,#2e8a56)';
+    desc.innerHTML = `<strong style="color:#5dca8e;">✅ ${MENU_ITEMS.length} prices pushed to Firebase successfully!</strong> You can now edit individual prices above and save them anytime.`;
+
+    // Hide card after 4 seconds
+    setTimeout(() => {
+      document.getElementById('migratePricesCard').style.display = 'none';
+    }, 4000);
+
+    renderList();
+    updateStats();
+    showToast(`✅ All ${MENU_ITEMS.length} prices are now live in Firebase!`);
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = '🚀 Push All Prices to Firebase';
+    desc.textContent = '❌ Migration failed: ' + err.message + '. Check your Firebase rules and try again.';
+    showToast('❌ Migration failed: ' + err.message, 5000);
+  }
+});
+
+/* Hide migrate card automatically once Firebase already has prices */
+function checkMigrateCard() {
+  if (firebasePrices.size > 0) {
+    const card = document.getElementById('migratePricesCard');
+    if (card) card.style.display = 'none';
+  }
+}
+
+/* ─────────────────────────────────────────────────
    RENDER ITEM LIST
-══════════════════════════════════════════════════ */
+───────────────────────────────────────────────── */
 function renderList() {
   const list = document.getElementById('itemsList');
 
@@ -891,23 +1191,21 @@ function renderList() {
   }
 
   list.innerHTML = filtered.map(item => {
-    // Effective current price: pending edit → Supabase → original hardcoded
     const effectivePrice = pendingChanges.has(item.id)
       ? pendingChanges.get(item.id)
-      : (supabasePrices.has(item.id) ? supabasePrices.get(item.id) : item.price);
+      : (firebasePrices.has(item.id) ? firebasePrices.get(item.id) : item.price);
 
     const isDirty    = pendingChanges.has(item.id);
-    const isModified = supabasePrices.has(item.id);
-
-    const rowClass = isDirty ? 'item-row dirty' : 'item-row';
-    const catLabel = CAT_LABELS[item.cat] || item.cat;
+    const isInFirebase = firebasePrices.has(item.id);
+    const rowClass   = isDirty ? 'item-row dirty' : 'item-row';
+    const catLabel   = CAT_LABELS[item.cat] || item.cat;
 
     return `
       <div class="${rowClass}" id="row-${item.id}" data-id="${item.id}">
         <span class="item-cat-badge">${catLabel}</span>
         <div class="item-name">
           ${item.name}
-          ${isModified && !isDirty ? '<small>✓ Saved</small>' : ''}
+          ${isInFirebase && !isDirty ? '<small>✓ Saved in Firebase</small>' : ''}
         </div>
         <div class="price-wrap">
           <span class="price-prefix">₦</span>
@@ -917,7 +1215,6 @@ function renderList() {
             min="0"
             step="50"
             value="${effectivePrice}"
-            data-original="${item.price}"
             data-id="${item.id}"
             aria-label="Price for ${item.name}"
           />
@@ -927,7 +1224,6 @@ function renderList() {
       </div>`;
   }).join('');
 
-  // Attach price-input listeners
   list.querySelectorAll('.price-input').forEach(input => {
     input.addEventListener('input', () => {
       const id  = parseInt(input.dataset.id, 10);
@@ -944,39 +1240,35 @@ function renderList() {
     });
   });
 
-  // Attach save-button listeners
   list.querySelectorAll('.save-row-btn').forEach(btn => {
     btn.addEventListener('click', () => saveItem(parseInt(btn.dataset.id, 10), btn));
   });
 }
 
-/* ══════════════════════════════════════════════════
-   SAVE HELPERS
-══════════════════════════════════════════════════ */
+/* ─────────────────────────────────────────────────
+   SAVE PRICE TO FIREBASE
+───────────────────────────────────────────────── */
 async function saveItem(itemId, btn) {
-  const input = document.querySelector(`.price-input[data-id="${itemId}"]`);
+  const input    = document.querySelector(`.price-input[data-id="${itemId}"]`);
   const newPrice = parseInt(input ? input.value : pendingChanges.get(itemId), 10);
 
-  if (isNaN(newPrice) || newPrice < 0) {
-    showToast('⚠️ Enter a valid price first');
-    return;
-  }
+  if (isNaN(newPrice) || newPrice < 0) { showToast('⚠️ Enter a valid price first'); return; }
 
   const statusEl = document.getElementById(`status-${itemId}`);
   const row      = document.getElementById(`row-${itemId}`);
 
-  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  if (btn)      { btn.disabled = true; btn.textContent = '…'; }
   if (statusEl) statusEl.textContent = '⏳';
 
   try {
-    await sbUpsertPrice(itemId, newPrice, currentSession.access_token);
+    await pricesRef.child(String(itemId)).set(newPrice);
 
-    supabasePrices.set(itemId, newPrice);
+    firebasePrices.set(itemId, newPrice);
     pendingChanges.delete(itemId);
 
-    if (row)      { row.className = 'item-row saved'; setTimeout(() => { if (row) row.className = 'item-row'; }, 2000); }
+    if (row)      { row.className = 'item-row saved'; setTimeout(() => { if (row) row.className = 'item-row'; }, 2200); }
     if (statusEl) { statusEl.textContent = '✅'; setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 2500); }
-    showToast('✅ Price saved — live on site now');
+    showToast('✅ Price saved — live on site instantly!');
   } catch (err) {
     console.error(err);
     if (row)      { row.className = 'item-row error'; setTimeout(() => { if (row) row.className = 'item-row dirty'; }, 2000); }
@@ -994,17 +1286,15 @@ async function saveAllPending() {
   btn.disabled = true;
   btn.textContent = '⏳ Saving…';
 
-  const promises = [];
-  pendingChanges.forEach((price, id) => {
-    promises.push(
-      sbUpsertPrice(id, price, currentSession.access_token)
-        .then(() => { supabasePrices.set(id, price); pendingChanges.delete(id); })
-    );
-  });
+  const updates = {};
+  pendingChanges.forEach((price, id) => { updates[String(id)] = price; });
 
   try {
-    await Promise.all(promises);
-    showToast(`✅ ${promises.length} price${promises.length > 1 ? 's' : ''} saved — live now`);
+    await pricesRef.update(updates);
+    pendingChanges.forEach((price, id) => firebasePrices.set(id, price));
+    const count = pendingChanges.size;
+    pendingChanges.clear();
+    showToast(`✅ ${count} price${count > 1 ? 's' : ''} saved — live now!`);
     renderList();
   } catch (err) {
     showToast('❌ Some saves failed. Try again.', 4000);
@@ -1015,49 +1305,40 @@ async function saveAllPending() {
   }
 }
 
-/* ══════════════════════════════════════════════════
-   LOAD PRICES FROM SUPABASE
-══════════════════════════════════════════════════ */
-async function loadSupabasePrices() {
-  try {
-    const rows = await sbGetPrices(currentSession.access_token);
-    supabasePrices.clear();
-    rows.forEach(row => {
-      if (typeof row.price === 'number') {
-        supabasePrices.set(row.item_id, row.price);
+/* ─────────────────────────────────────────────────
+   LOAD PRICES FROM FIREBASE (real-time listener)
+───────────────────────────────────────────────── */
+function listenPrices() {
+  pricesRef.on('value', snap => {
+    const data = snap.val() || {};
+    firebasePrices.clear();
+    Object.entries(data).forEach(([idStr, price]) => {
+      if (typeof price === 'number') {
+        firebasePrices.set(parseInt(idStr, 10), price);
       }
     });
+    checkMigrateCard();
     renderList();
     updateStats();
-  } catch (err) {
-    console.error('Supabase load error:', err);
-    showToast('⚠️ Could not load prices from Supabase', 5000);
-  }
+  });
 }
 
-function clearSession() {
-  currentSession = null;
-  sessionStorage.removeItem('sb_session');
-  supabasePrices.clear();
-  pendingChanges.clear();
-}
-
-/* ══════════════════════════════════════════════════
-   AUTH — init on page load
-══════════════════════════════════════════════════ */
-window.addEventListener('DOMContentLoaded', () => {
-  const session = loadSession();
+/* ─────────────────────────────────────────────────
+   AUTH
+───────────────────────────────────────────────── */
+auth.onAuthStateChanged(user => {
   hideLoading();
-  if (session) {
-    document.getElementById('topbarUser').textContent = session.user.email;
+  if (user) {
+    document.getElementById('topbarUser').textContent = user.email;
     setView('admin');
-    loadSupabasePrices();
+    listenPrices();
+    listenSiteState();
   } else {
     setView('login');
   }
 });
 
-/* Login form */
+/* Login */
 document.getElementById('loginBtn').addEventListener('click', async () => {
   const email    = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
@@ -1069,13 +1350,9 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
 
   btn.disabled = true; btn.textContent = 'Signing in…';
   try {
-    const session = await sbSignIn(email, password);
-    saveSession(session);
-    document.getElementById('topbarUser').textContent = session.user.email;
-    setView('admin');
-    loadSupabasePrices();
+    await auth.signInWithEmailAndPassword(email, password);
   } catch (err) {
-    errEl.textContent = err.message.includes('Invalid login')
+    errEl.textContent = err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found'
       ? 'Wrong email or password. Try again.'
       : err.message;
     errEl.style.display = 'block';
@@ -1084,21 +1361,22 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
   }
 });
 
-// Allow Enter key on password field
 document.getElementById('loginPassword').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('loginBtn').click();
 });
 
 /* Logout */
 document.getElementById('logoutBtn').addEventListener('click', async () => {
-  if (currentSession) await sbSignOut(currentSession.access_token).catch(() => {});
-  clearSession();
-  setView('login');
+  await auth.signOut();
+  pricesRef.off();
+  siteStateRef.off();
+  firebasePrices.clear();
+  pendingChanges.clear();
 });
 
-/* ══════════════════════════════════════════════════
-   TOOLBAR — search + filter
-══════════════════════════════════════════════════ */
+/* ─────────────────────────────────────────────────
+   TOOLBAR
+───────────────────────────────────────────────── */
 document.getElementById('adminSearch').addEventListener('input', e => {
   adminSearchQ = e.target.value.trim().toLowerCase();
   renderList();
@@ -1109,12 +1387,10 @@ document.getElementById('catFilter').addEventListener('change', e => {
   renderList();
 });
 
-/* Save All button */
 document.getElementById('saveAllBtn').addEventListener('click', saveAllPending);
-
 </script>
 
-<!-- Register Service Worker -->
+<!-- Service Worker -->
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
