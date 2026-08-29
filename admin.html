@@ -670,6 +670,46 @@
     .load-logo span { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 600; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
     .load-sub  { font-size: 13px; color: var(--muted); }
 
+    /* ─── OFFLINE BANNER ─── */
+    #offlineBanner {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 99999;
+      background: #1a0a00;
+      border-bottom: 1px solid rgba(224,82,82,0.5);
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #f08080;
+      letter-spacing: 0.3px;
+      animation: slideDown 0.3s var(--ease-out);
+    }
+    #offlineBanner.show { display: block; }
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    /* ─── RETRY BUTTON inside error ─── */
+    .retry-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 9px 22px;
+      background: linear-gradient(135deg, #d9b456, #a67c1b);
+      color: #0a0900;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      transition: filter 0.18s;
+    }
+    .retry-btn:hover { filter: brightness(1.1); }
+
     /* ─── MOBILE ─── */
     @media (max-width: 600px) {
       .login-box { padding: 32px 22px 28px; }
@@ -682,6 +722,9 @@
   </style>
 </head>
 <body>
+
+<!-- OFFLINE BANNER -->
+<div id="offlineBanner">📡 No internet connection — please check your network and try again.</div>
 
 <!-- LOADING -->
 <div id="loadingOverlay">
@@ -1362,27 +1405,114 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-/* Login */
-document.getElementById('loginBtn').addEventListener('click', async () => {
+/* ─────────────────────────────────────────────────
+   OFFLINE DETECTION
+───────────────────────────────────────────────── */
+function updateOnlineStatus() {
+  const banner = document.getElementById('offlineBanner');
+  if (!navigator.onLine) {
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
+}
+window.addEventListener('online',  updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+updateOnlineStatus();
+
+/* ─────────────────────────────────────────────────
+   SMART LOGIN — with auto-retry on network failure
+───────────────────────────────────────────────── */
+let loginRetryCount = 0;
+const MAX_RETRIES   = 3;
+
+async function attemptLogin(email, password, isRetry = false) {
+  const errEl = document.getElementById('loginError');
+  const btn   = document.getElementById('loginBtn');
+
+  if (!isRetry) loginRetryCount = 0;
+
+  // Check connectivity first
+  if (!navigator.onLine) {
+    errEl.innerHTML = '📡 <strong>No internet connection.</strong><br/>Please turn on your data or connect to WiFi, then tap retry.';
+    errEl.style.display = 'block';
+    showRetryButton(email, password);
+    btn.disabled = false; btn.textContent = 'Sign In';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = isRetry ? `Retrying… (${loginRetryCount}/${MAX_RETRIES})` : 'Signing in…';
+  errEl.style.display = 'none';
+
+  try {
+    await auth.signInWithEmailAndPassword(email, password);
+    loginRetryCount = 0; // success — reset
+  } catch (err) {
+    console.error('Login error:', err.code, err.message);
+
+    // Network failure — auto retry up to MAX_RETRIES
+    if (err.code === 'auth/network-request-failed') {
+      loginRetryCount++;
+      if (loginRetryCount <= MAX_RETRIES) {
+        const delay = loginRetryCount * 2000; // 2s, 4s, 6s
+        btn.textContent = `Network error — retrying in ${delay/1000}s…`;
+        setTimeout(() => attemptLogin(email, password, true), delay);
+        return;
+      } else {
+        // All retries exhausted
+        errEl.innerHTML = `
+          📡 <strong>Connection failed after ${MAX_RETRIES} attempts.</strong><br/>
+          Your network may be unstable. Please check your internet and try again.
+        `;
+        errEl.style.display = 'block';
+        showRetryButton(email, password);
+      }
+    } else if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+      errEl.textContent = '❌ Wrong email or password. Try again.';
+      errEl.style.display = 'block';
+    } else if (err.code === 'auth/too-many-requests') {
+      errEl.textContent = '⚠️ Too many attempts. Please wait a few minutes and try again.';
+      errEl.style.display = 'block';
+    } else {
+      errEl.textContent = '⚠️ ' + err.message;
+      errEl.style.display = 'block';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+  }
+}
+
+function showRetryButton(email, password) {
+  const errEl = document.getElementById('loginError');
+  // Remove old retry btn if exists
+  const old = errEl.querySelector('.retry-btn');
+  if (old) old.remove();
+
+  const retryBtn = document.createElement('button');
+  retryBtn.className   = 'retry-btn';
+  retryBtn.textContent = '🔄 Tap to Retry';
+  retryBtn.onclick = () => {
+    loginRetryCount = 0;
+    attemptLogin(email, password, false);
+  };
+  errEl.appendChild(retryBtn);
+}
+
+document.getElementById('loginBtn').addEventListener('click', () => {
   const email    = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
   const errEl    = document.getElementById('loginError');
-  const btn      = document.getElementById('loginBtn');
 
   errEl.style.display = 'none';
-  if (!email || !password) { errEl.textContent = 'Enter your email and password.'; errEl.style.display = 'block'; return; }
-
-  btn.disabled = true; btn.textContent = 'Signing in…';
-  try {
-    await auth.signInWithEmailAndPassword(email, password);
-  } catch (err) {
-    errEl.textContent = err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found'
-      ? 'Wrong email or password. Try again.'
-      : err.message;
+  if (!email || !password) {
+    errEl.textContent = 'Please enter your email and password.';
     errEl.style.display = 'block';
-  } finally {
-    btn.disabled = false; btn.textContent = 'Sign In';
+    return;
   }
+
+  attemptLogin(email, password);
 });
 
 document.getElementById('loginPassword').addEventListener('keydown', e => {
