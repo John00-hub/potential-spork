@@ -744,8 +744,12 @@
     <div class="login-sub">Admin Panel · Timeout Restaurant</div>
 
     <div class="field">
-      <label for="loginPassword">Admin Password</label>
-      <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password" />
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" placeholder="" autocomplete="email" />
+    </div>
+    <div class="field">
+      <label for="loginPassword">Password</label>
+      <input type="password" id="loginPassword" placeholder="" autocomplete="current-password" />
     </div>
 
     <button class="login-btn" id="loginBtn">Sign In</button>
@@ -931,10 +935,10 @@ const db = firebase.database();
 
 /* ─────────────────────────────────────────────────
    LOCAL AUTH — no Firebase Auth, no Google servers
-   Change ADMIN_PASS below to whatever you want.
-   Session persists until browser is closed.
+   Change ADMIN_EMAIL and ADMIN_PASS below.
 ───────────────────────────────────────────────── */
-const ADMIN_PASS = 'Timeout@2026';  // ← change this to your preferred password
+const ADMIN_EMAIL = 'admin@timeout.com.ng';   // ← your email
+const ADMIN_PASS  = 'Timeout@2026';           // ← your password
 
 /* ─── Realtime refs ─── */
 const pricesRef     = db.ref('menu_prices');
@@ -1413,22 +1417,22 @@ function isLoggedIn() {
   return sessionStorage.getItem('admin_auth') === 'yes';
 }
 
-function doLocalLogin(password) {
+function doLocalLogin(email, password) {
   const errEl = document.getElementById('loginError');
-  const btn   = document.getElementById('loginBtn');
 
   errEl.style.display = 'none';
-  if (!password) {
-    errEl.textContent = 'Please enter your password.';
+
+  if (!email || !password) {
+    errEl.textContent = 'Please enter your email and password.';
     errEl.style.display = 'block';
     return;
   }
 
-  if (password === ADMIN_PASS) {
+  if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase() && password === ADMIN_PASS) {
     sessionStorage.setItem('admin_auth', 'yes');
     showAdminPanel();
   } else {
-    errEl.textContent = '❌ Wrong password. Try again.';
+    errEl.textContent = '❌ Wrong email or password. Try again.';
     errEl.style.display = 'block';
     document.getElementById('loginPassword').value = '';
     document.getElementById('loginPassword').focus();
@@ -1454,8 +1458,9 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 document.getElementById('loginBtn').addEventListener('click', () => {
+  const email    = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
-  doLocalLogin(password);
+  doLocalLogin(email, password);
 });
 
 document.getElementById('loginPassword').addEventListener('keydown', e => {
@@ -1469,6 +1474,7 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
   firebasePrices.clear();
   pendingChanges.clear();
   setView('login');
+  document.getElementById('loginEmail').value    = '';
   document.getElementById('loginPassword').value = '';
 });
 
