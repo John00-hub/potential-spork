@@ -1937,13 +1937,20 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   /* Categories exempt from the ₦500 takeaway pack fee:
      shawarma/burgers (cat:'burger') and fries (cat:'chips') */
   const TAKEAWAY_EXEMPT_CATS = new Set(['burger', 'chips']);
+
+  /* Individual items exempt from the takeaway pack fee (protein sides):
+     50 = Beef, 51 = Goat Meat, 52 = Chicken (1/8), 53 = Chicken (1/4),
+     54 = Catfish, 55 = Croaker */
+  const TAKEAWAY_EXEMPT_IDS  = new Set([50, 51, 52, 53, 54, 55]);
   const TAKEAWAY_PACK_FEE    = 500; /* Naira per eligible item */
 
   function takeawayPackFee() {
-    /* Count items that are NOT in exempt categories and NOT drinks,
-       then charge ₦500 per qualifying item (not per qty). */
+    /* Count items that are NOT in exempt categories, NOT individually
+       exempt, and NOT drinks — then charge ₦500 per qualifying item. */
     return Object.values(cart).filter(function(e) {
-      return !TAKEAWAY_EXEMPT_CATS.has(e.item.cat) && !DRINK_CATS.has(e.item.cat);
+      return !TAKEAWAY_EXEMPT_CATS.has(e.item.cat)
+          && !TAKEAWAY_EXEMPT_IDS.has(e.item.id)
+          && !DRINK_CATS.has(e.item.cat);
     }).reduce(function(sum, e) {
       return sum + TAKEAWAY_PACK_FEE * e.qty;
     }, 0);
@@ -2550,5 +2557,5 @@ function renderReviews() {
 updateCartUI();
 renderReviews();        // ← Add this line
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a348dc7189894172',t:'MTc4ODMxMzc5Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
