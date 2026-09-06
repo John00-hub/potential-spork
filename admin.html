@@ -588,6 +588,82 @@
       text-align: center;
     }
 
+    /* ─── AVAILABILITY (disable / enable items) ─── */
+    .quick-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .qa-btn {
+      padding: 10px 18px;
+      border-radius: 100px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      background: rgba(224,82,82,0.08);
+      border: 1px solid rgba(224,82,82,0.35);
+      color: #f08080;
+      transition: background 0.2s, transform 0.18s var(--ease);
+    }
+    .qa-btn:hover { background: rgba(224,82,82,0.16); transform: translateY(-1px); }
+    .qa-btn:active { transform: scale(0.97); }
+    .qa-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .qa-btn-green {
+      background: rgba(76,175,125,0.08);
+      border-color: rgba(76,175,125,0.4);
+      color: #5dca8e;
+    }
+    .qa-btn-green:hover { background: rgba(76,175,125,0.16); }
+    .qa-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+    .avail-btn {
+      flex-shrink: 0;
+      padding: 8px 14px;
+      background: rgba(224,82,82,0.07);
+      border: 1px solid rgba(224,82,82,0.3);
+      border-radius: 8px;
+      color: #f08080;
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, transform 0.18s var(--ease);
+    }
+    .avail-btn:hover { background: rgba(224,82,82,0.16); transform: translateY(-1px); }
+    .avail-btn:active { transform: scale(0.97); }
+    .avail-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .avail-btn.enable {
+      background: rgba(76,175,125,0.10);
+      border-color: rgba(76,175,125,0.4);
+      color: #5dca8e;
+    }
+    .avail-btn.enable:hover { background: rgba(76,175,125,0.2); }
+    .item-row.disabled-item .item-name {
+      color: var(--muted);
+      text-decoration: line-through;
+      text-decoration-color: rgba(224,82,82,0.6);
+    }
+    .item-row.disabled-item .price-input { opacity: 0.4; }
+    .oos-tag {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #f08080;
+      background: rgba(224,82,82,0.12);
+      border: 1px solid rgba(224,82,82,0.35);
+      border-radius: 100px;
+      padding: 2px 8px;
+    }
+
     /* ─── SAVE ALL ─── */
     .save-all-wrap {
       position: fixed;
@@ -863,6 +939,10 @@
         <div class="stat-chip-val" id="statPending">0</div>
         <div class="stat-chip-label">Unsaved Changes</div>
       </div>
+      <div class="stat-chip">
+        <div class="stat-chip-val" id="statDisabled">0</div>
+        <div class="stat-chip-label">Out of Stock</div>
+      </div>
     </div>
 
     <!-- Section header -->
@@ -895,6 +975,13 @@
         <option value="champagne">Champagne</option>
       </select>
     </div>
+
+    <!-- Quick actions: one-tap bulk availability -->
+    <div class="quick-actions">
+      <button class="qa-btn" id="disableChickenBtn">🐔 Disable all chicken items</button>
+      <button class="qa-btn qa-btn-green" id="enableChickenBtn">🐔 Re-enable chicken items</button>
+    </div>
+    <p class="qa-hint">Disabled items instantly appear as “Out of stock” on the customer menu and can’t be added to carts. Re-enable them the moment the item is back in stock.</p>
 
     <!-- Items list -->
     <div class="items-list" id="itemsList"></div>
@@ -941,8 +1028,9 @@ const ADMIN_EMAIL = 'admin@timeout.com.ng';   // ← your email
 const ADMIN_PASS  = 'Timeout@2026';           // ← your password
 
 /* ─── Realtime refs ─── */
-const pricesRef     = db.ref('menu_prices');
-const siteStateRef  = db.ref('site_state');
+const pricesRef       = db.ref('menu_prices');
+const siteStateRef    = db.ref('site_state');
+const availabilityRef = db.ref('menu_availability'); /* item disable / enable */
 
 /* ─────────────────────────────────────────────────
    MENU ITEMS DATA
@@ -1079,6 +1167,7 @@ const pendingChanges  = new Map();  // item_id → new price (unsaved)
 let   siteIsPaused    = false;
 let   adminSearchQ    = '';
 let   adminCatQ       = 'all';
+const itemAvailability = new Map(); /* item_id → { disabled: true, ... } (real-time) */
 
 /* ─────────────────────────────────────────────────
    UI HELPERS
@@ -1106,6 +1195,7 @@ function updateStats() {
   document.getElementById('statTotal').textContent   = MENU_ITEMS.length;
   document.getElementById('statSaved').textContent   = firebasePrices.size;
   document.getElementById('statPending').textContent = pendingChanges.size;
+  document.getElementById('statDisabled').textContent = itemAvailability.size;
   document.getElementById('saveAllWrap').style.display = pendingChanges.size > 0 ? 'block' : 'none';
 }
 
@@ -1269,7 +1359,8 @@ function renderList() {
 
     const isDirty    = pendingChanges.has(item.id);
     const isInFirebase = firebasePrices.has(item.id);
-    const rowClass   = isDirty ? 'item-row dirty' : 'item-row';
+    const isDisabled = itemAvailability.has(item.id);
+    const rowClass   = isDisabled ? 'item-row disabled-item' : (isDirty ? 'item-row dirty' : 'item-row');
     const catLabel   = CAT_LABELS[item.cat] || item.cat;
 
     return `
@@ -1277,7 +1368,9 @@ function renderList() {
         <span class="item-cat-badge">${catLabel}</span>
         <div class="item-name">
           ${item.name}
-          ${isInFirebase && !isDirty ? '<small>✓ Saved in Firebase</small>' : ''}
+          ${isDisabled
+            ? '<span class="oos-tag">⛔ OUT OF STOCK</span>'
+            : (isInFirebase && !isDirty ? '<small>✓ Saved in Firebase</small>' : '')}
         </div>
         <div class="price-wrap">
           <span class="price-prefix">₦</span>
@@ -1291,6 +1384,7 @@ function renderList() {
             aria-label="Price for ${item.name}"
           />
         </div>
+        <button class="avail-btn ${isDisabled ? 'enable' : ''}" data-avail-id="${item.id}">${isDisabled ? '✅ Enable' : '🚫 Disable'}</button>
         <button class="save-row-btn" data-id="${item.id}">Save</button>
         <span class="row-status" id="status-${item.id}"></span>
       </div>`;
@@ -1314,6 +1408,10 @@ function renderList() {
 
   list.querySelectorAll('.save-row-btn').forEach(btn => {
     btn.addEventListener('click', () => saveItem(parseInt(btn.dataset.id, 10), btn));
+  });
+
+  list.querySelectorAll('.avail-btn').forEach(btn => {
+    btn.addEventListener('click', () => toggleAvailability(parseInt(btn.dataset.availId, 10), btn));
   });
 }
 
@@ -1376,6 +1474,97 @@ async function saveAllPending() {
     updateStats();
   }
 }
+
+/* ─────────────────────────────────────────────────
+   ITEM AVAILABILITY — disable / enable menu items
+   Writes to menu_availability/<id>. index.html listens
+   to this path in real time, so a disabled item shows
+   as "Out of stock" on the customer menu instantly.
+───────────────────────────────────────────────── */
+async function setAvailability(itemId, disable) {
+  try {
+    if (disable) {
+      await availabilityRef.child(String(itemId)).set({ disabled: true, updated_at: Date.now() });
+      itemAvailability.set(itemId, { disabled: true, updated_at: Date.now() });
+    } else {
+      await availabilityRef.child(String(itemId)).remove();
+      itemAvailability.delete(itemId);
+    }
+    return true;
+  } catch (err) {
+    console.error('Availability update failed:', err);
+    return false;
+  }
+}
+
+async function toggleAvailability(itemId, btn) {
+  const disable = !itemAvailability.has(itemId);
+  if (btn) btn.disabled = true;
+  const ok = await setAvailability(itemId, disable);
+  showToast(
+    ok
+      ? (disable ? '🚫 Item disabled — showing “Out of stock” on the menu now' : '✅ Item enabled — back on the menu')
+      : '❌ Update failed. Check your connection and try again.',
+    ok ? 3200 : 4500
+  );
+  renderList();
+  updateStats();
+  if (btn) btn.disabled = false;
+}
+
+function listenAvailability() {
+  availabilityRef.on('value', snap => {
+    const data = snap.val() || {};
+    itemAvailability.clear();
+    Object.entries(data).forEach(([idStr, a]) => {
+      if (a && a.disabled === true) itemAvailability.set(parseInt(idStr, 10), a);
+    });
+    renderList();
+    updateStats();
+  });
+}
+
+/* ─── QUICK ACTION: all chicken items at once ─── */
+/* Every chicken-related item on the menu, including the hidden
+   promo bundle (999) so the Jollof + Chicken deal locks too. */
+const CHICKEN_ITEM_IDS = [7, 20, 40, 41, 43, 52, 53, 71, 87, 100, 101, 102, 103, 104, 113, 999];
+
+async function setChickenAvailability(enable) {
+  const btn = document.getElementById(enable ? 'enableChickenBtn' : 'disableChickenBtn');
+  btn.disabled = true;
+  const oldText = btn.textContent;
+  btn.textContent = enable ? '⏳ Re-enabling…' : '⏳ Disabling…';
+
+  const updates = {};
+  CHICKEN_ITEM_IDS.forEach(id => {
+    updates[String(id)] = enable ? null : { disabled: true, updated_at: Date.now() };
+  });
+
+  try {
+    await availabilityRef.update(updates);
+    CHICKEN_ITEM_IDS.forEach(id => {
+      if (enable) itemAvailability.delete(id);
+      else itemAvailability.set(id, { disabled: true, updated_at: Date.now() });
+    });
+    renderList();
+    updateStats();
+    showToast(enable
+      ? '✅ ' + CHICKEN_ITEM_IDS.length + ' chicken items re-enabled — back on the menu!'
+      : '🚫 ' + CHICKEN_ITEM_IDS.length + ' chicken items disabled — showing “Out of stock” now!');
+  } catch (err) {
+    showToast('❌ Update failed: ' + err.message + '. Try again.', 5000);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = oldText;
+  }
+}
+
+document.getElementById('disableChickenBtn').addEventListener('click', () => {
+  if (!confirm('Disable ALL ' + CHICKEN_ITEM_IDS.length + ' chicken items right now?\n\nThey will show as “Out of stock” on the menu until you re-enable them.')) return;
+  setChickenAvailability(false);
+});
+
+document.getElementById('enableChickenBtn').addEventListener('click', () => setChickenAvailability(true));
 
 /* ─────────────────────────────────────────────────
    LOAD PRICES FROM FIREBASE (real-time listener)
@@ -1445,6 +1634,7 @@ function showAdminPanel() {
   setView('admin');
   listenPrices();
   listenSiteState();
+  listenAvailability();
 }
 
 /* Init on page load */
@@ -1471,8 +1661,10 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
   sessionStorage.removeItem('admin_auth');
   pricesRef.off();
   siteStateRef.off();
+  availabilityRef.off();
   firebasePrices.clear();
   pendingChanges.clear();
+  itemAvailability.clear();
   setView('login');
   document.getElementById('loginEmail').value    = '';
   document.getElementById('loginPassword').value = '';
