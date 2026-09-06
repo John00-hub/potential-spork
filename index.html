@@ -77,6 +77,36 @@
       /* Update checkout button if cart is open */
       if (typeof window.__updateCartUI === 'function') window.__updateCartUI();
     });
+
+    /* ── Real-time item availability (admin "Disable" feature) ──
+       admin.html writes to  menu_availability/<id> = { disabled: true }
+       and removes the node to re-enable. Every open menu updates
+       instantly — disabled items show as "Out of stock" and cannot
+       be added to carts. */
+    window.__availDisabled = {};
+
+    __db.ref('menu_availability').on('value', function(snap) {
+      var data = snap.val() || {};
+      var next = {};
+      Object.keys(data).forEach(function(idStr) {
+        var a = data[idStr];
+        if (a && a.disabled === true) next[parseInt(idStr, 10)] = a;
+      });
+      window.__availDisabled = next;
+
+      /* Drop newly-disabled items from open carts + re-render menu */
+      if (typeof window.enforcePausedItems === 'function') window.enforcePausedItems();
+      if (typeof window.__renderMenu === 'function') window.__renderMenu();
+
+      /* Lock the promo deal button if the promo bundle (999) is disabled */
+      var promoCta = document.getElementById('promoCta');
+      if (promoCta) {
+        var locked = !!window.__availDisabled[999];
+        promoCta.disabled = locked;
+        promoCta.style.opacity = locked ? '0.55' : '';
+        promoCta.style.cursor  = locked ? 'not-allowed' : '';
+      }
+    });
   </script>
 
   <style>
@@ -1999,13 +2029,19 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     return (p && p.until.getTime() > Date.now()) ? p : null;
   }
   function isItemOut(item) {
-    return !!item.out || !!pauseInfo(item);
+    /* true when the item is flagged out in the data list, time-paused
+       (PAUSED_ITEMS), or disabled live from the admin panel
+       (menu_availability in Firebase). */
+    return !!item.out || !!pauseInfo(item) ||
+           !!(window.__availDisabled && window.__availDisabled[item.id]);
   }
 
   function renderCard(item, idx, query) {
-    const rating  = item.rating || 4.5;
-    const paused  = pauseInfo(item);
-    const isOut   = !!item.out || !!paused;
+    const rating   = item.rating || 4.5;
+    const paused   = pauseInfo(item);
+    const adminOff = !!(window.__availDisabled && window.__availDisabled[item.id]);
+    const isOut    = !!item.out || !!paused || adminOff;
+    const outLabel = paused ? ('Back at ' + paused.back) : (adminOff ? 'Out of stock' : 'Sold Out');
     const inCart  = cart[item.id] ? cart[item.id].qty : 0;
     const eager   = idx < 4;
     const src     = imgUrl(item.img, eager);
@@ -2027,7 +2063,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     return `
     <article class="card${isOut ? ' is-out' : ''}" id="item-${item.id}" style="animation-delay:${idx * 40}ms"> <div class="card-badges">
         ${isOut
-          ? `<span class="card-badge paused">⏸ ${paused ? 'Back at ' + paused.back : 'Sold Out'}</span>`
+          ? `<span class="card-badge paused">⏸ ${outLabel}</span>`
           : (item.popular ? '<span class="card-badge popular">🔥 Popular</span>' : '')}
         ${!isOut && item.pricePill === 'Premium' ? '<span class="card-badge">👑 Premium</span>' : ''}
       </div>
@@ -2056,7 +2092,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
           <button class="add-cart-btn ${inCart > 0 ? 'added' : ''} ${isOut ? 'disabled' : ''}"
             ${isOut ? 'disabled' : `onclick="addToCart(${item.id})"`}>
             ${isOut
-              ? (paused ? `⏸ Back at ${paused.back}` : 'Sold Out')
+              ? `⏸ ${outLabel}`
               : (inCart > 0 ? `✓ In Cart (${inCart})` : '+ Add to Cart')}
           </button>
         </div>
@@ -2472,6 +2508,11 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
 
   /* ─── PROMO CTA ─── */
   document.getElementById('promoCta').addEventListener('click', function () {
+    var _promoItem = items.find(function(i){ return i.id === 999; });
+    if (_promoItem && isItemOut(_promoItem)) {
+      alert('Sorry, this deal is currently unavailable. Please check back soon!');
+      return;
+    }
     addToCart(999); /* Promo bundle: Jollof Rice + Chicken */
     openCart();
   });
