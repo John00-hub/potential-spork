@@ -955,24 +955,24 @@
       <input type="search" id="adminSearch" placeholder="Search item name…" />
       <select id="catFilter">
         <option value="all">All Categories</option>
-        <option value="chips">Chips & Fries</option>
-        <option value="pepper-soup">Pepper Soup</option>
-        <option value="soup">Nigerian Soup</option>
-        <option value="salad">Salad & Sandwiches</option>
-        <option value="protein">Protein</option>
-        <option value="swallow">Swallow</option>
-        <option value="pasta">Pasta</option>
         <option value="rice">Rice Meal</option>
+        <option value="soup">Nigerian Soup</option>
+        <option value="swallow">Swallow</option>
+        <option value="protein">Protein</option>
+        <option value="chips">Chips & Fries</option>
+        <option value="pepper-soup">Nigeria Pepper Soup</option>
+        <option value="salad">Salad & Sandwiches</option>
+        <option value="pasta">Pasta</option>
         <option value="beans">Beans Speciale</option>
         <option value="burger">Burgers & Shawarma</option>
         <option value="chops">Special Chops</option>
         <option value="drinks">Drinks/Juices</option>
         <option value="beer">Beer</option>
         <option value="juice">Fresh Juice</option>
-        <option value="cocktails">Cocktails</option>
         <option value="whisky">Whisky</option>
         <option value="wine">Red/White Wines</option>
         <option value="champagne">Champagne</option>
+        <option value="__promo__">Promo Deal</option>
       </select>
     </div>
 
@@ -1036,127 +1036,158 @@ const availabilityRef = db.ref('menu_availability'); /* item disable / enable */
    MENU ITEMS DATA
 ───────────────────────────────────────────────── */
 const CAT_LABELS = {
-  chips: 'Chips & Fries', 'pepper-soup': 'Pepper Soup', soup: 'Nigerian Soup',
-  salad: 'Salad', protein: 'Protein', swallow: 'Swallow', pasta: 'Pasta',
-  rice: 'Rice Meal', beans: 'Beans Speciale', burger: 'Burgers & Shawarma',
-  chops: 'Special Chops', chinese: 'Chinese Special', drinks: 'Drinks/Juices',
-  beer: 'Beer', juice: 'Fresh Juice', cocktails: 'Cocktails',
-  whisky: 'Whisky', wine: 'Red/White Wines', champagne: 'Champagne',
+  rice: 'Rice Meal',
+  soup: 'Nigerian Soup',
+  swallow: 'Swallow',
+  protein: 'Protein',
+  chips: 'Chips & Fries',
+  'pepper-soup': 'Nigeria Pepper Soup',
+  salad: 'Salad & Sandwiches',
+  pasta: 'Pasta',
+  beans: 'Beans Speciale',
+  burger: 'Burgers & Shawarma',
+  chops: 'Special Chops',
+  drinks: 'Drinks/Juices',
+  beer: 'Beer',
+  juice: 'Fresh Juice',
+  whisky: 'Whisky',
+  wine: 'Red/White Wines',
+  champagne: 'Champagne',
+  chinese: 'Chinese Special',
+  cocktails: 'Cocktails',
+  __promo__: 'Promo Deal'
 };
 
 const MENU_ITEMS = [
-  {id:80,  cat:'rice',        name:'Jollof Rice',                                        price:3000},
-  {id:87,  cat:'rice',        name:'Jollof Rice + Chicken',                              price:5400},
-  {id:81,  cat:'rice',        name:'Fried Rice',                                         price:3500},
-  {id:120, cat:'rice',        name:'Chinese Fried Rice',                                 price:5000},
-  {id:82,  cat:'rice',        name:'Basmati White Rice',                                 price:5000},
-  {id:83,  cat:'rice',        name:'Coconut Basmati Rice',                               price:5000},
-  {id:121, cat:'rice',        name:'Seafood Sauce with Basmati Rice',                    price:9200},
-  {id:85,  cat:'rice',        name:'White Rice',                                         price:3000},
-  {id:30,  cat:'soup',        name:'Ogbono',                                             price:3000},
-  {id:31,  cat:'soup',        name:'Egusi',                                              price:3000},
-  {id:32,  cat:'soup',        name:'Okro',                                               price:3000},
-  {id:33,  cat:'soup',        name:'Afang',                                              price:3500},
-  {id:35,  cat:'soup',        name:'Vegetable',                                          price:3000},
-  {id:36,  cat:'soup',        name:'Fisherman Soup',                                     price:12500},
-  {id:37,  cat:'soup',        name:'Seafood Okro',                                       price:12500},
-  {id:60,  cat:'swallow',     name:'Semo',                                               price:1000},
-  {id:61,  cat:'swallow',     name:'Eba',                                                price:1000},
-  {id:62,  cat:'swallow',     name:'Oatmeal',                                            price:1500},
-  {id:63,  cat:'swallow',     name:'Plantain Flour',                                     price:1500},
-  {id:64,  cat:'swallow',     name:'Poundo Yam',                                         price:1500},
-  {id:50,  cat:'protein',     name:'Beef',                                               price:1500},
-  {id:51,  cat:'protein',     name:'Goat Meat',                                          price:1500},
-  {id:52,  cat:'protein',     name:'Chicken (1/8)',                                      price:2600},
-  {id:53,  cat:'protein',     name:'Chicken (1/4)',                                      price:5000},
-  {id:54,  cat:'protein',     name:'Catfish',                                            price:5000},
-  {id:55,  cat:'protein',     name:'Croaker',                                            price:6000},
-  {id:56,  cat:'protein',     name:'Snail',                                              price:7500},
-  {id:1,   cat:'chips',       name:'Yam Chips (Boiled/Fried)',                           price:3000},
-  {id:2,   cat:'chips',       name:'Sweet Potatoes (Large Size)',                        price:2500},
-  {id:3,   cat:'chips',       name:'Sweet Potatoes (Regular Size)',                      price:1300},
-  {id:4,   cat:'chips',       name:'French Fries (Large Size)',                          price:2500},
-  {id:5,   cat:'chips',       name:'French Fries (Regular Size)',                        price:1300},
-  {id:6,   cat:'chips',       name:'Plantain (Boiled/Fried)',                            price:2000},
-  {id:7,   cat:'chips',       name:'Chef Precious Chips & Chicken',                      price:6500},
-  {id:8,   cat:'chips',       name:'Yam Porridge',                                       price:3000},
-  {id:9,   cat:'chips',       name:'Plain Omelette',                                     price:3000},
-  {id:10,  cat:'chips',       name:'Sardine Omelette',                                   price:4400},
-  {id:20,  cat:'pepper-soup', name:'Chicken Pepper Soup',                                price:5000},
-  {id:21,  cat:'pepper-soup', name:'Goat Meat Pepper Soup',                              price:5000},
-  {id:22,  cat:'pepper-soup', name:'Catfish Pepper Soup',                                price:6000},
-  {id:23,  cat:'pepper-soup', name:'Croaker Fish Pepper Soup',                           price:6000},
-  {id:24,  cat:'pepper-soup', name:'Dry Fish Pepper Soup',                               price:6500},
-  {id:40,  cat:'salad',       name:'Chicken Caesar Salad',                               price:9000},
-  {id:41,  cat:'salad',       name:'Timeout Salad',                                      price:8500},
-  {id:43,  cat:'salad',       name:'Chicken Club Sandwich',                              price:4800},
-  {id:45,  cat:'salad',       name:'Salad (Coleslaw)',                                   price:1500},
-  {id:46,  cat:'salad',       name:'Vegetable Salad',                                    price:4500},
-  {id:70,  cat:'pasta',       name:'Indomie (Special) Egg',                              price:3500},
-  {id:71,  cat:'pasta',       name:'Indomie with 1/8 Chicken',                           price:5000},
-  {id:72,  cat:'pasta',       name:'Spaghetti Napolitano',                               price:3500},
-  {id:73,  cat:'pasta',       name:'Spaghetti Napolitano with Fish',                     price:9000},
-  {id:90,  cat:'beans',       name:'Vegetable Beans',                                    price:4000},
-  {id:91,  cat:'beans',       name:'Akidi (Black Beans) with Yam/Plantain/Sweet Potato', price:5200},
-  {id:100, cat:'burger',      name:'Chicken/Beef Burger without French Fries',           price:2800},
-  {id:101, cat:'burger',      name:'Chicken/Beef Burger with Fries (Regular)',           price:4100},
-  {id:102, cat:'burger',      name:'Chicken/Beef Burger with Fries (Large)',             price:5300},
-  {id:103, cat:'burger',      name:'Regular Shawarma (Beef/Chicken/Goat)',               price:3600},
-  {id:104, cat:'burger',      name:'Jumbo Shawarma (Beef/Chicken/Goat)',                 price:4500},
-  {id:105, cat:'burger',      name:'Extra Sausage',                                      price:800 },
-  {id:106, cat:'burger',      name:'Extra Burger Patty',                                 price:1600},
-  {id:111, cat:'chops',       name:'Pepper Goatmeat',                                    price:5200},
-  {id:112, cat:'chops',       name:'Pepper Beef',                                        price:5200},
-  {id:113, cat:'chops',       name:'Pepper Chicken',                                     price:5600},
-  {id:114, cat:'chops',       name:'Goat Head (Isi Ewu)',                                price:10000},
-  {id:116, cat:'chops',       name:'Pepper Catfish',                                     price:6000},
-  {id:130, cat:'drinks',      name:'Water',                                               price:500 },
-  {id:131, cat:'drinks',      name:'Minerals',                                            price:600 },
-  {id:132, cat:'drinks',      name:'Malt',                                                price:1200},
-  {id:133, cat:'drinks',      name:'Five Alive',                                          price:2500},
-  {id:134, cat:'drinks',      name:'Cranberry (Big Pack)',                                price:4500},
-  {id:135, cat:'drinks',      name:'Origin Bitters',                                      price:2500},
-  {id:136, cat:'drinks',      name:'Double Black',                                        price:2500},
-  {id:140, cat:'beer',        name:'Heineken',                                            price:2000},
-  {id:143, cat:'beer',        name:'M/Stout',                                             price:1600},
-  {id:144, cat:'beer',        name:'M/Extra Smooth',                                      price:1500},
-  {id:145, cat:'beer',        name:'Star',                                                price:1700},
-  {id:146, cat:'beer',        name:'Hero',                                                price:1500},
-  {id:147, cat:'beer',        name:'Trophy',                                              price:1500},
-  {id:148, cat:'beer',        name:'Tiger',                                               price:1500},
-  {id:149, cat:'beer',        name:'Star Radler',                                         price:1500},
-  {id:150, cat:'beer',        name:'Gulder',                                              price:2000},
-  {id:151, cat:'beer',        name:'Legend',                                              price:1500},
-  {id:160, cat:'juice',       name:'Orange Juice (35cl)',                                 price:2800},
-  {id:161, cat:'juice',       name:'Watermelon Juice (35cl)',                             price:2600},
-  {id:162, cat:'juice',       name:'Watermelon & Orange (35cl)',                          price:3000},
-  {id:163, cat:'juice',       name:'Mix of Orange & Pineapple (35cl)',                    price:3000},
-  {id:164, cat:'juice',       name:'Mix of Apple & Cucumber (35cl)',                      price:3500},
-  {id:165, cat:'juice',       name:'Mix of Carrot, Pineapple & Apple (35cl)',             price:3500},
-  {id:166, cat:'juice',       name:'Mix of Apple, Pineapple, Cucumber (35cl)',            price:3600},
-  {id:167, cat:'juice',       name:'Any Other Mixture of Choice (35cl)',                  price:3600},
-  {id:170, cat:'cocktails',   name:'Sex on the Beach',                                    price:6000},
-  {id:171, cat:'cocktails',   name:'Pinacolada',                                          price:6000},
-  {id:172, cat:'cocktails',   name:'Timeout Special',                                     price:6000},
-  {id:180, cat:'whisky',      name:'Glenfiddich 15',                                      price:75000},
-  {id:181, cat:'whisky',      name:'Glenfiddich 18',                                      price:175000},
-  {id:182, cat:'whisky',      name:'Glenfiddich 21',                                      price:380000},
-  {id:183, cat:'whisky',      name:'Red Label',                                           price:30000},
-  {id:184, cat:'whisky',      name:'Black Label',                                         price:48000},
-  {id:185, cat:'whisky',      name:"Jack Daniel's",                                       price:40000},
-  {id:186, cat:'whisky',      name:'Jameson Green',                                       price:30000},
-  {id:187, cat:'whisky',      name:'Jameson Black Barrel',                                price:50000},
-  {id:188, cat:'whisky',      name:'Observatory 20',                                      price:57000},
-  {id:190, cat:'wine',        name:'Escudo Rojo',                                         price:38000},
-  {id:191, cat:'wine',        name:'Carlo Rossi',                                         price:15000},
-  {id:192, cat:'wine',        name:'Carlo Rossi (Sweet)',                                 price:20000},
-  {id:193, cat:'wine',        name:'Four Cousins',                                        price:13000},
-  {id:200, cat:'champagne',   name:'Moët Rosé',                                          price:290000},
-  {id:201, cat:'champagne',   name:'Moët Brut',                                          price:220000},
-  {id:202, cat:'champagne',   name:'Veuve Clicquot Brut',                                price:260000},
-  {id:203, cat:'champagne',   name:'Veuve Clicquot Rosé',                                price:300000},
-  {id:204, cat:'champagne',   name:'André Rosé',                                         price:32000},
-  {id:205, cat:'champagne',   name:'André Brut',                                          price:25000},
+
+  /* ── RICE MEAL ── */
+  {id:80, cat:'rice', name:'Jollof Rice', price:3000},
+  {id:87, cat:'rice', name:'Jollof Rice + Chicken', price:5400},
+  {id:81, cat:'rice', name:'Fried Rice', price:3500},
+  {id:120, cat:'rice', name:'Chinese Fried Rice', price:5000},
+  {id:82, cat:'rice', name:'Basmati White Rice and Stew', price:5000},
+  {id:83, cat:'rice', name:'Coconut Basmati Rice', price:5000},
+  {id:121, cat:'rice', name:'Seafood Sauce with Basmati Rice', price:9200},
+  {id:85, cat:'rice', name:'White Rice and Stew', price:4000},
+
+  /* ── NIGERIAN SOUP ── */
+  {id:30, cat:'soup', name:'Ogbono', price:3000},
+  {id:31, cat:'soup', name:'Egusi', price:3000},
+  {id:32, cat:'soup', name:'Okro', price:3500},
+  {id:33, cat:'soup', name:'Afang', price:3500},
+  {id:35, cat:'soup', name:'Vegetable Soup', price:3500},
+  {id:36, cat:'soup', name:'Fisherman Soup', price:16000},
+  {id:37, cat:'soup', name:'Seafood Okro', price:16000},
+
+  /* ── SWALLOW ── */
+  {id:60, cat:'swallow', name:'Semo (per wrap)', price:600},
+  {id:61, cat:'swallow', name:'Eba/Garri (per wrap)', price:600},
+  {id:62, cat:'swallow', name:'Oatmeal (per wrap)', price:1000},
+  {id:63, cat:'swallow', name:'Plantain Flour (per wrap)', price:1000},
+  {id:64, cat:'swallow', name:'Poundo Yam (per wrap)', price:1000},
+
+  /* ── PROTEIN ── */
+  {id:50, cat:'protein', name:'Beef', price:1500},
+  {id:51, cat:'protein', name:'Goat Meat', price:1500},
+  {id:52, cat:'protein', name:'Chicken (1/8)', price:2600},
+  {id:53, cat:'protein', name:'Chicken (1/4)', price:5000},
+  {id:54, cat:'protein', name:'Catfish', price:5000},
+  {id:55, cat:'protein', name:'Croaker', price:6000},
+  {id:56, cat:'protein', name:'Jumbo size snail', price:7500},
+
+  /* ── CHIPS & FRIES ── */
+  {id:1, cat:'chips', name:'Fried Yam Chips', price:3000},
+  {id:2, cat:'chips', name:'Sweet Potatoes (Large Size)', price:2500},
+  {id:3, cat:'chips', name:'Sweet Potatoes (Regular Size)', price:1300},
+  {id:4, cat:'chips', name:'French Fries (Large Size)', price:2500},
+  {id:5, cat:'chips', name:'French Fries (Regular Size)', price:1300},
+  {id:6, cat:'chips', name:'Fried Plantain', price:2000},
+  {id:7, cat:'chips', name:'Chef Precious Chips & Chicken', price:7200},
+  {id:8, cat:'chips', name:'Yam Porridge', price:4000},
+  {id:9, cat:'chips', name:'Plain Omelette', price:3000},
+  {id:10, cat:'chips', name:'Sardine Omelette', price:5000},
+
+  /* ── NIGERIA PEPPER SOUP ── */
+  {id:20, cat:'pepper-soup', name:'Chicken Pepper Soup', price:5000},
+  {id:21, cat:'pepper-soup', name:'Goat Meat Pepper Soup', price:5000},
+  {id:22, cat:'pepper-soup', name:'Catfish Pepper Soup', price:6000},
+  {id:23, cat:'pepper-soup', name:'Croaker Fish Pepper Soup', price:6000},
+  {id:24, cat:'pepper-soup', name:'Dry Fish Pepper Soup', price:6500},
+
+  /* ── SALAD & SANDWICHES ── */
+  {id:40, cat:'salad', name:'Chicken Caesar Salad', price:9000},
+  {id:41, cat:'salad', name:'Timeout Salad', price:8500},
+  {id:43, cat:'salad', name:'Chicken Club Sandwich', price:4800},
+  {id:45, cat:'salad', name:'Salad (Coleslaw)', price:1500},
+  {id:46, cat:'salad', name:'Vegetable Salad', price:4500},
+
+  /* ── PASTA ── */
+  {id:70, cat:'pasta', name:'Indomie (Special) Egg', price:3500},
+  {id:71, cat:'pasta', name:'Indomie with 1/8 Chicken', price:5500},
+  {id:72, cat:'pasta', name:'Spaghetti Napolitano', price:3500},
+  {id:73, cat:'pasta', name:'Spaghetti Napolitano with Fish (Catfish or Croaker)', price:9000},
+
+  /* ── BEANS SPECIALE ── */
+  {id:90, cat:'beans', name:'Vegetable Beans', price:4000},
+  {id:91, cat:'beans', name:'Akidi (Black Beans) with Yam/Plantain/Sweet Potato', price:5500},
+
+  /* ── BURGERS & SHAWARMA ── */
+  {id:100, cat:'burger', name:'Chicken/Beef Burger without French Fries', price:3000},
+  {id:101, cat:'burger', name:'Chicken/Beef Burger with Fries (Regular)', price:4300},
+  {id:102, cat:'burger', name:'Chicken/Beef Burger with Fries (Large)', price:5500},
+  {id:103, cat:'burger', name:'Regular Shawarma (Beef/Chicken/Goat)', price:3700},
+  {id:104, cat:'burger', name:'Jumbo Shawarma (Beef/Chicken/Goat)', price:4800},
+  {id:105, cat:'burger', name:'Extra Sausage', price:800},
+  {id:106, cat:'burger', name:'Extra Burger Patty', price:1600},
+
+  /* ── SPECIAL CHOPS ── */
+  {id:111, cat:'chops', name:'Pepper Goatmeat', price:5500},
+  {id:112, cat:'chops', name:'Pepper Beef', price:5500},
+  {id:113, cat:'chops', name:'Pepper Chicken', price:5500},
+  {id:114, cat:'chops', name:'Goat Head (Isi Ewu)', price:10000},
+  {id:116, cat:'chops', name:'Pepper Catfish', price:6000},
+
+  /* ── DRINKS/JUICES ── */
+  {id:130, cat:'drinks', name:'Water', price:500},
+  {id:131, cat:'drinks', name:'Minerals', price:600},
+  {id:132, cat:'drinks', name:'Malt', price:1200},
+  {id:133, cat:'drinks', name:'Five Alive', price:2500},
+  {id:134, cat:'drinks', name:'Cranberry (Big Pack)', price:4500},
+  {id:135, cat:'drinks', name:'Origin Bitters', price:2500},
+  {id:136, cat:'drinks', name:'Double Black', price:2500},
+
+  /* ── BEER ── */
+  {id:144, cat:'beer', name:'M/Extra Smooth', price:1500},
+
+  /* ── FRESH JUICE ── */
+  {id:160, cat:'juice', name:'Orange Juice (35cl)', price:3000},
+  {id:161, cat:'juice', name:'Watermelon Juice (35cl)', price:2600},
+  {id:162, cat:'juice', name:'Watermelon & Orange (35cl)', price:3000},
+  {id:163, cat:'juice', name:'Mix of Orange & Pineapple (35cl)', price:3500},
+  {id:164, cat:'juice', name:'Mix of Apple & Cucumber (35cl)', price:3500},
+  {id:165, cat:'juice', name:'Mix of Carrot, Pineapple & Apple (35cl)', price:3500},
+  {id:166, cat:'juice', name:'Mix of Apple, Pineapple, Cucumber (35cl)', price:3600},
+  {id:167, cat:'juice', name:'Any Other Mixture of Choice (35cl)', price:3600},
+
+  /* ── WHISKY ── */
+  {id:188, cat:'whisky', name:'Observatory 20', price:57000},
+
+  /* ── RED/WHITE WINES ── */
+  {id:190, cat:'wine', name:'Escudo Rojo', price:38000},
+  {id:191, cat:'wine', name:'Carlo Rossi', price:15000},
+  {id:192, cat:'wine', name:'Carlo Rossi (Sweet)', price:20000},
+  {id:193, cat:'wine', name:'Four Cousins', price:13000},
+
+  /* ── CHAMPAGNE ── */
+  {id:200, cat:'champagne', name:'Moët Rosé', price:290000},
+  {id:201, cat:'champagne', name:'Moët Brut', price:220000},
+  {id:202, cat:'champagne', name:'Veuve Clicquot Brut', price:260000},
+  {id:203, cat:'champagne', name:'Veuve Clicquot Rosé', price:300000},
+  {id:204, cat:'champagne', name:'Andre Rosé', price:32000},
+  {id:205, cat:'champagne', name:'Andre Brut', price:25000},
+
+  /* ── PROMO DEAL ── */
+  {id:999, cat:'__promo__', name:'Jollof Rice + Chicken (Offer)', price:5400},
 ];
 
 /* ─────────────────────────────────────────────────
