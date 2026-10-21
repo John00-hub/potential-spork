@@ -1,61 +1,21 @@
 {
   "name": "Timeout Restaurant",
   "short_name": "Timeout",
-  "description": "Freshly made Nigerian and continental meals delivered fast. Order online from Timeout Restaurant, Garki 2, Abuja.",
+  "description": "Freshly made Nigerian and continental meals delivered fast.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#c9a84c",
   "background_color": "#050504",
-  "lang": "en",
-  "categories": ["food", "restaurants"],
   "icons": [
-    {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "/icon-180.png",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any"
-    }
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    {
-      "name": "Order Now",
-      "short_name": "Order",
-      "description": "Go straight to the menu",
-      "url": "/#menuSection",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "WhatsApp Order",
-      "short_name": "WhatsApp",
-      "description": "Order via WhatsApp",
-      "url": "https://wa.me/2349011724825?text=Hello%20Timeout%20Restaurant%2C%20I%20would%20like%20to%20make%20an%20order.",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
-    }
+    { "name": "Order Now", "url": "/#menuSection" },
+    { "name": "WhatsApp Order", "url": "https://wa.me/2349011724825" }
   ]
 }
