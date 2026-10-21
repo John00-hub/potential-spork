@@ -1023,7 +1023,55 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   <span id="countdown" class="promo-countdown"></span>
   <button id="close-banner" class="promo-banner-close" aria-label="Close promotion banner">&times;</button>
 </div>
-<button id="installBtn" style="display:none;">📲 Add to Home Screen</button>
+<!-- PWA Install Banner -->
+<div id="installBanner" style="
+  display:none;
+  position:fixed;
+  bottom:0; left:0; right:0;
+  z-index:9999;
+  background:#0f0f0d;
+  border-top:1px solid rgba(201,168,76,0.35);
+  padding:16px 20px;
+  box-shadow:0 -8px 32px rgba(0,0,0,0.6);
+  animation: slideUp 0.4s cubic-bezier(0.22,1,0.36,1) both;
+">
+  <style>
+    @keyframes slideUp {
+      from { transform:translateY(100%); opacity:0; }
+      to   { transform:translateY(0);    opacity:1; }
+    }
+  </style>
+  <div style="display:flex;align-items:center;gap:14px;max-width:500px;margin:0 auto;">
+    <img src="images/logo.png" style="width:48px;height:48px;border-radius:12px;object-fit:contain;flex-shrink:0;background:#1a1a16;padding:4px;">
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:14px;font-weight:700;color:#ede8de;">Add Timeout to Home Screen</div>
+      <div style="font-size:12px;color:#615d52;margin-top:2px;">Order faster — works offline too</div>
+    </div>
+    <button id="installBtn" style="
+      flex-shrink:0;
+      background:linear-gradient(135deg,#c9a84c,#a67c1b);
+      color:#0a0900;
+      border:none;
+      border-radius:100px;
+      padding:10px 20px;
+      font-family:'Outfit',sans-serif;
+      font-size:13px;
+      font-weight:700;
+      cursor:pointer;
+      white-space:nowrap;
+    ">Install</button>
+    <button id="installDismiss" style="
+      flex-shrink:0;
+      background:none;
+      border:none;
+      color:#615d52;
+      font-size:20px;
+      cursor:pointer;
+      padding:4px 8px;
+      line-height:1;
+    ">×</button>
+  </div>
+</div>
 
 <!-- HERO -->
 <header class="hero">
@@ -2694,16 +2742,21 @@ renderReviews();        // ← Add this line
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById('installBtn').style.display = 'block';
+e.preventDefault();
+deferredPrompt = e;
+document.getElementById('installBanner').style.display = 'block';
 });
 
 document.getElementById('installBtn').addEventListener('click', () => {
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(() => {
-    deferredPrompt = null;
-    document.getElementById('installBtn').style.display = 'none';
-  });
+if (!deferredPrompt) return;
+deferredPrompt.prompt();
+deferredPrompt.userChoice.then(() => {
+deferredPrompt = null;
+document.getElementById('installBanner').style.display = 'none';
+});
+});
+
+document.getElementById('installDismiss').addEventListener('click', () => {
+document.getElementById('installBanner').style.display = 'none';
 });</script></body>
 </html>
