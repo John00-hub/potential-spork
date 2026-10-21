@@ -1023,6 +1023,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   <span id="countdown" class="promo-countdown"></span>
   <button id="close-banner" class="promo-banner-close" aria-label="Close promotion banner">&times;</button>
 </div>
+<button id="installBtn" style="display:none;">📲 Add to Home Screen</button>
 
 <!-- HERO -->
 <header class="hero">
@@ -2690,5 +2691,19 @@ updateCartUI();
 renderReviews();        // ← Add this line
 </script>
 <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a348dc7189894172',t:'MTc4ODMxMzc5Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();
-</script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }</script></body>
+</script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBtn').style.display = 'block';
+});
+
+document.getElementById('installBtn').addEventListener('click', () => {
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => {
+    deferredPrompt = null;
+    document.getElementById('installBtn').style.display = 'none';
+  });
+});</script></body>
 </html>
