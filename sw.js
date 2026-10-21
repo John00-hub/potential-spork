@@ -1,10 +1,18 @@
-const CACHE_NAME = 'timeout-admin-v1';
+const CACHE_NAME = 'timeout-restaurant-v1';
 const ASSETS = [
-  './admin.html',
-  './manifest.json'
+  '/',
+  '/index.html',
+  '/admin.html',
+  '/contact.html',
+  '/check-out.html',
+  '/main.js',
+  '/manifest.json',
+  '/icon-192.png',
+  '/icon-512.png',
+  '/icon-180.png'
 ];
 
-// Install — cache core files
+// Install
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
@@ -12,7 +20,7 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Activate — clean old caches
+// Activate
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -22,22 +30,11 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch — network first, fallback to cache
+// Fetch
 self.addEventListener('fetch', event => {
-  // Always go network-first for Firebase (auth + Firestore)
-  if (event.request.url.includes('firebase') ||
-      event.request.url.includes('googleapis') ||
-      event.request.url.includes('firestore')) {
-    return; // Let Firebase handle its own requests
-  }
-
   event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        return response;
-      })
-      .catch(() => caches.match(event.request))
+    caches.match(event.request).then(cached => {
+      return cached || fetch(event.request).catch(() => caches.match('/index.html'));
+    })
   );
 });
