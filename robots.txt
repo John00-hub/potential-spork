@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /check-out.html
+
+Sitemap: https://timeout.com.ng/sitemap.xml

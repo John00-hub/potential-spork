@@ -7,8 +7,8 @@
      • API / Paystack / FB  →  Network-only (never cache)
 =================================================== */
 
-const CACHE_NAME    = 'timeout-v2'; /* v2: 2026 redesign — forces fresh shell */
-const RUNTIME_CACHE = 'timeout-images-v2';
+const CACHE_NAME    = 'timeout-v3'; /* v3: ad-traffic conversion pass — forces fresh shell */
+const RUNTIME_CACHE = 'timeout-images-v3';
 
 /* ─── Core shell: cached on install ─── */
 const PRECACHE_ASSETS = [
