@@ -7,14 +7,16 @@
      • API / Paystack / FB  →  Network-only (never cache)
 =================================================== */
 
-const CACHE_NAME    = 'timeout-v1';
-const RUNTIME_CACHE = 'timeout-images-v1';
+const CACHE_NAME    = 'timeout-v2'; /* v2: 2026 redesign — forces fresh shell */
+const RUNTIME_CACHE = 'timeout-images-v2';
 
 /* ─── Core shell: cached on install ─── */
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
   '/main.js',
+  '/redesign.css',
+  '/redesign.js',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
@@ -23,8 +25,7 @@ const PRECACHE_ASSETS = [
   '/images/jollof-chicken.webp',
   '/images/jollof-rice.webp',
   '/images/fried-rice.webp',
-  '/images/logo.png',
-  '/images/ola.webp'
+  '/images/logo.png'
 ];
 
 /* ─── Never cache these origins / paths ─── */
