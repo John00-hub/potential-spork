@@ -3,8 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Timeout Restaurant — freshly made Nigerian and continental meals delivered fast. Order online from our premium menu: rice, soups, grills, chops, drinks and more." />
-  <title>Timeout Restaurant Premium Food Menu</title>
+  <title>Time Out Restaurant Abuja — Good Food. Great Moments. | Order Online &amp; Get Directions</title>
+  <meta name="description" content="Time Out Restaurant, Garki 2 Abuja — smoky jollof, Nigerian soups, grills & shawarma. Order online, chat on WhatsApp, or tap for directions to 1245 Sapele Crescent, Apex Plaza." />
+  <meta property="og:title" content="Time Out Restaurant Abuja — Good Food. Great Moments." />
+  <meta property="og:description" content="From smoky jollof and comforting Nigerian soups to freshly wrapped shawarma — find your next meal in Garki 2, Abuja." />
+  <meta property="og:type" content="restaurant" />
+  <meta property="og:image" content="images/jollof-chicken.webp" />
 
   <!-- Preconnect: critical origins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1013,8 +1017,32 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   gtag('config', 'AW-18076585067');
 </script>
 <link rel="manifest" href="/manifest.json">
+
+  <!-- 2026 Redesign layer (hero, visit section, floating directions icon) -->
+  <link rel="stylesheet" href="redesign.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Time Out Restaurant",
+    "servesCuisine": ["Nigerian", "Continental", "Grill"],
+    "telephone": "+2349011724825",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1245 Sapele Crescent, Apex Plaza, Garki 2",
+      "addressLocality": "Abuja",
+      "addressRegion": "FCT",
+      "addressCountry": "NG"
+    },
+    "hasMap": "https://www.google.com/maps/search/?api=1&query=Time+Out+Restaurant+1245+Sapele+Crescent+Apex+Plaza+Garki+2+Abuja",
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], "opens": "09:00", "closes": "22:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Sunday", "opens": "12:00", "closes": "22:00" }
+    ]
+  }
+  </script>
 </head>
-<body>
+<body class="page-home">
 
 <!-- ─── PROMO TOP BANNER ─── -->
 <!-- Shown only when isPromoActive() === true. JS controls visibility. -->
@@ -1108,73 +1136,105 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     ">Maybe later</button>
   </div>
 </div>
-<!-- HERO -->
+<!-- HERO — 2026 redesign: "Good food. Great moments." -->
 <header class="hero">
   <div class="hero-inner">
-<button id="themeToggle" class="theme-toggle" style="position:absolute;top:16px;right:16px;z-index:10;">🌙</button>
-    <div class="hero-pill">
-      <div class="hero-pill-dot"></div>
-      Now Taking Orders
-    </div>
-    <h1>Food Worth<br/><em>Obsessing</em> Over</h1>
-    <p class="hero-sub">Freshly made. Delivered fast.<br/>Order straight from the menu.</p>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin:24px auto 0;width:100%;">
-  <img src="images/logo.png" alt="Timeout Logo" style="height:110px;width:auto;object-fit:contain;display:block;filter:drop-shadow(0 0 14px rgba(201,168,76,0.45));">
-  <div style="margin:0;text-align:center;line-height:1;">
-    <p style="
-      margin:0 0 6px;
-      font-size:17px;
-      font-weight:900;
-      letter-spacing:0.6px;
-      background: linear-gradient(135deg, #e2c06e 0%, #c9a84c 60%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-shadow: none;
-      filter: drop-shadow(0 0 8px rgba(201,168,76,0.55));
-    ">📍 1245 Sapele Street, Garki 2, <span style="font-size:20px;letter-spacing:1px;">ABUJA</span></p>
-    <p style="
-      margin:0;
-      font-size:13.5px;
-      font-weight:700;
-      color:var(--text-soft);
-      letter-spacing:0.3px;
-    ">📞 +234 901 172 4825</p>
-  </div>
-</div>
-    <div class="hero-stats">
-      <div class="stat-item">
-        <div class="stat-val">8.7★</div>
-        <div class="stat-label">Rating</div>
+    <button id="themeToggle" class="theme-toggle" style="position:absolute;top:16px;right:16px;z-index:10;">🌙</button>
+
+    <div class="hero-copy">
+      <p class="hero-eyebrow">A taste of Time Out · Garki 2, Abuja</p>
+      <h1>Good food.<br/><em>Great moments.</em></h1>
+      <p class="hero-sub">From smoky jollof and comforting Nigerian soups to freshly wrapped shawarma and continental favourites — find your next meal in Abuja.</p>
+
+      <div class="hero-actions">
+        <button class="hero-cta" id="exploreBtn" aria-label="Scroll to menu">
+          Explore the menu
+          <span class="hero-cta-arrow">↓</span>
+        </button>
+        <a href="https://wa.me/2349011724825?text=Hello%20Timeout%20Restuarant,%20I%20would%20like%20to%20make%20an%20order."
+           target="_blank" rel="noopener noreferrer"
+           class="whatsapp-hero-btn"
+           aria-label="Chat to order on WhatsApp"
+           onclick="if(window.gtag)gtag('event', 'whatsapp_click', {'event_category': 'engagement', 'event_label': 'hero_button'});">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Chat to order
+        </a>
+        <a href="https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=Time%20Out%20Restaurant%2C%201245%20Sapele%20Crescent%2C%20Apex%20Plaza%2C%20Garki%202%2C%20Abuja%2C%20FCT%2C%20Nigeria" target="_blank" rel="noopener noreferrer"
+           class="btn-directions"
+           aria-label="Get directions to Time Out Restaurant, 1245 Sapele Crescent, Apex Plaza, Garki 2, Abuja (opens Google Maps)"
+           onclick="if(window.gtag)gtag('event', 'directions_click', {'event_category': 'engagement', 'event_label': 'hero_button'});">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Get directions
+        </a>
       </div>
-      <div class="stat-item">
-        <div class="stat-val">20–35</div>
-        <div class="stat-label">Min Delivery</div>
+
+      <div class="hero-trust">
+        <div class="trust-main">
+          <span class="trust-star" aria-hidden="true">★</span>
+          <span>4.7 / 5 guest rating<small>Google listing · Abuja</small></span>
+        </div>
+        <span class="trust-sep" aria-hidden="true"></span>
+        <span class="open-chip" data-open-status><span class="open-dot" aria-hidden="true"></span><span data-open-text>Open now · Closes 10pm</span></span>
+        <span class="trust-sep" aria-hidden="true"></span>
+        <div class="trust-main">
+          <span>Made for every craving<small>Rice · soups · grills · quick bites</small></span>
+        </div>
       </div>
     </div>
-    <a href="https://wa.me/2349011724825?text=Hello%20Timeout%20Restuarant,%20I%20would%20like%20to%20make%20an%20order."
-       target="_blank"
-       class="whatsapp-hero-btn"
-       aria-label="Order via WhatsApp"
-          onclick="gtag('event', 'whatsapp_click', {'event_category': 'engagement', 'event_label': 'hero_button'});">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      Order on WhatsApp
-    </a>
-    <button class="hero-cta" id="exploreBtn" aria-label="Scroll to menu">
-      Explore our menu
-      <span class="hero-cta-arrow">↓</span>
-    </button>
+
+    <div class="hero-visual" aria-hidden="false">
+      <div class="hero-visual-frame">
+        <img src="images/jollof-chicken.webp" alt="Smoky jollof rice with chicken at Time Out Restaurant, Abuja" width="640" height="520" fetchpriority="high" />
+        <div class="hero-visual-caption">
+          <strong>Time Out</strong>
+          <span>Restaurant · Grill · Bar</span>
+        </div>
+      </div>
+      <div class="hero-float-card hero-float--rating">
+        <span class="float-ico" aria-hidden="true">⭐</span>
+        <span>Loved in Abuja<small>Fresh, hot &amp; made to order</small></span>
+      </div>
+      <div class="hero-float-card hero-float--delivery">
+        <span class="float-ico" aria-hidden="true">🛵</span>
+        <span>20–35 min<small>Fast delivery &amp; pickup</small></span>
+      </div>
+    </div>
   </div>
+
   <div class="search-wrap">
     <div class="search-inner">
       <span class="search-icon">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       </span>
-      <input type="search" id="searchInput" placeholder="Search dishes, drinks…" autocomplete="off" spellcheck="false" aria-label="Search menu items"/>
+      <input type="search" id="searchInput" placeholder="Search jollof, pepper soup, shawarma…" autocomplete="off" spellcheck="false" aria-label="Search menu items"/>
       <button class="search-clear" id="searchClear" aria-label="Clear search">✕</button>
     </div>
   </div>
 </header>
+
+<!-- GOLD TICKER -->
+<div class="rd-ticker" aria-hidden="true">
+  <div class="rd-ticker-track">
+    <span>Smoky Jollof ✦ Pepper Soup ✦ Nigerian Soups ✦ Grills ✦ Shawarma ✦ Burgers ✦ Fresh Juice ✦ Cocktails ✦ Garki 2 · Abuja ✦</span>
+    <span>Smoky Jollof ✦ Pepper Soup ✦ Nigerian Soups ✦ Grills ✦ Shawarma ✦ Burgers ✦ Fresh Juice ✦ Cocktails ✦ Garki 2 · Abuja ✦</span>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="rd-features" aria-label="Why Time Out">
+  <article class="rd-feature rd-reveal">
+    <span class="rd-feature-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></span>
+    <div><h3>Something for everyone</h3><p>Nigerian &amp; continental favourites, made fresh all day.</p></div>
+  </article>
+  <article class="rd-feature rd-reveal">
+    <span class="rd-feature-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18H3c-.6 0-1-.4-1-1V7c0-.6.4-1 1-1h10c.6 0 1 .4 1 1v11"/><path d="M14 9h4l4 4v4c0 .6-.4 1-1 1h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/><path d="M9 18h6"/></svg></span>
+    <div><h3>Pickup &amp; delivery</h3><p>Confirm timing and delivery fee on WhatsApp — or swing by Garki 2.</p></div>
+  </article>
+  <article class="rd-feature rd-reveal">
+    <span class="rd-feature-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/></svg></span>
+    <div><h3>Easy WhatsApp ordering</h3><p>Review your order before sending. No wahala, just good food.</p></div>
+  </article>
+</section>
 
 <!-- ─── PROMO SECTION ─── -->
 <section class="promo-section" id="promoBanner" aria-label="Featured deal">
@@ -1667,6 +1727,64 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     <div class="reviews-grid" id="reviewsGrid"></div>
   </div>
 </section>
+<!-- ═══ VISIT US — "Your table. Your time." ═══ -->
+<section class="visit-section" id="find-us" aria-labelledby="visit-heading">
+  <div class="visit-inner">
+    <div class="rd-reveal">
+      <p class="visit-eyebrow">Visit us in Garki 2</p>
+      <h2 class="visit-title" id="visit-heading">Your table.<br/><em>Your time.</em></h2>
+      <p class="visit-lead">Visit Time Out Restaurant in Garki 2 for a relaxed meal, a catch-up with friends or your next favourite dish.</p>
+
+      <div class="visit-info">
+        <div class="visit-row">
+          <span class="visit-row-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <div>
+            <strong><a href="https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=Time%20Out%20Restaurant%2C%201245%20Sapele%20Crescent%2C%20Apex%20Plaza%2C%20Garki%202%2C%20Abuja%2C%20FCT%2C%20Nigeria" target="_blank" rel="noopener noreferrer">1245 Sapele Crescent, Apex Plaza</a></strong>
+            <span>Garki 2, Abuja, FCT, Nigeria</span>
+          </div>
+        </div>
+        <div class="visit-row">
+          <span class="visit-row-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+          <div>
+            <strong><a href="tel:+2349011724825">+234 901 172 4825</a></strong>
+            <span>Restaurant phone — tap to call</span>
+          </div>
+        </div>
+        <div class="visit-row">
+          <span class="visit-row-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg></span>
+          <div>
+            <strong>Opening hours</strong>
+            <span>Mon–Sat 9am–10pm · Sunday 12 noon–10pm</span><br/>
+            <span class="visit-open" data-open-status><span class="open-dot" aria-hidden="true"></span><span data-open-text>Open now · Closes 10pm</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="visit-actions">
+        <a href="https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=Time%20Out%20Restaurant%2C%201245%20Sapele%20Crescent%2C%20Apex%20Plaza%2C%20Garki%202%2C%20Abuja%2C%20FCT%2C%20Nigeria" target="_blank" rel="noopener noreferrer" class="btn-visit-directions"
+           aria-label="Get directions to Time Out Restaurant (opens Google Maps)"
+           onclick="if(window.gtag)gtag('event', 'directions_click', {'event_category': 'engagement', 'event_label': 'visit_section'});">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Get directions
+        </a>
+        <a href="tel:+2349011724825" class="btn-visit-call" aria-label="Call Time Out Restaurant">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Call restaurant
+        </a>
+      </div>
+    </div>
+
+    <div class="visit-map rd-reveal">
+      <div class="visit-map-frame">
+        <iframe title="Map — Time Out Restaurant, 1245 Sapele Crescent, Apex Plaza, Garki 2, Abuja"
+          src="https://www.google.com/maps?q=1245%20Sapele%20Crescent%2C%20Apex%20Plaza%2C%20Garki%202%2C%20Abuja%2C%20Nigeria&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      </div>
+      <div class="visit-map-badge" aria-hidden="true">
+        <strong>Time Out</strong>
+        <span>Restaurant · Grill · Bar</span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer class="footer">
 
   <div class="footer-logo">Timeout</div>
@@ -1675,8 +1793,9 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   <nav class="footer-links-row" aria-label="Footer navigation">
     <a href="https://wa.me/2349011724825?text=Hi%2C%20I%20want%20to%20place%20an%20order%20from%20Timeout%20Restaurant"
        target="_blank" class="footer-link"
-       onclick="gtag('event', 'whatsapp_click', {'event_category': 'engagement', 'event_label': 'footer_link'});"></a>
-    <a href="visit-us.html" class="footer-link">Directions</a>
+       onclick="gtag('event', 'whatsapp_click', {'event_category': 'engagement', 'event_label': 'footer_link'});">WhatsApp</a>
+    <a href="https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=Time%20Out%20Restaurant%2C%201245%20Sapele%20Crescent%2C%20Apex%20Plaza%2C%20Garki%202%2C%20Abuja%2C%20FCT%2C%20Nigeria" target="_blank" rel="noopener noreferrer" class="footer-link">📍 Get Directions</a>
+    <a href="visit-us.html" class="footer-link">Visit Us</a>
     <a href="contact.html" class="footer-link">Contact</a>
     <a href="/privacy-policy.html" class="footer-link">Privacy Policy</a>
     <a href="/terms-and-conditions.html" class="footer-link">Terms &amp; Conditions</a>
@@ -1684,7 +1803,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
   </nav>
 
   <div class="footer-contact-row">
-    <span>📍 1245 Sapele Street, Garki 2, Abuja</span>
+    <a class="footer-address-link" href="https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=Time%20Out%20Restaurant%2C%201245%20Sapele%20Crescent%2C%20Apex%20Plaza%2C%20Garki%202%2C%20Abuja%2C%20FCT%2C%20Nigeria" target="_blank" rel="noopener noreferrer" aria-label="Get directions to 1245 Sapele Crescent, Apex Plaza, Garki 2, Abuja">📍 1245 Sapele Crescent, Apex Plaza, Garki 2, Abuja — Get directions</a>
     <a href="tel:+2349011724825">+234 901 172 4825</a>
   </div>
 
@@ -2810,5 +2929,6 @@ document.getElementById('installDismiss').addEventListener('click', () => {
   document.getElementById('installModal').style.display = 'none';
   localStorage.setItem('pwa_dismissed', Date.now().toString());
 });
-</script></body>
+</script><script src="redesign.js" defer></script>
+</body>
 </html>
