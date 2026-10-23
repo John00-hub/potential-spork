@@ -528,3 +528,15 @@ body.page-home.light-mode .hero-trust .trust-main { color: #17150f; }
 body.light-mode .faq-title, body.light-mode .faq-item summary { color: #17150f; }
 body.light-mode .faq-item { background: rgba(255,255,255,0.85); }
 body.light-mode .faq-item p { color: #5c574a; }
+
+/* City emphasis — Abuja big & bold in every address block */
+.city-emph {
+  font-size: 1.5em;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+}
+.visit-row .city-emph { color: var(--rd-ink); }
+.footer-address-link .city-emph { color: var(--rd-gold-bright); }
