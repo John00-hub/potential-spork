@@ -2165,10 +2165,10 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
     payBtn.textContent = 'Opening payment…';
 
     // Save order details before Paystack opens (in case page reloads on live mobile payments)
-    sessionStorage.setItem('pendingOrderData', JSON.stringify({
-      name: name, email: email, phone: phone, address: address,
-      orderItems: orderItems, total: total, packFee: packFee
-    }));
+    var _orderSnap = JSON.stringify({ name: name, email: email, phone: phone, address: address, orderItems: orderItems, total: total, packFee: packFee });
+ sessionStorage.setItem('pendingOrderData', _orderSnap);
+ try { localStorage.setItem('pendingOrderData', _orderSnap); } catch (e) {}
+ window.__pendingOrder = { name: name, email: email, phone: phone, address: address, orderItems: orderItems, total: total, packFee: packFee };
 
     const handler = PaystackPop.setup({
       key:      PAYSTACK_KEY,
@@ -2191,16 +2191,21 @@ callback: function(response) {
     });
     
     // Read saved order data (survives page reload on live mobile payments)
-    var _saved = JSON.parse(sessionStorage.getItem('pendingOrderData') || '{}');
-    
-    // ... rest of your existing code continues unchanged
-        var name       = _saved.name       || name       || '';
-        var email      = _saved.email      || email      || '';
-        var phone      = _saved.phone      || phone      || '';
-        var address    = _saved.address    || address    || '';
-        var orderItems = _saved.orderItems || orderItems || '';
-        var total      = _saved.total      || total      || 0;
-        var packFee    = _saved.packFee    || packFee    || 0;
+    var _saved = {};
+        try {
+          _saved = window.__pendingOrder
+                || JSON.parse(localStorage.getItem('pendingOrderData') || 'null')
+                || JSON.parse(sessionStorage.getItem('pendingOrderData') || 'null')
+                || {};
+        } catch (e) { _saved = {}; }
+
+        var name       = _saved.name       || (typeof name !== 'undefined' ? name : '')             || '';
+        var email      = _saved.email      || (typeof email !== 'undefined' ? email : '')           || '';
+        var phone      = _saved.phone      || (typeof phone !== 'undefined' ? phone : '')           || '';
+        var address    = _saved.address    || (typeof address !== 'undefined' ? address : '')       || '';
+        var orderItems = _saved.orderItems || (typeof orderItems !== 'undefined' ? orderItems : '') || '';
+        var total      = _saved.total      || (typeof total !== 'undefined' ? total : 0)            || 0;
+        var packFee    = _saved.packFee    || (typeof packFee !== 'undefined' ? packFee : 0)        || 0;
 
         var cartItemsArr = Object.values(cart).map(function(e) {
           return { name: e.item.name, note: null, qty: e.qty, unitPrice: getDiscountedPrice(e.item.price, e.item.cat) };
@@ -2695,5 +2700,5 @@ document.addEventListener('DOMContentLoaded', function () {
   else document.addEventListener('DOMContentLoaded', boot);
 })();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a533804eeb1a55c2',t:'MTc5MzQ1ODUzMQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a533804eeb1a55c2',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a533804eeb1a55c2',t:'MTc5MzQ1ODUzMQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a533804eeb1a55c2',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a535970b7d0876c8',t:'MTc5MzQ4MDQzNA=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a535970b7d0876c8',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
