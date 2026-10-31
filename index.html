@@ -1168,7 +1168,20 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       <h1>Good food.<br/><em>Great moments.</em></h1>
       <p class="hero-sub">From smoky jollof and comforting Nigerian soups to freshly wrapped shawarma and continental favourites — find your next meal in Abuja.</p>
 
-      <div class="hero-actions">
+      <div class="hero-order-banner" style="margin:18px 0 4px;background:linear-gradient(135deg,#fff8e6,#fdf0cf);
+     border:1px solid rgba(201,168,76,.55);border-radius:14px;padding:12px 14px;
+     display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+     box-shadow:0 8px 26px rgba(201,168,76,.16);">
+  <div style="min-width:150px;">
+    <div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#a67c1b;font-weight:800;">Today's deal</div>
+    <div style="font-size:15px;font-weight:800;color:#2b2410;font-family:inherit;">Jollof Rice + Chicken</div>
+    <div style="font-size:12.5px;color:#7b6a3a;">Freshly made · Delivered hot in Abuja</div>
+  </div>
+  <a href="#menuSection" style="background:linear-gradient(135deg,#d9b456,#a67c1b);color:#20180a;text-decoration:none;
+     font-weight:800;font-size:13.5px;padding:11px 16px;border-radius:11px;white-space:nowrap;
+     box-shadow:0 5px 18px rgba(166,124,27,.35);">Order now →</a>
+</div>
+<div class="hero-actions">
         <button class="hero-cta" id="exploreBtn" aria-label="Scroll to menu">
           Explore the menu
           <span class="hero-cta-arrow">↓</span>
@@ -1842,7 +1855,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 
   <div class="footer-bottom">
     <span class="footer-copy">&copy; 2025 Timeout Restaurant. All rights reserved.</span>
-    <a href="https://wa.me/2348063559368?text=Hi%20Midex%20Edits%2C%20I%20would%20like%20to%20enquire%20about%20your%20services."
+    <a href="https://wa.me/2349011724825?text=Hello%20Time%20Out%20Restaurant%2C%20I%20would%20like%20to%20place%20an%20order."
        target="_blank" rel="noopener noreferrer" class="footer-powered">Powered by <strong>Midex Edits</strong></a>
   </div>
 
@@ -1921,6 +1934,22 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       <button class="modal-cancel" id="modalCancel">Back</button>
       <button class="modal-pay" id="modalPay">Pay Now 🔒</button>
     </div>
+    <!-- WHATSAPP ORDER FALLBACK — for customers who will not pay online -->
+    <div id="waOrderFallback" style="margin-top:14px;padding-top:14px;border-top:1px dashed rgba(201,168,76,.28);text-align:center;">
+      <p style="font-size:12.5px;color:#8b8578;margin:0 0 9px;line-height:1.5;">
+        Prefer not to pay online? Send your order straight to our WhatsApp and we will confirm delivery.
+      </p>
+      <a id="waOrderBtn" href="https://wa.me/2349011724825?text=Hello%20Time%20Out%20Restaurant%2C%20I%20would%20like%20to%20place%20an%20order."
+         target="_blank" rel="noopener noreferrer"
+         style="display:flex;align-items:center;justify-content:center;gap:9px;width:100%;
+                background:#25D366;color:#052e12;text-decoration:none;font-weight:800;
+                font-size:14.5px;padding:13px;border-radius:12px;font-family:inherit;
+                box-shadow:0 6px 22px rgba(37,211,102,.28);">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.6.372-.253.148-.477.223-.743-.075-.267-.297-1.113-1.372-1.113-1.372s-.223-.372-.075-.595c.148-.223.372-.595.595-.892.223-.297.297-.372.446-.595.148-.223.074-.417-.074-.669-.149-.223-.669-1.61-.916-2.205-.24-.579-.484-.5-.669-.51-.173-.008-.372-.01-.57-.01-.198 0-.52.074-.792.372-.273.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.101 11.893c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652a12.02 12.02 0 0 0 5.71 1.447h.006c6.585 0 11.946-5.336 11.949-11.896a11.8 11.8 0 0 0-3.48-8.45zM12.05 21.785h-.004a9.9 9.9 0 0 1-5.031-1.378l-.361-.214-3.741.975 1.013-3.65-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.002-5.45 4.457-9.884 9.942-9.884a9.86 9.86 0 0 1 7.02 2.9 9.75 9.75 0 0 1 2.909 6.99c-.003 5.45-4.458 9.895-9.943 9.895z"/></svg>
+        Order on WhatsApp instead
+      </a>
+    </div>
+
   </div>
 </div>
 
@@ -2977,5 +3006,34 @@ document.getElementById('installDismiss').addEventListener('click', () => {
   localStorage.setItem('pwa_dismissed', Date.now().toString());
 });
 </script><script src="redesign.js" defer></script>
+
+<script>
+/* Midex fix — keep the WhatsApp fallback in sync with the customer's cart */
+document.addEventListener('DOMContentLoaded', function () {
+  var btn = document.getElementById('waOrderBtn');
+  if (!btn) return;
+  function sync() {
+    try {
+      var raw = localStorage.getItem('cart') || localStorage.getItem('cartItems') || '[]';
+      var items = JSON.parse(raw);
+      if (!items || !items.length) return;
+      var lines = [], total = 0;
+      items.forEach(function (i) {
+        var q = i.qty || i.quantity || 1, p = i.price || 0;
+        total += p * q;
+        lines.push('- ' + q + ' x ' + (i.name || i.title || 'Item') + ' = N' + (p * q).toLocaleString());
+      });
+      var msg = 'Hello Time Out Restaurant, I would like to order:\n\n' + lines.join('\n') +
+                '\n\nTotal: N' + total.toLocaleString() + '\n\nMy address: ';
+      btn.href = 'https://wa.me/2349011724825?text=' + encodeURIComponent(msg);
+    } catch (e) {}
+  }
+  sync();
+  try { new MutationObserver(sync).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
+  btn.addEventListener('click', function () {
+    if (window.gtag) gtag('event', 'whatsapp_order_click', { event_category: 'engagement', event_label: 'checkout_fallback' });
+  });
+});
+</script>
 </body>
 </html>
