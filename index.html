@@ -2578,5 +2578,109 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 </script>
+
+<!-- ═══ Silent conversion tracking (added 2026) ═══ -->
+<script>
+(function () {
+  var WA   = 'https://wa.me/2349011724825';
+  var TEL  = '+2349011724825';
+  var ADDR = 'Time Out Restaurant, 1245 Sapele Crescent, Apex Plaza, Garki 2, Abuja';
+
+  function g(ev, params) {
+    try { if (window.gtag) gtag('event', ev, params || {}); } catch (e) {}
+  }
+  function f(ev, params) {
+    try { if (window.fbq) fbq('track', ev, params || {}); } catch (e) {}
+  }
+  function fCustom(ev, params) {
+    try { if (window.fbq) fbq('trackCustom', ev, params || {}); } catch (e) {}
+  }
+
+  /* ---------- 1. Add to cart ---------- */
+  if (typeof window.addToCart === 'function' && !window.addToCart.__tracked) {
+    var _origAdd = window.addToCart;
+    window.addToCart = function (id) {
+      var r = _origAdd.apply(this, arguments);
+      try {
+        var it = (typeof items !== 'undefined' && items) ? items.find(function (x) { return x.id === id; }) : null;
+        if (it) {
+          g('add_to_cart', { currency: 'NGN', value: it.price, items: [{ item_id: id, item_name: it.name, price: it.price }] });
+          f('AddToCart', { content_name: it.name, currency: 'NGN', value: it.price });
+        }
+      } catch (e) {}
+      return r;
+    };
+    window.addToCart.__tracked = true;
+  }
+
+  /* ---------- 2. Cart opened / checkout initiated ---------- */
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('#checkoutBtn') : null;
+    if (t) {
+      g('begin_checkout', { currency: 'NGN' });
+      f('InitiateCheckout', { currency: 'NGN' });
+      fCustom('CheckoutStarted');
+    }
+  }, true);
+
+  /* ---------- 3. EVERY outbound engagement: WhatsApp, call, directions ---------- */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    if (href.indexOf('wa.me') > -1 || href.indexOf('whatsapp') > -1) {
+      g('whatsapp_click',   { event_category: 'engagement', event_label: 'all_links' });
+      fCustom('WhatsAppClick');
+    } else if (href.indexOf('tel:') === 0) {
+      g('call_click',       { event_category: 'engagement', event_label: 'all_links' });
+      fCustom('CallClick');
+    } else if (href.indexOf('maps') > -1 || href.indexOf('goo.gl/maps') > -1) {
+      g('directions_click', { event_category: 'engagement', event_label: 'all_links' });
+      fCustom('DirectionsClick');
+    }
+  }, true);
+
+  /* ---------- 4. Scroll depth ---------- */
+  var fired = {};
+  window.addEventListener('scroll', function () {
+    var h = document.documentElement;
+    var pct = (h.scrollTop + window.innerHeight) / h.scrollHeight * 100;
+    [25, 50, 75, 90].forEach(function (m) {
+      if (pct >= m && !fired[m]) {
+        fired[m] = 1;
+        g('scroll_depth', { event_category: 'engagement', event_label: m + '%' });
+      }
+    });
+  }, { passive: true });
+
+  /* ---------- 5. Time on page (15s / 60s) ---------- */
+  setTimeout(function () { g('engaged_15s',  { event_category: 'engagement' }); }, 15000);
+  setTimeout(function () { g('engaged_60s',  { event_category: 'engagement' }); }, 60000);
+
+  /* ---------- 6. Order placed: log to database + both ad platforms ---------- */
+  if (typeof window.showSuccess === 'function' && !window.showSuccess.__tracked) {
+    var _origSuccess = window.showSuccess;
+    window.showSuccess = function (ref, name, phone, address, orderItems, total) {
+      try {
+        /* silent database record so every order is permanent and countable */
+        if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length) {
+          firebase.database().ref('orders').push({
+            ref: ref, name: name, phone: phone, address: address,
+            items: orderItems, total: total, status: 'paid',
+            ts: Date.now(), iso: new Date().toISOString(),
+            day: new Date().toLocaleDateString('en-GB', { timeZone: 'Africa/Lagos' })
+          });
+        }
+      } catch (e) {}
+      try {
+        g('purchase', { transaction_id: ref, currency: 'NGN', value: total });
+        f('Purchase', { currency: 'NGN', value: total, content_name: 'Timeout order' });
+      } catch (e) {}
+      return _origSuccess.apply(this, arguments);
+    };
+    window.showSuccess.__tracked = true;
+  }
+})();
+</script>
 </body>
 </html>
