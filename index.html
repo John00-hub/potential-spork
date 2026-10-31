@@ -2579,107 +2579,120 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<!-- ═══ Silent conversion tracking (added 2026) ═══ -->
+
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5337cacfdd5a249',t:'MTc5MzQ1ODM4Mg=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5337cacfdd5a249',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+<!-- ═══ Silent conversion tracking v2 (runtime aware) ═══ -->
 <script>
 (function () {
-  var WA   = 'https://wa.me/2349011724825';
-  var TEL  = '+2349011724825';
-  var ADDR = 'Time Out Restaurant, 1245 Sapele Crescent, Apex Plaza, Garki 2, Abuja';
+  var TRIES = 0, MAX = 200;   /* poll up to ~20s for the app to define its functions */
 
-  function g(ev, params) {
-    try { if (window.gtag) gtag('event', ev, params || {}); } catch (e) {}
-  }
-  function f(ev, params) {
-    try { if (window.fbq) fbq('track', ev, params || {}); } catch (e) {}
-  }
-  function fCustom(ev, params) {
-    try { if (window.fbq) fbq('trackCustom', ev, params || {}); } catch (e) {}
-  }
+  function g(ev, p) { try { if (window.gtag) gtag('event', ev, p || {}); } catch (e) {} }
+  function f(ev, p) { try { if (window.fbq) fbq('track', ev, p || {}); } catch (e) {} }
+  function fc(ev, p) { try { if (window.fbq) fbq('trackCustom', ev, p || {}); } catch (e) {} }
 
-  /* ---------- 1. Add to cart ---------- */
-  if (typeof window.addToCart === 'function' && !window.addToCart.__tracked) {
-    var _origAdd = window.addToCart;
-    window.addToCart = function (id) {
-      var r = _origAdd.apply(this, arguments);
+  /* --- wrap addToCart once it exists --- */
+  function hookAdd() {
+    if (typeof window.addToCart !== 'function') return false;
+    if (window.addToCart.__t === 1) return true;
+    var orig = window.addToCart;
+    var wrapped = function (id) {
+      var r = orig.apply(this, arguments);
       try {
-        var it = (typeof items !== 'undefined' && items) ? items.find(function (x) { return x.id === id; }) : null;
+        var list = (typeof items !== 'undefined') ? items : (window.items || []);
+        var it = null;
+        for (var k = 0; k < list.length; k++) { if (list[k].id === id) { it = list[k]; break; } }
         if (it) {
           g('add_to_cart', { currency: 'NGN', value: it.price, items: [{ item_id: id, item_name: it.name, price: it.price }] });
           f('AddToCart', { content_name: it.name, currency: 'NGN', value: it.price });
+        } else {
+          g('add_to_cart', { event_category: 'engagement', event_label: String(id) });
+          fc('AddToCart');
         }
       } catch (e) {}
       return r;
     };
-    window.addToCart.__tracked = true;
+    wrapped.__t = 1;
+    try { window.addToCart = wrapped; } catch (e) { return false; }
+    return true;
   }
 
-  /* ---------- 2. Cart opened / checkout initiated ---------- */
-  document.addEventListener('click', function (e) {
-    var t = e.target.closest ? e.target.closest('#checkoutBtn') : null;
-    if (t) {
-      g('begin_checkout', { currency: 'NGN' });
-      f('InitiateCheckout', { currency: 'NGN' });
-      fCustom('CheckoutStarted');
-    }
-  }, true);
+  /* --- order logging via a safe public path: watch the success overlay --- */
+  var lastLogged = null;
+  function watchOrders() {
+    var ov = document.getElementById('successOverlay');
+    if (!ov) return;
+    var obs = new MutationObserver(function () {
+      if (!ov.classList.contains('open')) return;
+      var refEl = document.getElementById('successRef');
+      var ref = refEl ? (refEl.textContent || '').trim() : '';
+      if (!ref || ref === lastLogged) return;
+      lastLogged = ref;
 
-  /* ---------- 3. EVERY outbound engagement: WhatsApp, call, directions ---------- */
+      /* google + meta */
+      g('purchase', { transaction_id: ref, currency: 'NGN' });
+      f('Purchase', { currency: 'NGN', content_name: 'Timeout order' });
+
+      /* silent database record */
+      try {
+        var pending = JSON.parse(sessionStorage.getItem('pendingOrderData') || '{}');
+        var payload = {
+          ref: ref,
+          name: pending.name || '',
+          phone: pending.phone || '',
+          address: pending.address || '',
+          items: pending.orderItems || '',
+          total: pending.total || 0,
+          status: 'paid',
+          ts: Date.now(),
+          iso: new Date().toISOString(),
+          day: new Date().toLocaleDateString('en-GB', { timeZone: 'Africa/Lagos' })
+        };
+        if (window.firebase && firebase.apps && firebase.apps.length) {
+          firebase.database().ref('orders').push(payload);
+        } else {
+          fetch('https://olamide-3fb18-default-rtdb.firebaseio.com/orders.json',
+                { method: 'POST', headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload) });
+        }
+      } catch (e) {}
+    });
+    obs.observe(ov, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  /* --- click tracking (works immediately, no dependencies) --- */
   document.addEventListener('click', function (e) {
     var a = e.target.closest ? e.target.closest('a[href]') : null;
-    if (!a) return;
-    var href = a.getAttribute('href') || '';
-    if (href.indexOf('wa.me') > -1 || href.indexOf('whatsapp') > -1) {
-      g('whatsapp_click',   { event_category: 'engagement', event_label: 'all_links' });
-      fCustom('WhatsAppClick');
-    } else if (href.indexOf('tel:') === 0) {
-      g('call_click',       { event_category: 'engagement', event_label: 'all_links' });
-      fCustom('CallClick');
-    } else if (href.indexOf('maps') > -1 || href.indexOf('goo.gl/maps') > -1) {
-      g('directions_click', { event_category: 'engagement', event_label: 'all_links' });
-      fCustom('DirectionsClick');
+    if (a) {
+      var h = a.getAttribute('href') || '';
+      if (h.indexOf('wa.me') > -1)      { g('whatsapp_click',   { event_category: 'engagement', event_label: 'all_links' }); fc('WhatsAppClick'); }
+      else if (h.indexOf('tel:') === 0) { g('call_click',       { event_category: 'engagement', event_label: 'all_links' }); fc('CallClick'); }
+      else if (h.indexOf('maps') > -1)  { g('directions_click', { event_category: 'engagement', event_label: 'all_links' }); fc('DirectionsClick'); }
     }
+    var c = e.target.closest ? e.target.closest('#checkoutBtn') : null;
+    if (c) { g('begin_checkout', { currency: 'NGN' }); f('InitiateCheckout', { currency: 'NGN' }); }
   }, true);
 
-  /* ---------- 4. Scroll depth ---------- */
-  var fired = {};
+  /* --- scroll depth --- */
+  var seen = {};
   window.addEventListener('scroll', function () {
-    var h = document.documentElement;
-    var pct = (h.scrollTop + window.innerHeight) / h.scrollHeight * 100;
+    var d = document.documentElement;
+    var pct = (d.scrollTop + window.innerHeight) / d.scrollHeight * 100;
     [25, 50, 75, 90].forEach(function (m) {
-      if (pct >= m && !fired[m]) {
-        fired[m] = 1;
-        g('scroll_depth', { event_category: 'engagement', event_label: m + '%' });
-      }
+      if (pct >= m && !seen[m]) { seen[m] = 1; g('scroll_depth', { event_category: 'engagement', event_label: m + '%' }); }
     });
   }, { passive: true });
 
-  /* ---------- 5. Time on page (15s / 60s) ---------- */
-  setTimeout(function () { g('engaged_15s',  { event_category: 'engagement' }); }, 15000);
-  setTimeout(function () { g('engaged_60s',  { event_category: 'engagement' }); }, 60000);
+  setTimeout(function () { g('engaged_15s', { event_category: 'engagement' }); }, 15000);
+  setTimeout(function () { g('engaged_60s', { event_category: 'engagement' }); }, 60000);
 
-  /* ---------- 6. Order placed: log to database + both ad platforms ---------- */
-  if (typeof window.showSuccess === 'function' && !window.showSuccess.__tracked) {
-    var _origSuccess = window.showSuccess;
-    window.showSuccess = function (ref, name, phone, address, orderItems, total) {
-      try {
-        /* silent database record so every order is permanent and countable */
-        if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length) {
-          firebase.database().ref('orders').push({
-            ref: ref, name: name, phone: phone, address: address,
-            items: orderItems, total: total, status: 'paid',
-            ts: Date.now(), iso: new Date().toISOString(),
-            day: new Date().toLocaleDateString('en-GB', { timeZone: 'Africa/Lagos' })
-          });
-        }
-      } catch (e) {}
-      try {
-        g('purchase', { transaction_id: ref, currency: 'NGN', value: total });
-        f('Purchase', { currency: 'NGN', value: total, content_name: 'Timeout order' });
-      } catch (e) {}
-      return _origSuccess.apply(this, arguments);
-    };
-    window.showSuccess.__tracked = true;
+  /* --- start polling --- */
+  function boot() {
+    watchOrders();
+    var ok = hookAdd();
+    if (!ok && TRIES++ < MAX) setTimeout(boot, 100);
   }
+  if (document.readyState === 'complete' || document.readyState === 'interactive') { setTimeout(boot, 0); }
+  else document.addEventListener('DOMContentLoaded', boot);
 })();
 </script>
 </body>
