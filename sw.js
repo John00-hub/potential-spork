@@ -7,8 +7,8 @@
      • API / Paystack / FB  →  Network-only (never cache)
 =================================================== */
 
-const CACHE_NAME    = 'timeout-v5'; /* v3: ad-traffic conversion pass — forces fresh shell */
-const RUNTIME_CACHE = 'timeout-images-v5';
+const CACHE_NAME    = 'timeout-v7'; /* v3: ad-traffic conversion pass — forces fresh shell */
+const RUNTIME_CACHE = 'timeout-images-v7';
 
 /* ─── Core shell: cached on install ─── */
 const PRECACHE_ASSETS = [
@@ -106,7 +106,14 @@ self.addEventListener('fetch', event => {
         .catch(() => {
           /* Offline fallback: return cached homepage for navigation requests */
           if (request.mode === 'navigate') {
-            return caches.match('/index.html');
+            /* NETWORK-FIRST for pages: never serve a stale shell to returning visitors */
+            return fetch(request).then(function (res) {
+              var copy = res.clone();
+              caches.open(CACHE_NAME).then(function (c) { c.put('/index.html', copy); });
+              return res;
+            }).catch(function () {
+              return caches.match('/index.html');
+            });
           }
         });
     })
