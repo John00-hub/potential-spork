@@ -4,127 +4,99 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Orders Dashboard · Timeout</title>
+<title>Orders</title>
 <style>
-  :root{--bg:#0a0e17;--card:#121a2b;--line:#233049;--gold:#F0C24B;--green:#10B981;--red:#EF4444;--text:#EEF2F8;--mut:#8fa0b8;}
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);padding:14px;line-height:1.5;}
-  .wrap{max-width:760px;margin:0 auto;}
-  header{background:linear-gradient(150deg,#152238,#0b1220);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;}
-  .k{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:800;}
-  h1{font-size:19px;margin:5px 0 3px;}
-  .s{font-size:12px;color:var(--mut);}
-  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px;}
-  .st{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px;text-align:center;}
-  .st b{display:block;font-size:19px;color:var(--gold);}
-  .st span{font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);}
-  .row{display:flex;gap:8px;margin-bottom:12px;}
-  .btn{flex:1;background:#1b2740;border:1px solid var(--line);color:var(--text);padding:11px;border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;}
-  .btn.gold{background:linear-gradient(135deg,#F0C24B,#b8860b);color:#1a1300;border:0;}
-  .order{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:9px;}
-  .order .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px;}
-  .order h3{font-size:14px;color:var(--gold);}
-  .order .amt{font-size:14.5px;font-weight:800;color:var(--green);}
-  .order .meta{font-size:11.5px;color:var(--mut);margin-bottom:6px;}
-  .order .items{font-size:12.3px;color:#c7d3e4;white-space:pre-wrap;background:#0b1220;border-radius:8px;padding:8px;}
-  .order .line{font-size:11.8px;color:#9fb0c8;margin-top:5px;}
-  .order a{color:var(--green);text-decoration:none;font-weight:700;}
-  .empty{text-align:center;color:var(--mut);font-size:12.5px;padding:26px 8px;}
-  .warn{background:#2a1a12;border-left:4px solid var(--red);border-radius:9px;padding:11px;font-size:11.8px;color:#f0b8a8;margin-top:10px;}
-  footer{text-align:center;font-size:10px;color:var(--mut);padding:14px 0;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,Roboto,Arial,sans-serif;background:#0a0e17;color:#eef2f8;padding:14px;line-height:1.5}
+.w{max-width:760px;margin:0 auto}
+header{background:linear-gradient(150deg,#152238,#0b1220);border:1px solid #233049;border-radius:14px;padding:16px;margin-bottom:10px}
+.k{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#F0C24B;font-weight:800}
+h1{font-size:19px;margin:5px 0 3px}
+.s{font-size:11.5px;color:#8fa0b8}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.st{background:rgba(255,255,255,.06);border-radius:10px;padding:10px;text-align:center}
+.st b{display:block;font-size:18px;color:#F0C24B}
+.st span{font-size:8.5px;text-transform:uppercase;color:#8fa0b8}
+.row{display:flex;gap:8px;margin-bottom:10px}
+.btn{flex:1;background:#1b2740;border:1px solid #233049;color:#eef2f8;padding:12px;border-radius:10px;font-size:13px;font-weight:700;font-family:inherit}
+.btn.gold{background:linear-gradient(135deg,#F0C24B,#b8860b);color:#1a1300;border:0}
+.o{background:#121a2b;border:1px solid #233049;border-radius:12px;padding:12px;margin-bottom:9px}
+.top{display:flex;justify-content:space-between;gap:8px;margin-bottom:5px}
+.o h3{font-size:14px;color:#F0C24B}
+.amt{font-size:14px;font-weight:800;color:#10B981}
+.meta{font-size:11px;color:#8fa0b8;margin-bottom:6px}
+.items{font-size:12px;color:#c7d3e4;white-space:pre-wrap;background:#0b1220;border-radius:8px;padding:8px}
+.line{font-size:11.5px;color:#9fb0c8;margin-top:5px}
+a{color:#10B981;text-decoration:none;font-weight:700}
+.empty{text-align:center;color:#8fa0b8;font-size:12.5px;padding:26px 8px}
+.warn{background:#2a1a12;border-left:4px solid #EF4444;border-radius:9px;padding:11px;font-size:11.5px;color:#f0b8a8;margin-top:10px}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="w">
   <header>
-    <div class="k">Timeout Restaurant · Garki 2, Abuja</div>
-    <h1>Orders Dashboard</h1>
-    <p class="s">Live from the database. Pull down or tap refresh.</p>
+    <div class="k">Timeout Restaurant · Garki 2</div>
+    <h1>Orders</h1>
+    <p class="s">Live from the database. Auto refreshes.</p>
     <div class="stats">
-      <div class="st"><b id="sTotal">0</b><span>Orders</span></div>
-      <div class="st"><b id="sToday">0</b><span>Today</span></div>
-      <div class="st"><b id="sRev">₦0</b><span>Revenue</span></div>
+      <div class="st"><b id="t">0</b><span>Orders</span></div>
+      <div class="st"><b id="d">0</b><span>Today</span></div>
+      <div class="st"><b id="r">&#8358;0</b><span>Revenue</span></div>
     </div>
   </header>
-
   <div class="row">
-    <button class="btn gold" id="btnRefresh">↻ Refresh</button>
-    <button class="btn" id="btnCopy">Copy report</button>
+    <button class="btn gold" id="rf">Refresh</button>
+    <button class="btn" id="cp">Copy report</button>
   </div>
-
-  <div id="list"><div class="empty">Fetching orders…</div></div>
-
-  <div class="warn">
-    Anyone with this link can read the orders, including customer phone numbers.
-    Keep it private. Do not post it anywhere.
-  </div>
-  <footer>Midex · order log for Timeout Restaurant</footer>
+  <div id="list"><div class="empty">Loading…</div></div>
+  <div class="warn">Private. Anyone with this link can read customer phone numbers. Do not share it.</div>
 </div>
-
 <script>
-var DB = 'https://olamide-3fb18-default-rtdb.firebaseio.com/orders.json';
-var DATA = [];
-
-function naira(n){ return '\u20A6' + (Number(n)||0).toLocaleString(); }
-function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
+var DB='https://olamide-3fb18-default-rtdb.firebaseio.com/orders.json';
+var DATA=[];
+function ngn(n){return '\u20A6'+(Number(n)||0).toLocaleString();}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function today(){return new Date().toLocaleDateString('en-GB',{timeZone:'Africa/Lagos'});}
 function render(){
-  var today = new Date().toLocaleDateString('en-GB', { timeZone: 'Africa/Lagos' });
-  var list = document.getElementById('list');
+  var L=document.getElementById('list');
   if(!DATA.length){
-    list.innerHTML = '<div class="empty">No orders recorded yet.<br><br>An order appears here the moment a customer pays on the site.</div>';
+    L.innerHTML='<div class="empty">No orders recorded yet.<br><br>An order appears here within seconds of payment.</div>';
   } else {
-    list.innerHTML = DATA.map(function(o){
-      var wa = String(o.phone||'').replace(/\D/g,'');
-      if(wa.indexOf('0')===0) wa = '234'+wa.slice(1);
-      return '<div class="order">'
-        + '<div class="top"><h3>'+esc(o.name||'Customer')+'</h3><span class="amt">'+naira(o.total)+'</span></div>'
-        + '<div class="meta">'+esc(o.iso? new Date(o.iso).toLocaleString('en-GB',{timeZone:'Africa/Lagos'}) : (o.day||''))+' · '+esc(o.ref||'')+'</div>'
-        + '<div class="items">'+esc(o.items||'')+'</div>'
-        + '<div class="line">📍 '+esc(o.address||'')+' · 📞 <a href="https://wa.me/'+wa+'">'+esc(o.phone||'')+'</a></div>'
-        + '</div>';
+    L.innerHTML=DATA.map(function(o){
+      var p=String(o.phone||'').replace(/\D/g,'');
+      if(p.indexOf('0')===0)p='234'+p.slice(1);
+      var when=o.iso?new Date(o.iso).toLocaleString('en-GB',{timeZone:'Africa/Lagos'}):(o.day||'');
+      return '<div class="o"><div class="top"><h3>'+esc(o.name||'Customer')+'</h3><span class="amt">'+ngn(o.total)+'</span></div>'
+        +'<div class="meta">'+esc(when)+' · '+esc(o.ref||'')+'</div>'
+        +'<div class="items">'+esc(o.items||'')+'</div>'
+        +'<div class="line">'+esc(o.address||'')+(p?' · <a href="https://wa.me/'+p+'">'+esc(o.phone)+'</a>':'')+'</div></div>';
     }).join('');
   }
-  var isToday = function(o){ return (o.day||'') === today; };
-  document.getElementById('sTotal').textContent = DATA.length;
-  document.getElementById('sToday').textContent = DATA.filter(isToday).length;
-  document.getElementById('sRev').textContent = naira(DATA.reduce(function(t,o){ return t + (Number(o.total)||0); },0));
+  var t=today();
+  document.getElementById('t').textContent=DATA.length;
+  document.getElementById('d').textContent=DATA.filter(function(o){return (o.day||'')===t;}).length;
+  document.getElementById('r').textContent=ngn(DATA.reduce(function(s,o){return s+(Number(o.total)||0);},0));
 }
-
 function load(){
-  document.getElementById('list').innerHTML = '<div class="empty">Fetching orders…</div>';
-  fetch(DB + '?t=' + Date.now())
-    .then(function(r){ return r.json(); })
+  fetch(DB+'?t='+Date.now(),{cache:'no-store'})
+    .then(function(r){return r.json();})
     .then(function(d){
-      DATA = d ? Object.keys(d).map(function(k){ var o=d[k]; o._id=k; return o; })
-                 .sort(function(a,b){ return (b.ts||0)-(a.ts||0); }) : [];
+      DATA=d?Object.keys(d).map(function(k){var o=d[k];return o;}).sort(function(a,b){return (b.ts||0)-(a.ts||0);}):[];
       render();
     })
-    .catch(function(){
-      document.getElementById('list').innerHTML = '<div class="empty">Could not load orders.<br>Check your internet and tap Refresh.</div>';
-    });
+    .catch(function(){document.getElementById('list').innerHTML='<div class="empty">Could not load. Check internet, then tap Refresh.</div>';});
 }
-
-document.getElementById('btnRefresh').addEventListener('click', load);
-document.getElementById('btnCopy').addEventListener('click', function(){
-  if(!DATA.length){ alert('No orders to report yet.'); return; }
-  var today = new Date().toLocaleDateString('en-GB',{timeZone:'Africa/Lagos'});
-  var t = DATA.filter(function(o){ return (o.day||'')===today; });
-  var rev = DATA.reduce(function(s,o){ return s+(Number(o.total)||0); },0);
-  var msg = 'Orders report, Timeout Restaurant\n\n'
-    + 'Total orders: ' + DATA.length + '\n'
-    + 'Today: ' + t.length + '\n'
-    + 'Total value: ' + naira(rev) + '\n\n'
-    + DATA.map(function(o,i){
-        return (i+1)+'. '+(o.day||'')+' '+(o.name||'')+' - '+naira(o.total);
-      }).join('\n');
-  if(navigator.clipboard) navigator.clipboard.writeText(msg);
-  this.textContent = '✅ Copied';
-  var b=this; setTimeout(function(){ b.textContent='Copy report'; }, 1400);
-});
-
-load();
-setInterval(load, 60000);
+document.getElementById('rf').onclick=load;
+document.getElementById('cp').onclick=function(){
+  if(!DATA.length){alert('No orders yet.');return;}
+  var t=today();
+  var m='Orders report, Timeout\n\nTotal: '+DATA.length+'\nToday: '+DATA.filter(function(o){return (o.day||'')===t;}).length
+   +'\nValue: '+ngn(DATA.reduce(function(s,o){return s+(Number(o.total)||0);},0))+'\n\n'
+   +DATA.map(function(o,i){return (i+1)+'. '+(o.day||'')+' '+(o.name||'')+' - '+ngn(o.total);}).join('\n');
+  if(navigator.clipboard)navigator.clipboard.writeText(m);
+  this.textContent='Copied';var b=this;setTimeout(function(){b.textContent='Copy report';},1400);
+};
+load();setInterval(load,60000);
 </script>
 </body>
 </html>
