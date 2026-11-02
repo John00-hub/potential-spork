@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Reserve your table at Timeout Restaurant Abuja — Garki's premier fine dining destination. Call or WhatsApp +2349061600052 to book now." />
+  <meta name="description" content="Reserve your table at Timeout Restaurant Abuja — Garki's premier fine dining destination. Call or WhatsApp +234 901 172 4825 to book now." />
   <meta name="keywords" content="Timeout Restaurant Abuja, restaurant Abuja, fine dining Abuja, table booking Abuja, Garki restaurant, WhatsApp reservation Abuja" />
   <meta name="robots" content="index, follow" />
   <meta property="og:title" content="Book a Table — Timeout Restaurant Abuja" />
-  <meta property="og:description" content="Reserve your table at Timeout Restaurant, Garki Abuja. Fine dining, private events & more. Call +2349061600052." />
+  <meta property="og:description" content="Reserve your table at Timeout Restaurant, Garki Abuja. Fine dining, private events & more. Call +234 901 172 4825 (alt: +234 906 160 0052)." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://timeout.com.ng/contact" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -433,6 +433,13 @@
       color: var(--text);
       line-height: 1.4;
     }
+    .contact-card__alt {
+      display: inline-block;
+      margin-top: 4px;
+      font-family: var(--ff-body);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
     .contact-card__action {
       margin-top: auto;
       font-size: 11px;
@@ -733,6 +740,15 @@
       line-height: 1.7;
       max-width: 280px;
     }
+    .footer__address {
+      margin-top: 14px;
+      font-style: normal;
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+    .footer__address a { color: var(--gold-dim); text-decoration: none; transition: color 0.2s; }
+    .footer__address a:hover { color: var(--gold); }
 
     .footer__col h4 {
       font-family: var(--ff-body);
@@ -866,6 +882,32 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
   <link rel="stylesheet" href="redesign.css">
+
+  <!-- Local Business / Contact Schema Markup -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Timeout Restaurant Abuja",
+    "url": "https://timeout.com.ng/contact.html",
+    "telephone": "+2349011724825",
+    "email": "info@timeout.com.ng",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1245 Sapele Street, Garki 2",
+      "addressLocality": "Abuja",
+      "addressRegion": "FCT",
+      "addressCountry": "NG"
+    },
+    "hasMap": "https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=Time%20Out%20Restaurant%2C%201245%20Sapele%20Street%2C%20Garki%202%2C%20Abuja%2C%20FCT%2C%20Nigeria",
+    "servesCuisine": ["Nigerian", "Continental", "Fine Dining"],
+    "priceRange": "₦₦",
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], "opens": "09:00", "closes": "22:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Sunday", "opens": "12:00", "closes": "22:00" }
+    ]
+  }
+  </script>
 </head>
 <body>
 
@@ -946,12 +988,12 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       <div class="contact-cards">
 
         <!-- Phone -->
-        <a href="tel:+2349061600052" class="contact-card" aria-label="Call Timeout Restaurant">
+        <a href="tel:+2349011724825" class="contact-card" aria-label="Call Timeout Restaurant (main line)">
           <div class="contact-card__icon">
             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.8 19.8 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.8 19.8 0 01.07 2.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.36 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.34 1.85.573 2.81.7A2 2 0 0122 14.93v1.99z"/></svg>
           </div>
           <span class="contact-card__label">Phone / Call</span>
-          <p class="contact-card__value">+2349061600052</p>
+          <p class="contact-card__value">+234 901 172 4825<br><span class="contact-card__alt">Alt: +234 906 160 0052</span></p>
           <span class="contact-card__action">
             Tap to Call
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -972,12 +1014,12 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
         </a>
 
         <!-- Location -->
-        <a href="https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=Time%20Out%20Restaurant%2C%201245%20Sapele%20Crescent%2C%20Apex%20Plaza%2C%20Garki%202%2C%20Abuja%2C%20FCT%2C%20Nigeria" class="contact-card" target="_blank" rel="noopener" aria-label="Get directions to Timeout Restaurant">
+        <a href="https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=Time%20Out%20Restaurant%2C%201245%20Sapele%20Street%2C%20Garki%202%2C%20Abuja%2C%20FCT%2C%20Nigeria" class="contact-card" target="_blank" rel="noopener" aria-label="Get directions to Timeout Restaurant">
           <div class="contact-card__icon">
             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
           </div>
           <span class="contact-card__label">Address</span>
-          <p class="contact-card__value">1245 Sapele crescent, <br> Garki 2, <span class="city-emph">Abuja</span>.</p>
+          <p class="contact-card__value">1245 Sapele Street, <br> Garki 2, <span class="city-emph">Abuja</span>.</p>
           <span class="contact-card__action">
             Get Directions
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -1258,7 +1300,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
             </span>
           </button>
           <div class="faq-answer" id="faq-7" role="region">
-            Yes, we offer takeaway. You can place your order by calling us at <a href="tel:++2349061600052">+2349011724825</a> or via WhatsApp. Please check our <a href="https://timeout.com.ng/menu">menu page</a> first to browse available items.
+            Yes, we offer takeaway. You can place your order by calling us at <a href="tel:+2349011724825">+234 901 172 4825</a> or via WhatsApp. Please check our <a href="https://timeout.com.ng/menu">menu page</a> first to browse available items.
           </div>
         </div>
 
@@ -1298,6 +1340,11 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       <div class="footer__brand">
         <div class="logo">Timeout<span> Restaurant</span></div>
         <p>Fine dining in the heart of Garki, Abuja. Where every meal is a celebration and every guest is family.</p>
+        <address class="footer__address">
+          <a href="https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=Time%20Out%20Restaurant%2C%201245%20Sapele%20Street%2C%20Garki%202%2C%20Abuja%2C%20FCT%2C%20Nigeria" target="_blank" rel="noopener noreferrer">1245 Sapele Street, Garki 2, Abuja</a><br>
+          <a href="tel:+2349011724825">+234 901 172 4825</a> &middot; <a href="tel:+2349061600052">+234 906 160 0052</a><br>
+          <a href="mailto:info@timeout.com.ng">info@timeout.com.ng</a>
+        </address>
         <div style="display:flex;gap:12px;margin-top:20px;">
           <a href="tel:+234 901 172 4825" style="color:var(--gold-dim);transition:color .2s;" aria-label="Phone">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.8 19.8 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.8 19.8 0 01.07 2.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.36 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.34 1.85.573 2.81.7A2 2 0 0122 14.93v1.99z"/></svg>
@@ -1336,7 +1383,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 
     <div class="footer__bottom">
       <p>© <span id="year"></span> Timeout Restaurant Abuja. All rights reserved.</p>
-      <p><a href="https://timeout.com.ng">timeout.com.ng</a> · Garki, Abuja, Nigeria</p>
+      <p><a href="https://timeout.com.ng">timeout.com.ng</a> · 1245 Sapele Street, Garki 2, Abuja, Nigeria</p>
     </div>
   </footer>
 

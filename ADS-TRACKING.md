@@ -62,8 +62,7 @@ who didn't check out.
 - WhatsApp/Facebook share card uses the jollof photo + "Good Food. Great
   Moments." headline — every shared link advertises itself.
 - **Google Business Profile tip:** make sure the listing uses the same
-  name/address/phone as the site — *Time Out Restaurant, 1245 Sapele
-  Crescent, Apex Plaza, Garki 2, Abuja* — consistency is what makes the
+  name/address/phone as the site — *Time Out Restaurant, 1245 Sapele Street, Garki 2, Abuja* — consistency is what makes the
   "near me" rankings and directions taps spike.
 
 ## 5. Notes
