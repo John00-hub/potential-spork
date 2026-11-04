@@ -82,6 +82,7 @@ function load(){
     .then(function(r){return r.json();})
     .then(function(d){
       DATA=d?Object.keys(d).map(function(k){var o=d[k];return o;}).sort(function(a,b){return (b.ts||0)-(a.ts||0);}):[];
+      (function(){var seen={};DATA=DATA.filter(function(o){if(!o.ref)return true;if(seen[o.ref])return false;seen[o.ref]=1;return true;});})();
       render();
     })
     .catch(function(){document.getElementById('list').innerHTML='<div class="empty">Could not load. Check internet, then tap Refresh.</div>';});
