@@ -38,6 +38,7 @@
         else window.__sbPrices.push({ item_id: id, price: price });
       });
       if (changed && typeof window.__renderMenu === 'function') window.__renderMenu();
+      if (changed && typeof window.__refreshPromoPrice === 'function') window.__refreshPromoPrice();
     });
 
     /* ── Real-time site pause listener ── */
@@ -2430,42 +2431,68 @@ callback: function(response) {
       document.body.classList.remove('promo-active');
     });
 
-    /* Apply -20% to hero promo deal card — reads live price from Supabase (item ID 87) */
-    var DEFAULT_ORIG = 5600; // fallback if the live price (Firebase) is unreachable
+    /* ── HERO / DEAL CARD PRICES ───────────────────────────────
+       Both prices are editable from admin.html (Firebase menu_prices):
+         item 87  = Jollof Rice + Chicken (normal menu price)
+         item 999 = the deal price charged by the "Order Now" button
+       If no deal price has been saved, the deal simply matches item 87. */
+    var DEFAULT_ORIG  = 5600; // fallback Jollof Rice + Chicken price
+    var DEFAULT_PROMO = 5600; // fallback deal price (no discount until one is saved)
 
-    function applyPromoPrice(ORIG) {
-      var DISC = Math.round(ORIG * 0.8);
-      var savings = ORIG - DISC;
+    /* Read a price that Firebase has already delivered, if any */
+    function livePrice(id) {
+      var row = window.__sbPrices && window.__sbPrices.find(function (r) { return r.item_id === id; });
+      return (row && typeof row.price === 'number') ? row.price : null;
+    }
+
+    function applyPromoPrice(ORIG, DEAL) {
+      if (typeof DEAL !== 'number' || DEAL <= 0) DEAL = ORIG;
+      var isDiscount = DEAL < ORIG;
+      var savings    = ORIG - DEAL;
+      var pct        = isDiscount ? Math.round((savings / ORIG) * 100) : 0;
 
       var priceMain  = document.getElementById('promoPriceMain');
       var priceWas   = document.getElementById('promoPriceWas');
       var priceLabel = document.getElementById('promoPriceLabel');
       var ctaPrice   = document.getElementById('promoCTAPrice');
 
-      if (priceMain)  priceMain.textContent  = '₦' + DISC.toLocaleString();
-      if (priceWas)   { priceWas.textContent = '₦' + ORIG.toLocaleString(); priceWas.style.display = 'inline'; }
-      if (priceLabel) priceLabel.textContent = '20% Off — Save ₦' + savings.toLocaleString();
-      if (ctaPrice)   ctaPrice.innerHTML = '<s style="color:#c8b89a;font-weight:600;font-size:0.85em;">₦' + ORIG.toLocaleString() + '</s>&nbsp;₦' + DISC.toLocaleString();
+      if (priceMain)  priceMain.textContent = '₦' + DEAL.toLocaleString();
+      if (priceWas) {
+        priceWas.textContent   = '₦' + ORIG.toLocaleString();
+        priceWas.style.display = isDiscount ? 'inline' : 'none';
+      }
+      if (priceLabel) {
+        priceLabel.textContent = isDiscount
+          ? pct + '% Off — Save ₦' + savings.toLocaleString()
+          : 'Deal price';
+      }
+      if (ctaPrice) {
+        ctaPrice.innerHTML = isDiscount
+          ? '<s style="color:#c8b89a;font-weight:600;font-size:0.85em;">₦' + ORIG.toLocaleString() + '</s>&nbsp;₦' + DEAL.toLocaleString()
+          : '₦' + DEAL.toLocaleString();
+      }
 
-      // Also update the promo item price in MENU_ITEMS so cart uses correct price
-      var promoItem = MENU_ITEMS.find(function(i){ return i.id === 87; });
-      if (promoItem) promoItem.price = ORIG;
-      var promoCartItem = MENU_ITEMS.find(function(i){ return i.id === 999; });
-      if (promoCartItem) promoCartItem.price = DISC;
+      /* Keep the cart in sync with what is displayed */
+      var menu = window.__menuItems || [];
+      var origItem = menu.find(function (i) { return i.id === 87; });
+      if (origItem) origItem.price = ORIG;
+      var dealItem = menu.find(function (i) { return i.id === 999; });
+      if (dealItem) dealItem.price = DEAL;
     }
 
-    /* Get live price from Firebase (already synced via real-time listener above),
-       fallback to default if not yet loaded */
-    var sbRow = window.__sbPrices && window.__sbPrices.find(function(r){ return r.item_id === 87; });
-    if (sbRow && typeof sbRow.price === 'number') {
-      applyPromoPrice(sbRow.price);
-    } else {
-      /* Prices may not be loaded yet — wait briefly then try again */
-      setTimeout(function() {
-        var row2 = window.__sbPrices && window.__sbPrices.find(function(r){ return r.item_id === 87; });
-        applyPromoPrice(row2 && typeof row2.price === 'number' ? row2.price : DEFAULT_ORIG);
-      }, 1500);
-    }
+    /* Recompute whenever prices arrive from Firebase */
+    window.__refreshPromoPrice = function () {
+      var menu  = window.__menuItems || [];
+      var oItem = menu.find(function (i) { return i.id === 87; });
+      var dItem = menu.find(function (i) { return i.id === 999; });
+      var ORIG  = livePrice(87)  || (oItem ? oItem.price : DEFAULT_ORIG);
+      var DEAL  = livePrice(999) || (dItem ? dItem.price : DEFAULT_PROMO);
+      applyPromoPrice(ORIG, DEAL);
+    };
+
+    window.__refreshPromoPrice();
+    /* Prices may still be in flight — check again shortly */
+    setTimeout(function () { if (typeof window.__refreshPromoPrice === 'function') window.__refreshPromoPrice(); }, 1500);
   })();
 /* ─── CUSTOMER REVIEWS DATA ─── */
 const reviews = [
