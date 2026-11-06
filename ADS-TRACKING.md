@@ -43,7 +43,7 @@ who didn't check out.
 ## 3. Recommended campaign setup (quick wins)
 
 1. **Traffic/Conversion campaign → homepage.** The hero now leads with the
-   ₦5,400 Jollof + Chicken deal, and mobile visitors always see the sticky
+   ₦5,600 Jollof + Chicken deal, and mobile visitors always see the sticky
    *Order Now · WhatsApp · Directions* bar — no scrolling needed to buy.
 2. **Location campaign → optimise for `DirectionsClick`.** Target a radius
    around Garki 2 / Area 11 / Central Area; the floating 📍 Find Us icon
@@ -62,8 +62,7 @@ who didn't check out.
 - WhatsApp/Facebook share card uses the jollof photo + "Good Food. Great
   Moments." headline — every shared link advertises itself.
 - **Google Business Profile tip:** make sure the listing uses the same
-  name/address/phone as the site — *Time Out Restaurant, 1245 Sapele
-  Crescent, Apex Plaza, Garki 2, Abuja* — consistency is what makes the
+  name/address/phone as the site — *Time Out Restaurant, 1245 Sapele Street, Garki 2, Abuja* — consistency is what makes the
   "near me" rankings and directions taps spike.
 
 ## 5. Notes

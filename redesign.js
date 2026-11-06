@@ -10,7 +10,7 @@
   'use strict';
 
   /* ── Restaurant facts (single source for the redesign) ── */
-  var ADDRESS = '1245 Sapele Crescent, Apex Plaza, Garki 2, Abuja, FCT, Nigeria';
+  var ADDRESS = '1245 Sapele Street, Garki 2, Abuja, FCT, Nigeria';
   var DIRECTIONS_URL =
     'https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=' +
     encodeURIComponent('Time Out Restaurant, ' + ADDRESS);
