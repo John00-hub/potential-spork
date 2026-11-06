@@ -1090,8 +1090,8 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
         <div class="promo-price-block">
           <span class="promo-price-label" id="promoPriceLabel">Special Price</span>
           <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;line-height:1;">
-            <span class="promo-price" id="promoPriceMain">₦5,400</span>
-            <span id="promoPriceWas" style="display:none;text-decoration:line-through;text-decoration-thickness:1.5px;color:#c8b89a;font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;line-height:1;">₦5,400</span>
+            <span class="promo-price" id="promoPriceMain">₦5,600</span>
+            <span id="promoPriceWas" style="display:none;text-decoration:line-through;text-decoration-thickness:1.5px;color:#c8b89a;font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;line-height:1;">₦5,600</span>
           </div>
         </div>
         <div class="promo-divider" aria-hidden="true"></div>
@@ -1103,7 +1103,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 
       <button class="promo-cta" id="promoCta" aria-label="Add promo deal to cart">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        Order Now — <span id="promoCTAPrice">₦5,400</span>
+        Order Now — <span id="promoCTAPrice">₦5,600</span>
       </button>
 
       <p class="promo-footnote">⚡ Tap once to add to cart &amp; checkout instantly</p>
@@ -1684,7 +1684,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     /* ── RICE MEAL ── */
     { id:80, cat:'rice', name:'Jollof Rice',                         price:3000, desc:'Party jollof rice.',                                                           rating:9.4, popular:true,
       img:'images/jollof-rice.webp' },
-    { id:87, cat:'rice', name:'Jollof Rice + Chicken',               price:5400, desc:'Perfectly seasoned party jollof rice served with chicken.',                    rating:9.2, popular:true,
+    { id:87, cat:'rice', name:'Jollof Rice + Chicken',               price:5600, desc:'Perfectly seasoned party jollof rice served with chicken.',                    rating:9.2, popular:true,
       img:'images/jollof-chicken.webp' },
     { id:81, cat:'rice', name:'Fried Rice',                          price:3500, desc:'Nigerian fried rice.',                                                         rating:9.1,
       img:'images/fried-rice.webp' },
@@ -1903,7 +1903,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       img:'images/andre-brut.webp' },
 
     /* ── PROMO BUNDLE — hidden from menu, only added via the promo button ── */
-    { id:999, cat:'__promo__', name:'Jollof Rice + Chicken (Offer)', price:5400,
+    { id:999, cat:'__promo__', name:'Jollof Rice + Chicken (Offer)', price:5600,
       desc:'Special promo bundle — Jollof Rice & Chicken (1/4).', rating:9.4,
       img:'images/jollof-chicken.webp' },
   ];
@@ -2506,7 +2506,7 @@ document.getElementById('cartOverlay').addEventListener('click', closeCart);
     });
 
     /* Apply -20% to hero promo deal card — reads live price from Supabase (item ID 87) */
-    var DEFAULT_ORIG = 5400; // fallback if Supabase unreachable
+    var DEFAULT_ORIG = 5600; // fallback if the live price (Firebase) is unreachable
 
     function applyPromoPrice(ORIG) {
       var DISC = Math.round(ORIG * 0.8);
