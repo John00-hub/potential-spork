@@ -1062,7 +1062,7 @@ const MENU_ITEMS = [
 
   /* ── RICE MEAL ── */
   {id:80, cat:'rice', name:'Jollof Rice', price:3000},
-  {id:87, cat:'rice', name:'Jollof Rice + Chicken', price:5600},
+  {id:87, cat:'rice', name:'Jollof Rice + Chicken', price:5400},
   {id:81, cat:'rice', name:'Fried Rice', price:3500},
   {id:120, cat:'rice', name:'Chinese Fried Rice', price:5000},
   {id:82, cat:'rice', name:'Basmati White Rice and Stew', price:5000},
@@ -1187,7 +1187,7 @@ const MENU_ITEMS = [
   {id:205, cat:'champagne', name:'Andre Brut', price:25000},
 
   /* ── PROMO DEAL ── */
-  {id:999, cat:'__promo__', name:'Jollof Rice + Chicken (Offer)', price:5600},
+  {id:999, cat:'__promo__', name:'Jollof Rice + Chicken (Offer)', price:5400},
 ];
 
 /* ─────────────────────────────────────────────────
@@ -1329,7 +1329,7 @@ document.getElementById('migrateBtn').addEventListener('click', async () => {
   desc.textContent = 'Writing all prices to Firebase Realtime Database…';
 
   try {
-    // Build one big update object: { "80": 3000, "87": 5600, ... }
+    // Build one big update object: { "80": 3000, "87": 5400, ... }
     const updates = {};
     MENU_ITEMS.forEach(item => { updates[String(item.id)] = item.price; });
 
