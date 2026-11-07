@@ -8,8 +8,8 @@
      • API / Paystack / FB  →  Network-only (never cache)
 =================================================== */
 
-const CACHE_NAME    = 'timeout-v9'; /* v9: network-first pages, scoped cache cleanup (audit #9) */
-const RUNTIME_CACHE = 'timeout-images-v9';
+const CACHE_NAME    = 'timeout-v10'; /* v10: Supabase cutover (Firebase removed) */
+const RUNTIME_CACHE = 'timeout-images-v10';
 const CACHE_PREFIX  = 'timeout';    /* only ever delete caches we own */
 
 /* ─── Core shell: cached on install ─── */
@@ -34,7 +34,7 @@ const PRECACHE_ASSETS = [
 const NETWORK_ONLY = [
   'js.paystack.co',
   'api.paystack.co',
-  'firebaseio.com',
+  'supabase.co',
   'gstatic.com',
   'googletagmanager.com',
   'connect.facebook.net',

@@ -1,75 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Time Out Restaurant Abuja, Good Food. Great Moments. | Order Online &amp; Get Directions</title> <meta name="description" content="Time Out Restaurant, Garki 2 Abuja, smoky jollof, Nigerian soups, grills & shawarma. Order online, chat on WhatsApp, or tap for directions to 1245 Sapele Street." /> <meta property="og:title" content="Time Out Restaurant Abuja, Good Food. Great Moments." /> <meta property="og:description" content="From smoky jollof and comforting Nigerian soups to freshly wrapped shawarma, find your next meal in Garki 2, Abuja." /> <meta property="og:type" content="restaurant" /> <meta property="og:url" content="https://timeout.com.ng/" /> <meta property="og:image" content="https://timeout.com.ng/images/jollof-chicken.webp" /> <meta property="og:image:alt" content="Smoky jollof rice and chicken at Time Out Restaurant, Garki 2 Abuja" /> <meta name="twitter:card" content="summary_large_image" /> <meta name="twitter:title" content="Time Out Restaurant Abuja, Good Food. Great Moments." /> <meta name="twitter:description" content="Smoky jollof, Nigerian soups, grills & shawarma in Garki 2, Abuja. Order online, WhatsApp or get directions." /> <meta name="twitter:image" content="https://timeout.com.ng/images/jollof-chicken.webp" /> <meta name="keywords" content="restaurant Garki Abuja, best jollof Abuja, Nigerian food Abuja, shawarma Abuja, pepper soup Abuja, food delivery Garki, restaurant near me Abuja" /> <link rel="canonical" href="https://timeout.com.ng/" /> <link rel="preload" as="image" href="images/jollof-chicken.webp" fetchpriority="high" /> <!-- Preconnect: critical origins --> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link rel="preconnect" href="https://images.unsplash.com"> <link rel="preconnect" href="https://js.paystack.co"> <link rel="preconnect" href="https://www.gstatic.com"> <!-- Fonts: display=swap prevents render-blocking FOIT --> <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"> <!-- Paystack: defer so it never blocks parsing; we call it lazily on checkout --> <script src="https://js.paystack.co/v1/inline.js" defer></script> <!-- EmailJS: for automatic order notification emails --> <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script> <script>emailjs.init('atVlhsVq8lVoP9f3f');</script> <!-- ═══════════════════════════════════════════════════════
-       FIREBASE — real-time price sync + site pause/resume
-       Prices & pause state set in admin.html apply instantly
-       to every customer without a page refresh.
-  ════════════════════════════════════════════════════════ --> <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script> <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script> <script>
-    /* Same config as admin.html */
-    const firebaseConfig = {
-      apiKey:            "AIzaSyAcEpZxA95IzaVpj5YpsdrkBmT3v6sJuMo",
-      authDomain:        "olamide-3fb18.firebaseapp.com",
-      databaseURL:       "https://olamide-3fb18-default-rtdb.firebaseio.com",
-      projectId:         "olamide-3fb18",
-      storageBucket:     "olamide-3fb18.firebasestorage.app",
-      messagingSenderId: "496751820578",
-      appId:             "1:496751820578:web:5e0e5a7e26dedccade2f7b",
-      measurementId:     "G-L01NFW0GV3"
-    };
-
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const __db = firebase.database();
-
-    /* ── Real-time price listener ── */
-    __db.ref('menu_prices').on('value', function(snap) {
-      var data = snap.val() || {};
-      var changed = false;
-      Object.entries(data).forEach(function([idStr, price]) {
-        if (typeof price !== 'number') return;
-        var id = parseInt(idStr, 10);
-        if (window.__menuItems) {
-          var item = window.__menuItems.find(function(i){ return i.id === id; });
-          if (item && item.price !== price) { item.price = price; changed = true; }
-        }
-        /* keep __sbPrices compat for promo section */
-        window.__sbPrices = window.__sbPrices || [];
-        var existing = window.__sbPrices.find(function(r){ return r.item_id === id; });
-        if (existing) existing.price = price;
-        else window.__sbPrices.push({ item_id: id, price: price });
-      });
-      if (changed && typeof window.__renderMenu === 'function') window.__renderMenu();
-      if (changed && typeof window.__refreshPromoPrice === 'function') window.__refreshPromoPrice();
-    });
-
-    /* ── Real-time site pause listener ── */
-    window.__sitePaused   = false;
-    window.__pauseMessage = '';
-
-    __db.ref('site_state').on('value', function(snap) {
-      var data = snap.val() || {};
-      window.__sitePaused   = data.paused === true;
-      window.__pauseMessage = data.message || '';
-      /* Update checkout button if cart is open */
-      if (typeof window.__updateCartUI === 'function') window.__updateCartUI();
-    });
-
-    /* ── Real-time item availability (admin "Disable" feature) ──
-       admin.html writes to  menu_availability/<id> = { disabled: true }
-       and removes the node to re-enable. Every open menu updates
-       instantly — disabled items show as "Out of stock" and cannot
-       be added to carts. */
+     SUPABASE — real-time price sync + site pause/resume
+     Prices & pause state set in admin.html apply instantly
+     to every customer without a page refresh.
+════════════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script>
+  (function () {
+    window.__sitePaused    = false;
+    window.__pauseMessage  = '';
     window.__availDisabled = {};
 
-    __db.ref('menu_availability').on('value', function(snap) {
-      var data = snap.val() || {};
+    var sb = window.__sb;
+    if (!sb) return;                       /* not configured → built-in defaults */
+    var T = window.TIMEOUT_SB.tables;
+
+    /* ── prices ── */
+    function applyPriceRow(row) {
+      var id    = parseInt(row.item_id, 10);
+      var price = row.price;
+      if (!id || typeof price !== 'number') return false;
+      var changed = false;
+      if (window.__menuItems) {
+        var item = window.__menuItems.find(function (i) { return i.id === id; });
+        if (item && item.price !== price) { item.price = price; changed = true; }
+      }
+      /* keep __sbPrices in sync for the promo section */
+      window.__sbPrices = window.__sbPrices || [];
+      var existing = window.__sbPrices.find(function (r) { return r.item_id === id; });
+      if (existing) existing.price = price;
+      else window.__sbPrices.push({ item_id: id, price: price });
+      return changed;
+    }
+
+    function afterPrices(changed) {
+      if (changed && typeof window.__renderMenu === 'function') window.__renderMenu();
+      if (changed && typeof window.__refreshPromoPrice === 'function') window.__refreshPromoPrice();
+    }
+
+    sb.from(T.prices).select('item_id,price').then(function (res) {
+      if (res.error) { console.warn('[Timeout] price load failed:', res.error.message); return; }
+      var changed = false;
+      (res.data || []).forEach(function (row) { changed = applyPriceRow(row) || changed; });
+      afterPrices(changed);
+    });
+
+    sb.channel('timeout-prices')
+      .on('postgres_changes', { event: '*', schema: 'public', table: T.prices }, function (payload) {
+        if (payload.new && applyPriceRow(payload.new)) afterPrices(true);
+      })
+      .subscribe();
+
+    /* ── site pause / resume ── */
+    function applySiteState(row) {
+      window.__sitePaused   = !!(row && row.paused === true);
+      window.__pauseMessage = (row && row.message) || '';
+      if (typeof window.__updateCartUI === 'function') window.__updateCartUI();
+    }
+
+    sb.from(T.siteState).select('paused,message').eq('id', 1).maybeSingle().then(function (res) {
+      if (!res.error) applySiteState(res.data);
+    });
+
+    sb.channel('timeout-site-state')
+      .on('postgres_changes', { event: '*', schema: 'public', table: T.siteState }, function (payload) {
+        applySiteState(payload.new);
+      })
+      .subscribe();
+
+    /* ── item availability (admin "Disable" feature) ──
+       A row with disabled = true hides the item from the menu and
+       blocks it from being added to a cart. */
+    function rebuildAvailability(rows) {
       var next = {};
-      Object.keys(data).forEach(function(idStr) {
-        var a = data[idStr];
-        if (a && a.disabled === true) next[parseInt(idStr, 10)] = a;
+      (rows || []).forEach(function (r) {
+        if (r && r.disabled === true) next[parseInt(r.item_id, 10)] = r;
       });
       window.__availDisabled = next;
 
-      /* Drop newly-disabled items from open carts + re-render menu */
       if (typeof window.enforcePausedItems === 'function') window.enforcePausedItems();
       if (typeof window.__renderMenu === 'function') window.__renderMenu();
 
@@ -81,8 +91,47 @@
         promoCta.style.opacity = locked ? '0.55' : '';
         promoCta.style.cursor  = locked ? 'not-allowed' : '';
       }
+    }
+
+    sb.from(T.availability).select('item_id,disabled').then(function (res) {
+      if (res.error) { console.warn('[Timeout] availability load failed:', res.error.message); return; }
+      rebuildAvailability(res.data);
     });
-  </script> <style>
+
+    sb.channel('timeout-availability')
+      .on('postgres_changes', { event: '*', schema: 'public', table: T.availability }, function () {
+        sb.from(T.availability).select('item_id,disabled').then(function (res) {
+          if (!res.error) rebuildAvailability(res.data);
+        });
+      })
+      .subscribe();
+  })();
+
+  /* ── Shared order writer (used by both checkout paths) ──
+     One row per Paystack reference; `upsert` on the unique reference
+     makes repeated callbacks idempotent. */
+  window.__saveOrder = function (rec) {
+    if (!window.__sb || !rec || !rec.ref) return;
+    try {
+      window.__sb.from(window.TIMEOUT_SB.tables.orders).upsert({
+        reference: String(rec.ref),
+        name:      rec.name    || '',
+        phone:     rec.phone   || '',
+        email:     rec.email   || '',
+        address:   rec.address || '',
+        items:     rec.items   || '',
+        total:     Number(rec.total) || 0,
+        status:    'paid',
+        day:       rec.day || '',
+        payload:   rec
+      }, { onConflict: 'reference' }).then(function (res) {
+        if (res && res.error) console.warn('[Timeout] order save failed:', res.error.message);
+      });
+    } catch (err) {
+      console.warn('[Timeout] order save error:', err && err.message);
+    }
+  };
+</script>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -2257,12 +2306,7 @@ callback: function(response) {
         day: new Date().toLocaleDateString('en-GB', { timeZone: 'Africa/Lagos' })
       };
       try {
-        var _key1 = String(rec.ref).replace(/[.#$\[\]\/]/g, '_');
-        fetch('https://olamide-3fb18-default-rtdb.firebaseio.com/orders/' + encodeURIComponent(_key1) + '.json', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(rec)
-        });
+        window.__saveOrder(rec);
       } catch (e) {}
       try {
         if (window.gtag) gtag('event', 'purchase', { transaction_id: rec.ref, value: rec.total, currency: 'NGN' });
@@ -2715,14 +2759,7 @@ document.addEventListener('DOMContentLoaded', function () {
           iso: new Date().toISOString(),
           day: new Date().toLocaleDateString('en-GB', { timeZone: 'Africa/Lagos' })
         };
-        var _key2 = String(ref).replace(/[.#$\[\]\/]/g, '_');
-        if (window.firebase && firebase.apps && firebase.apps.length) {
-          firebase.database().ref('orders/' + _key2).set(payload);
-        } else {
-          fetch('https://olamide-3fb18-default-rtdb.firebaseio.com/orders/' + encodeURIComponent(_key2) + '.json',
-                { method: 'PUT', headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(payload) });
-        }
+        window.__saveOrder(payload);
       } catch (e) {}
     });
     obs.observe(ov, { attributes: true, attributeFilter: ['class'] });
