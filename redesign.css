@@ -211,7 +211,15 @@ body.page-home .hero .search-inner { max-width: 560px; }
   body.page-home .hero .hero-inner { grid-template-columns: 1fr; }
   body.page-home .hero-eyebrow::before { display: none; }
   body.page-home .hero-sub { margin-inline: auto; }
-  body.page-home .hero-actions, .hero-trust { justify-content: center; }
+  body.page-home .hero-actions { justify-content: center; }
+  /* trust row: stack it cleanly — the 1px dividers used to be left
+     orphaned at the end of wrapped rows, which looked broken */
+  body.page-home .hero-trust {
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; text-align: center;
+  }
+  body.page-home .hero-trust .trust-sep { display: none; }
+  body.page-home .hero-trust .trust-main { justify-content: center; }
   body.page-home .hero .search-inner { margin-inline: auto; }
   body.page-home .hero-visual { max-width: 520px; margin: 6px auto 0; width: 100%; }
   body.page-home .hero-float--rating { left: 10px; }
@@ -394,6 +402,12 @@ html, body { overflow-x: clip; }
 }
 .findus-fab.show-hint .findus-hint { opacity: 1; transform: translateY(0); }
 
+/* the sticky order bar already carries a Directions button — on phones the
+   floating pin was permanently sitting on top of menu prices */
+@media (max-width: 760px) {
+  .findus-fab.findus-fab--redundant { display: none; }
+}
+
 /* hide while the Visit/map section is on screen (button is right there) */
 .findus-fab.findus-hidden { opacity: 0; pointer-events: none; transform: translateY(18px) scale(0.92); }
 
@@ -462,6 +476,16 @@ body.page-home.light-mode .hero-trust .trust-main { color: #17150f; }
 .hero-deal-arrow { font-size: 20px; color: var(--rd-gold-bright); transition: transform 0.25s; }
 .hero-deal:hover .hero-deal-arrow { transform: translateX(4px); }
 @media (max-width: 880px) { .hero-deal { margin-inline: auto; text-align: left; } }
+/* phones: the strip was squeezing the title into 4 lines between the icon
+   and the price — drop the sub-line and let the price breathe */
+@media (max-width: 560px) {
+  .hero-deal { gap: 10px; padding: 12px 14px; }
+  .hero-deal-fire { font-size: 22px; }
+  .hero-deal-text strong { font-size: 14px; }
+  .hero-deal-text small { display: none; }
+  .hero-deal-price { font-size: 20px; }
+  .hero-deal-arrow { display: none; }
+}
 
 /* sticky mobile order bar — pinned conversion for ad traffic */
 .sticky-order-bar { display: none; }
