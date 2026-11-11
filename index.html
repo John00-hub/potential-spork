@@ -113,7 +113,7 @@
       min-height: 100vh;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-      background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('./images/ola.webp');
+      background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('./images/jollof-chicken.webp');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -972,7 +972,7 @@ s.parentNode.insertBefore(t,s)}(window, document,'script',
 fbq('init', '975805464852992');
 fbq('track', 'PageView');
 </script>
-<noscript><img height="1" width="1" style="display:none"
+<noscript><img height="1" width="1" alt="" style="display:none"
 src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
@@ -2431,8 +2431,15 @@ callback: function(response) {
       document.body.classList.remove('promo-active');
     });
 
-    /* ── HERO / DEAL CARD PRICES ───────────────────────────────
-       Both prices are editable from admin.html (Firebase menu_prices):
+
+  })();
+
+  /* ── FEATURED DEAL CARD PRICES ──────────────────────────────
+     Kept OUTSIDE the dated promo-banner block on purpose: the card
+     price must stay in sync with the cart all year, not just while a
+     campaign is running.  (Audit finding #5.) */
+  (function () {
+    /* Both prices are editable from admin.html (Firebase menu_prices):
          item 87  = Jollof Rice + Chicken (normal menu price)
          item 999 = the deal price charged by the "Order Now" button
        If no deal price has been saved, the deal simply matches item 87. */
@@ -2494,6 +2501,7 @@ callback: function(response) {
     /* Prices may still be in flight — check again shortly */
     setTimeout(function () { if (typeof window.__refreshPromoPrice === 'function') window.__refreshPromoPrice(); }, 1500);
   })();
+
 /* ─── CUSTOMER REVIEWS DATA ─── */
 const reviews = [
   {

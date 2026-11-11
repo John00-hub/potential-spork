@@ -48,6 +48,12 @@
 
     document.body.appendChild(fab);
 
+    /* Pages with the sticky order bar already expose a Directions button,
+       so the floating pin is redundant there (it covered menu prices). */
+    if (document.querySelector('.sticky-order-bar')) {
+      fab.classList.add('findus-fab--redundant');
+    }
+
     /* First visit on touch devices: briefly explain the round icon */
     try {
       if (!sessionStorage.getItem('findusHintSeen')) {

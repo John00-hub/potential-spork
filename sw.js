@@ -2,13 +2,15 @@
    Timeout Restaurant — Service Worker  v1.0
    Scope: /
    Strategy:
-     • Shell + core assets  →  Cache-first (offline works)
-     • Menu images          →  Stale-while-revalidate
+     • Pages / navigations  →  Network-first (fresh deploy wins; cache only offline)
+     • Images               →  Stale-while-revalidate
+     • Other static assets  →  Cache-first
      • API / Paystack / FB  →  Network-only (never cache)
 =================================================== */
 
-const CACHE_NAME    = 'timeout-v8'; /* v8: N5,600 Jollof + Chicken price + editable promo — forces fresh shell */
-const RUNTIME_CACHE = 'timeout-images-v8';
+const CACHE_NAME    = 'timeout-v10'; /* v10: mobile layout fixes (trust row, floating pin) */
+const RUNTIME_CACHE = 'timeout-images-v10';
+const CACHE_PREFIX  = 'timeout';    /* only ever delete caches we own */
 
 /* ─── Core shell: cached on install ─── */
 const PRECACHE_ASSETS = [
@@ -52,7 +54,15 @@ function isImageRequest(url) {
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(PRECACHE_ASSETS))
+      .then(cache => Promise.all(
+        PRECACHE_ASSETS.map(asset =>
+          cache.add(asset).catch(err => {
+            /* One bad entry (e.g. a redirected /index.html) must not
+               abort the whole install. */
+            console.warn('[sw] precache skipped:', asset, err && err.message);
+          })
+        )
+      ))
       .then(() => self.skipWaiting())
   );
 });
@@ -63,7 +73,10 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
       .then(keys => Promise.all(
-        keys.filter(k => !KEEP.has(k)).map(k => caches.delete(k))
+        keys
+          .filter(k => !KEEP.has(k))
+          .filter(k => k.indexOf(CACHE_PREFIX) === 0)   /* ours only */
+          .map(k => caches.delete(k))
       ))
       .then(() => self.clients.claim())
   );
@@ -80,45 +93,66 @@ self.addEventListener('fetch', event => {
   /* Never cache payments, analytics, Firebase */
   if (isNetworkOnly(url)) return;
 
+  /* Pages: network-first, so a new deploy reaches returning visitors */
+  if (request.mode === 'navigate') {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
   /* Images: stale-while-revalidate */
   if (isImageRequest(url)) {
     event.respondWith(staleWhileRevalidate(request, RUNTIME_CACHE));
     return;
   }
 
-  /* Everything else: cache-first → network → offline fallback */
-  event.respondWith(
-    caches.match(request).then(cached => {
-      if (cached) return cached;
-      return fetch(request)
-        .then(response => {
-          /* Cache successful same-origin responses */
-          if (
-            response.ok &&
-            response.type === 'basic' &&
-            !url.includes('admin')     /* don't cache admin panel */
-          ) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then(c => c.put(request, clone));
-          }
-          return response;
-        })
-        .catch(() => {
-          /* Offline fallback: return cached homepage for navigation requests */
-          if (request.mode === 'navigate') {
-            /* NETWORK-FIRST for pages: never serve a stale shell to returning visitors */
-            return fetch(request).then(function (res) {
-              var copy = res.clone();
-              caches.open(CACHE_NAME).then(function (c) { c.put('/index.html', copy); });
-              return res;
-            }).catch(function () {
-              return caches.match('/index.html');
-            });
-          }
-        });
-    })
-  );
+  /* Everything else: cache-first, refreshed when it is fetched */
+  event.respondWith(cacheFirst(request));
 });
+
+/* ─── Network-first for navigations (max 3.5s, then cached shell) ─── */
+function networkFirst(request) {
+  var timer;
+  var cachedFallback = new Promise(function (resolve) {
+    timer = setTimeout(function () {
+      caches.match(request).then(function (r) {
+        resolve(r || caches.match('/') || caches.match('/index.html') || null);
+      });
+    }, 3500);
+  });
+
+  var network = fetch(request).then(function (response) {
+    clearTimeout(timer);
+    if (response && response.ok && response.type === 'basic' && request.url.indexOf('admin') === -1) {
+      var copy = response.clone();
+      caches.open(CACHE_NAME).then(function (c) { c.put(request, copy); });
+    }
+    return response;
+  }).catch(function () {
+    clearTimeout(timer);
+    return caches.match(request).then(function (r) {
+      return r || caches.match('/') || caches.match('/index.html');
+    });
+  });
+
+  return Promise.race([
+    network,
+    cachedFallback.then(function (r) { return r || network; })
+  ]);
+}
+
+/* ─── Cache-first for static assets ─── */
+function cacheFirst(request) {
+  return caches.match(request).then(function (cached) {
+    if (cached) return cached;
+    return fetch(request).then(function (response) {
+      if (response && response.ok && response.type === 'basic' && request.url.indexOf('admin') === -1) {
+        var copy = response.clone();
+        caches.open(CACHE_NAME).then(function (c) { c.put(request, copy); });
+      }
+      return response;
+    });
+  });
+}
 
 /* ─── Stale-While-Revalidate helper ─── */
 function staleWhileRevalidate(request, cacheName) {
