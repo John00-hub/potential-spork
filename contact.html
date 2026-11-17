@@ -1104,7 +1104,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
     <div class="container" style="max-width:780px;">
       <p class="section-tag">Make a Reservation</p>
       <h2 class="section-title">Reserve Your <em class="gold">Table</em></h2>
-      <p class="section-sub" style="margin-bottom:40px;">Fill in the form below and we'll confirm your reservation via WhatsApp or phone within 30 minutes during business hours.</p>
+      <p class="section-sub" style="margin-bottom:40px;">Fill in the form below and we'll open a ready-made WhatsApp message for you — send it and our team will reply to confirm your table.</p>
 
       <div id="form-wrap">
         <form id="reservation-form" novalidate aria-label="Reservation form">
@@ -1182,12 +1182,12 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
           </div>
 
           <div class="form-submit-row" style="margin-top:24px;">
-            <button type="submit" class="btn btn-gold btn-full" style="max-width:280px;" id="submit-btn" aria-label="Submit reservation request">
+            <button type="submit" class="btn btn-gold btn-full" style="max-width:280px;" id="submit-btn" aria-label="Continue to WhatsApp to send your reservation">
               <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
-              Send Reservation Request
+              Continue to WhatsApp
             </button>
             <p class="form-note">
-              We confirm within 30 mins.<br />
+              Your table is confirmed when we reply.<br />
               Prefer instant booking? <a href="https://wa.me/2349011724825?text=Hi%2C%20I%27d%20like%20to%20make%20a%20reservation." target="_blank" rel="noopener">WhatsApp us directly ↗</a>
             </p>
           </div>
@@ -1199,10 +1199,10 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
         <div class="form-success__icon">
           <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
-        <h3>Request Received!</h3>
-        <p>Thank you — we'll confirm your table via WhatsApp or phone within 30 minutes during business hours.</p>
+        <h3>One more step</h3>
+        <p>Your details are ready. Tap below to open WhatsApp and <strong>send the message</strong> — your table is confirmed once we reply. If WhatsApp does not open, call us on +234 901 172 4825.</p>
         <a href="https://wa.me/2349011724825?text=Hi%2C%20I%20just%20submitted%20a%20reservation%20request." target="_blank" rel="noopener" class="btn btn-wa" style="margin-top:24px;">
-          Follow Up on WhatsApp
+          Open WhatsApp &amp; Send
         </a>
       </div>
     </div>
@@ -1490,7 +1490,7 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
       if (occ) msg += `*Occasion:* ${occ}\n`;
       if (notes) msg += `*Notes:* ${notes}\n`;
 
-      // Show success
+      // Show the WhatsApp hand-off panel (not a "received" confirmation)
       document.getElementById('form-wrap').style.display = 'none';
       document.getElementById('form-success').style.display = 'block';
 
@@ -1500,11 +1500,12 @@ src="https://www.facebook.com/tr?id=975805464852992&ev=PageView&noscript=1"
         waLink.href = `https://wa.me/2349011724825?text=${encodeURIComponent(msg)}`;
       }
 
-      // Auto-open WhatsApp on mobile
-      if (/Mobi|Android/i.test(navigator.userAgent)) {
-        setTimeout(() => {
-          window.open(`https://wa.me/2349011724825?text=${encodeURIComponent(msg)}`, '_blank');
-        }, 800);
+      // No auto-popup: browsers block it without a tap, which is why the old
+      // flow said "Request Received" while nothing was ever sent. The panel
+      // button below carries the prefilled message and needs the customer's tap.
+      const panel = document.getElementById('form-success');
+      if (panel && panel.scrollIntoView) {
+        panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     });
 
