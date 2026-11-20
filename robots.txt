@@ -1,6 +1,15 @@
 User-agent: *
 Allow: /
+
+# Staff and checkout pages
 Disallow: /admin.html
 Disallow: /check-out.html
+Disallow: /orders.html
+Disallow: /thank-you.html
+
+# Stale backups of the homepage (duplicate content)
+Disallow: /index.html1
+Disallow: /index.htmlo
+Disallow: /index.htmly
 
 Sitemap: https://timeout.com.ng/sitemap.xml
