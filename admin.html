@@ -991,9 +991,14 @@
       <div class="promo-editor-copy">
         <div class="promo-editor-title">🔥 Jollof Rice + Chicken — homepage deal price</div>
         <p class="promo-editor-hint">
-          This is the price customers pay when they tap the “Order Now” button in the deal card
-          (and the price shown as “Today’s deal”). Saving it overrides the automatic discount.
-          Set it lower than the menu price to show a strike-through saving.
+          This is what the homepage deal card charges. It must match the menu price
+          (item 87) unless you are deliberately running a discount — a lower value
+          shows a strike-through saving, a higher one is a mistake.
+        </p>
+        <p class="promo-editor-hint" id="promoMismatch" style="display:none;color:#ffb4a2;">
+          ⚠️ This does not match the menu price (<span id="promoMenuPriceLabel">—</span>).
+          Customers would see one price and be charged another.
+          <button class="save-row-btn" id="promoMatchBtn" style="margin-left:8px;padding:4px 10px;font-size:12px;">Match menu price</button>
         </p>
       </div>
       <div class="promo-editor-controls">
@@ -1428,6 +1433,15 @@ function checkMigrateCard() {
    always-visible editor above the item list.
 ───────────────────────────────────────────────── */
 var PROMO_ITEM_ID = 999;
+var MENU_DEAL_ITEM_ID = 87;   /* the Jollof + Chicken price shown on the menu */
+
+/* Menu price for the deal item, live from Firebase when available. */
+function menuDealPrice() {
+  if (firebasePrices.has(MENU_DEAL_ITEM_ID)) return firebasePrices.get(MENU_DEAL_ITEM_ID);
+  if (pendingChanges.has(MENU_DEAL_ITEM_ID)) return pendingChanges.get(MENU_DEAL_ITEM_ID);
+  const it = MENU_ITEMS.find(i => i.id === MENU_DEAL_ITEM_ID);
+  return it ? it.price : '';
+}
 
 function promoEffectivePrice() {
   if (pendingChanges.has(PROMO_ITEM_ID))  return pendingChanges.get(PROMO_ITEM_ID);
@@ -1443,6 +1457,27 @@ function syncPromoEditor(force) {
 
   const status = document.getElementById('promoStatus');
   if (status && firebasePrices.has(PROMO_ITEM_ID)) status.textContent = '✓ live';
+
+  /* Flag a deal price that disagrees with the menu price. */
+  var warn  = document.getElementById('promoMismatch');
+  var label = document.getElementById('promoMenuPriceLabel');
+  var menu  = menuDealPrice();
+  var deal  = promoEffectivePrice();
+  if (warn && label && menu !== '' && deal !== '' && Number(menu) !== Number(deal)) {
+    label.textContent = '₦' + Number(menu).toLocaleString();
+    warn.style.display = 'block';
+  } else if (warn) {
+    warn.style.display = 'none';
+  }
+}
+
+/* One click: copy the menu price onto the deal price and save it. */
+function matchMenuDealPrice() {
+  var input = document.getElementById('promoPriceInput');
+  var menu  = menuDealPrice();
+  if (!input || menu === '') { showToast('⚠️ Menu price not loaded yet'); return; }
+  input.value = menu;
+  savePromoPrice();
 }
 
 async function savePromoPrice() {
@@ -1826,6 +1861,7 @@ document.getElementById('saveAllBtn').addEventListener('click', saveAllPending);
 
 /* Homepage deal / promo price editor */
 document.getElementById('promoSaveBtn').addEventListener('click', savePromoPrice);
+document.getElementById('promoMatchBtn').addEventListener('click', matchMenuDealPrice);
 document.getElementById('promoPriceInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') { e.preventDefault(); savePromoPrice(); }
 });
